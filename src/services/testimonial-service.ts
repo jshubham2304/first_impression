@@ -33,17 +33,13 @@ async function uploadImage(imageFile: File, testimonialId: string): Promise<{ im
 type TestimonialData = Omit<Testimonial, 'id' | 'imageUrl' | 'imagePath'>;
 
 export async function addTestimonial(data: TestimonialData, imageFile?: File) {
-    const testimonialData: Omit<Testimonial, 'id'> = { ...data };
-    
-    const docRef = await addDoc(collection(db, TESTIMONIALS_COLLECTION), {});
+    const docRef = await addDoc(collection(db, TESTIMONIALS_COLLECTION), data);
 
     if (imageFile) {
         const { imageUrl, imagePath } = await uploadImage(imageFile, docRef.id);
-        testimonialData.imageUrl = imageUrl;
-        testimonialData.imagePath = imagePath;
+        await updateDoc(docRef, { imageUrl, imagePath });
     }
     
-    await updateDoc(docRef, testimonialData);
     return docRef.id;
 }
 
