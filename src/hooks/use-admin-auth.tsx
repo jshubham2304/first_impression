@@ -35,17 +35,29 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const checkPin = useCallback(async (pin: string) => {
+        const defaultPin = '230498'; // The default PIN from firebase.ts
+
         try {
             await fetchAndActivate(remoteConfig);
             const correctPin = getString(remoteConfig, 'admin_pin');
-            if (pin === correctPin) {
+            
+            // The correctPin will be the remote value, or the default '230498' if not set remotely.
+            // An empty string can be returned if the default is not configured correctly or the remote value is empty.
+            if (pin === correctPin && correctPin) {
                 sessionStorage.setItem(ADMIN_AUTH_KEY, 'true');
                 setIsAuthenticated(true);
                 return true;
             }
             return false;
         } catch (error) {
-            console.error("Error fetching remote config or checking PIN:", error);
+            console.error("Error fetching remote config. Falling back to default PIN check.", error);
+            // If remote config fails (e.g. no internet, misconfigured keys),
+            // allow login with the hardcoded default PIN. This improves local dev experience.
+            if (pin === defaultPin) {
+                sessionStorage.setItem(ADMIN_AUTH_KEY, 'true');
+                setIsAuthenticated(true);
+                return true;
+            }
             return false;
         }
     }, []);
