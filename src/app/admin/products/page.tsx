@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -12,59 +12,78 @@ import {
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { products as initialProducts } from '@/lib/data';
 import type { Product } from '@/lib/types';
-import { PlusCircle, MoreHorizontal, FilePenLine, Trash2 } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, FilePenLine, Trash2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { v4 as uuidv4 } from 'uuid';
+import { deleteProduct, getProducts } from '@/services/product-service';
+import { ProductForm } from './product-form';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function AdminProductsPage() {
-    const [allProducts, setAllProducts] = useState<Product[]>(initialProducts);
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    
-    // State for new product form
-    const [newProductName, setNewProductName] = useState('');
-    const [newProductBrand, setNewProductBrand] = useState('');
-    const [newProductPrice, setNewProductPrice] = useState('');
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const { toast } = useToast();
 
-    const handleAddProduct = () => {
-        const newProduct: Product = {
-            id: uuidv4(),
-            name: newProductName,
-            brand: newProductBrand,
-            price: parseFloat(newProductPrice) || 0,
-            imageUrl: 'https://placehold.co/600x600.png',
-            imageHint: 'new product',
-            description: 'A newly added product.',
-            finish: 'Satin',
-            colorFamily: 'Neutrals',
-            popularity: 0,
-            reviews: [],
-            variants: [{ name: 'Default', hex: '#FFFFFF' }],
-        };
-
-        setAllProducts(prev => [...prev, newProduct]);
-        
-        // Reset form and close dialog
-        setNewProductName('');
-        setNewProductBrand('');
-        setNewProductPrice('');
-        setIsDialogOpen(false);
+    const fetchProducts = async () => {
+        setIsLoading(true);
+        try {
+            const products = await getProducts();
+            setAllProducts(products);
+        } catch (error) {
+            console.error("Failed to fetch products:", error);
+            toast({ title: 'Error', description: 'Failed to load products.', variant: 'destructive' });
+        } finally {
+            setIsLoading(false);
+        }
     };
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
     
-    const handleDeleteProduct = (productId: string) => {
-        setAllProducts(prev => prev.filter(p => p.id !== productId));
-    }
+    const handleAddClick = () => {
+        setEditingProduct(null);
+        setIsDialogOpen(true);
+    };
+
+    const handleEditClick = (product: Product) => {
+        setEditingProduct(product);
+        setIsDialogOpen(true);
+    };
+
+    const handleDeleteProduct = async (productId: string) => {
+        try {
+            await deleteProduct(productId);
+            toast({ title: 'Success', description: 'Product deleted successfully.' });
+            fetchProducts(); // Refresh the list
+        } catch (error) {
+             toast({ title: 'Error', description: 'Failed to delete product.', variant: 'destructive' });
+        }
+    };
+
+    const onFormSuccess = () => {
+        setIsDialogOpen(false);
+        fetchProducts();
+    };
 
     return (
         <div>
@@ -72,32 +91,13 @@ export default function AdminProductsPage() {
                 <h1 className="text-3xl font-bold">Products</h1>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button><PlusCircle className="mr-2 h-4 w-4"/>Add Product</Button>
+                        <Button onClick={handleAddClick}><PlusCircle className="mr-2 h-4 w-4"/>Add Product</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
-                        <DialogTitle>Add New Product</DialogTitle>
-                        <DialogDescription>
-                            Fill in the details for the new product. Click save when you're done.
-                        </DialogDescription>
+                            <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
                         </DialogHeader>
-                        <div className="grid gap-4 py-4">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="name" className="text-right">Name</Label>
-                                <Input id="name" value={newProductName} onChange={(e) => setNewProductName(e.target.value)} className="col-span-3" />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="brand" className="text-right">Brand</Label>
-                                <Input id="brand" value={newProductBrand} onChange={(e) => setNewProductBrand(e.target.value)} className="col-span-3" />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="price" className="text-right">Price</Label>
-                                <Input id="price" type="number" value={newProductPrice} onChange={(e) => setNewProductPrice(e.target.value)} className="col-span-3" />
-                            </div>
-                        </div>
-                        <DialogFooter>
-                            <Button onClick={handleAddProduct}>Save changes</Button>
-                        </DialogFooter>
+                        <ProductForm product={editingProduct} onSuccess={onFormSuccess} />
                     </DialogContent>
                 </Dialog>
             </div>
@@ -107,6 +107,11 @@ export default function AdminProductsPage() {
                     <CardDescription>A list of all available products in your store.</CardDescription>
                 </CardHeader>
                 <CardContent>
+                    {isLoading ? (
+                        <div className="flex justify-center items-center h-64">
+                            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                        </div>
+                    ) : (
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -136,26 +141,45 @@ export default function AdminProductsPage() {
                                     <TableCell>{product.brand}</TableCell>
                                     <TableCell>${product.price.toFixed(2)}</TableCell>
                                     <TableCell>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                            <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                                <span className="sr-only">Toggle menu</span>
-                                            </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem><FilePenLine className="mr-2 h-4 w-4"/>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteProduct(product.id)}>
-                                                <Trash2 className="mr-2 h-4 w-4"/>Delete
-                                            </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                         <AlertDialog>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                    <span className="sr-only">Toggle menu</span>
+                                                </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DropdownMenuItem onSelect={() => handleEditClick(product)}>
+                                                        <FilePenLine className="mr-2 h-4 w-4"/>Edit
+                                                    </DropdownMenuItem>
+                                                     <AlertDialogTrigger asChild>
+                                                        <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                                                            <Trash2 className="mr-2 h-4 w-4"/>Delete
+                                                        </DropdownMenuItem>
+                                                    </AlertDialogTrigger>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action cannot be undone. This will permanently delete this product.
+                                                </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => handleDeleteProduct(product.id)}>Continue</AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
+                    )}
                 </CardContent>
             </Card>
         </div>

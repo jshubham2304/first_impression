@@ -1,5 +1,5 @@
 'use client';
-import { LayoutDashboard, Package, ShoppingCart } from 'lucide-react';
+import { LayoutDashboard, LogOut, Package, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from '@/components/ui/button';
 import { PaintBucket } from 'lucide-react';
+import { AdminAuthGuard, useAdminAuth } from '@/hooks/use-admin-auth';
 
 const adminNavLinks = [
     { href: "/admin/dashboard", label: "Dashboard", icon: <LayoutDashboard /> },
@@ -22,26 +23,28 @@ const adminNavLinks = [
     { href: "/admin/orders", label: "Orders", icon: <ShoppingCart /> },
 ];
 
-export default function AdminLayout({
-    children,
-}: {
-    children: React.ReactNode
-}) {
+function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const { logout } = useAdminAuth();
 
     return (
         <SidebarProvider>
              <Sidebar>
                 <SidebarHeader>
-                    <div className="flex items-center gap-2 p-2">
-                        <Button variant="ghost" size="icon" className="w-8 h-8" asChild>
-                            <Link href="/">
-                                <PaintBucket />
-                            </Link>
+                    <div className="flex items-center justify-between p-2">
+                        <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="icon" className="w-8 h-8" asChild>
+                                <Link href="/">
+                                    <PaintBucket />
+                                </Link>
+                            </Button>
+                            <h2 className="font-bold text-lg group-data-[collapsible=icon]:hidden">
+                                Admin Panel
+                            </h2>
+                        </div>
+                        <Button variant="ghost" size="icon" className="w-8 h-8 group-data-[collapsible=icon]:hidden" onClick={logout}>
+                            <LogOut />
                         </Button>
-                        <h2 className="font-bold text-lg group-data-[collapsible=icon]:hidden">
-                            Admin Panel
-                        </h2>
                     </div>
                 </SidebarHeader>
                 <SidebarContent>
@@ -68,4 +71,17 @@ export default function AdminLayout({
             </main>
         </SidebarProvider>
     )
+}
+
+
+export default function AdminLayout({
+    children,
+}: {
+    children: React.ReactNode
+}) {
+   return (
+       <AdminAuthGuard>
+           <AdminLayoutContent>{children}</AdminLayoutContent>
+       </AdminAuthGuard>
+   )
 }

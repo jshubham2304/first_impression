@@ -9,6 +9,7 @@ export type Product = {
   description: string;
   imageUrl: string;
   imageHint: string;
+  imagePath?: string;
   variants: ColorVariant[];
   reviews: Review[];
 };

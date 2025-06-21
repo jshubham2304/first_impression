@@ -2,10 +2,9 @@
 
 import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
-import { products } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, ShieldCheck, Droplets, PaintRoller, Minus, Plus } from "lucide-react";
+import { Star, ShieldCheck, Droplets, PaintRoller, Minus, Plus, Loader2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -13,10 +12,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
-import type { ColorVariant } from "@/lib/types";
+import { useState, useEffect } from "react";
+import type { ColorVariant, Product } from "@/lib/types";
 import { useCart } from "@/context/cart-context";
 import { cn } from "@/lib/utils";
+import { getProduct } from "@/services/product-service";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ColorSwatch = ({ name, hex, active = false, onClick }: { name: string; hex: string; active?: boolean, onClick: () => void }) => (
   <div className="flex flex-col items-center space-y-2 cursor-pointer" onClick={onClick}>
@@ -38,13 +39,67 @@ const Feature = ({ icon, title, description }: { icon: React.ReactNode; title: s
   </div>
 );
 
+const ProductDetailSkeleton = () => (
+    <div className="container py-12 max-w-screen-2xl">
+        <div className="grid md:grid-cols-2 gap-12 items-start">
+            <div>
+                <Skeleton className="w-full aspect-square rounded-lg" />
+            </div>
+            <div className="space-y-6">
+                <Skeleton className="h-6 w-24 rounded-md" />
+                <Skeleton className="h-10 w-3/4 rounded-md" />
+                <div className="flex items-center gap-4 mt-2">
+                    <Skeleton className="h-5 w-32 rounded-md" />
+                </div>
+                <Skeleton className="h-24 w-full rounded-md" />
+                <Card>
+                    <CardHeader> <Skeleton className="h-6 w-40 rounded-md" /></CardHeader>
+                    <CardContent className="space-y-4">
+                        <Skeleton className="h-12 w-full rounded-md" />
+                        <Skeleton className="h-12 w-full rounded-md" />
+                        <Skeleton className="h-12 w-full rounded-md" />
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
+    </div>
+);
+
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
   const { addToCart } = useCart();
-  const product = products.find((p) => p.id === params.id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (params.id) {
+        const fetchProduct = async () => {
+            setIsLoading(true);
+            try {
+                const fetchedProduct = await getProduct(params.id as string);
+                if (fetchedProduct) {
+                    setProduct(fetchedProduct);
+                    setSelectedVariant(fetchedProduct.variants?.[0] || null)
+                } else {
+                    notFound();
+                }
+            } catch (error) {
+                console.error("Failed to fetch product", error);
+                notFound();
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchProduct();
+    }
+  }, [params.id]);
   
-  const [selectedVariant, setSelectedVariant] = useState<ColorVariant | null>(product?.variants[0] || null);
+  const [selectedVariant, setSelectedVariant] = useState<ColorVariant | null>(null);
   const [quantity, setQuantity] = useState(1);
+
+  if (isLoading) {
+    return <ProductDetailSkeleton />;
+  }
 
   if (!product) {
     notFound();
@@ -104,6 +159,7 @@ export default function ProductDetailPage() {
             </CardContent>
           </Card>
           
+          {product.variants && product.variants.length > 0 && (
           <div>
             <h3 className="text-xl font-headline font-semibold mb-4">Select a Color</h3>
             <div className="flex space-x-4">
@@ -118,6 +174,7 @@ export default function ProductDetailPage() {
               ))}
             </div>
           </div>
+          )}
           
           <div>
             <h3 className="text-xl font-headline font-semibold mb-4">Quantity</h3>
@@ -144,7 +201,7 @@ export default function ProductDetailPage() {
       <div className="mt-16">
         <h2 className="text-3xl font-headline font-bold mb-6 text-center">Customer Reviews</h2>
         <div className="max-w-3xl mx-auto space-y-6">
-          {product.reviews.length > 0 ? (
+          {product.reviews && product.reviews.length > 0 ? (
             product.reviews.map((review) => (
               <Card key={review.id}>
                 <CardHeader className="flex flex-row justify-between items-start">

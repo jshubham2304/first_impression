@@ -1,9 +1,9 @@
-import { products } from '@/lib/data';
+import { getProducts } from '@/services/product-service';
 import { ProductsClient } from './client';
+import type { Product } from '@/lib/types';
 
 export default async function ProductsPage() {
-  // In a real app, you would fetch products from an API
-  const allProducts = products;
+  const allProducts: Product[] = await getProducts();
 
   return (
     <div className="container py-8 max-w-screen-2xl">
