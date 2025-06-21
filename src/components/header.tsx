@@ -21,6 +21,8 @@ import {
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
@@ -113,6 +115,8 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
+              <SheetTitle className="sr-only">Menu</SheetTitle>
+              <SheetDescription className="sr-only">The main navigation menu for the mobile site.</SheetDescription>
                <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
                 <PaintBucket className="h-6 w-6 text-primary" />
                 <span className="font-bold font-headline">
