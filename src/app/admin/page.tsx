@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,14 +13,20 @@ import Link from 'next/link';
 
 export default function AdminPinPage() {
     const [pin, setPin] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
     const router = useRouter();
-    const { checkPin } = useAdminAuth();
+    const { checkPin, isAuthenticated, isLoading: isAuthLoading } = useAdminAuth();
+
+    useEffect(() => {
+        if (!isAuthLoading && isAuthenticated) {
+            router.replace('/admin/dashboard');
+        }
+    }, [isAuthenticated, isAuthLoading, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
+        setIsSubmitting(true);
 
         const isCorrect = await checkPin(pin);
 
@@ -33,10 +39,18 @@ export default function AdminPinPage() {
                 description: 'The PIN you entered is incorrect.',
                 variant: 'destructive',
             });
-            setIsLoading(false);
+            setIsSubmitting(false);
             setPin('');
         }
     };
+    
+    if (isAuthLoading || isAuthenticated) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+        );
+    }
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
@@ -63,8 +77,8 @@ export default function AdminPinPage() {
                                 className="text-center tracking-[1em]"
                             />
                         </div>
-                        <Button type="submit" className="w-full" disabled={isLoading || pin.length !== 6}>
-                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        <Button type="submit" className="w-full" disabled={isSubmitting || pin.length !== 6}>
+                            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Enter
                         </Button>
                     </form>
