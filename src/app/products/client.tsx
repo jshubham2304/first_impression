@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { ProductCard } from '@/components/product-card';
-import type { Product } from '@/lib/types';
+import type { Product, ProductAttributes } from '@/lib/types';
 import {
   Select,
   SelectContent,
@@ -18,13 +18,10 @@ import { Separator } from '@/components/ui/separator';
 
 type ProductsClientProps = {
   products: Product[];
+  attributes: ProductAttributes;
 };
 
-const colorFamilies = ['Reds', 'Blues', 'Greens', 'Yellows', 'Neutrals', 'Whites'];
-const finishes = ['Matte', 'Satin', 'Semi-Gloss', 'Gloss'];
-const brands = ['Prestige Paints', 'GreenSheen', 'ProTect', 'Pure Hues', 'MetroPaints', 'GoldenRay'];
-
-export function ProductsClient({ products }: ProductsClientProps) {
+export function ProductsClient({ products, attributes }: ProductsClientProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedFinishes, setSelectedFinishes] = useState<string[]>([]);
@@ -76,7 +73,7 @@ export function ProductsClient({ products }: ProductsClientProps) {
         </div>
         
         <FilterGroup title="Color Family">
-          {colorFamilies.map((color) => (
+          {attributes.colorFamilies.map((color) => (
             <CheckboxItem key={color} id={color} label={color} checked={selectedColors.includes(color)} onCheckedChange={() => handleCheckboxChange(setSelectedColors, selectedColors, color)} />
           ))}
         </FilterGroup>
@@ -84,7 +81,7 @@ export function ProductsClient({ products }: ProductsClientProps) {
         <Separator className="my-4" />
 
         <FilterGroup title="Finish">
-          {finishes.map((finish) => (
+          {attributes.finishes.map((finish) => (
             <CheckboxItem key={finish} id={finish} label={finish} checked={selectedFinishes.includes(finish)} onCheckedChange={() => handleCheckboxChange(setSelectedFinishes, selectedFinishes, finish)} />
           ))}
         </FilterGroup>
@@ -92,7 +89,7 @@ export function ProductsClient({ products }: ProductsClientProps) {
         <Separator className="my-4" />
 
         <FilterGroup title="Brand">
-          {brands.map((brand) => (
+          {attributes.brands.map((brand) => (
             <CheckboxItem key={brand} id={brand} label={brand} checked={selectedBrands.includes(brand)} onCheckedChange={() => handleCheckboxChange(setSelectedBrands, selectedBrands, brand)} />
           ))}
         </FilterGroup>

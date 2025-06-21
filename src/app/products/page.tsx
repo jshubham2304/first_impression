@@ -1,9 +1,11 @@
 import { getProducts } from '@/services/product-service';
 import { ProductsClient } from './client';
-import type { Product } from '@/lib/types';
+import type { Product, ProductAttributes } from '@/lib/types';
+import { getProductAttributes } from '@/services/configuration-service';
 
 export default async function ProductsPage() {
   const allProducts: Product[] = await getProducts();
+  const attributes: ProductAttributes = await getProductAttributes();
   const activeProducts = allProducts.filter(p => p.isActive);
 
   return (
@@ -12,7 +14,7 @@ export default async function ProductsPage() {
         <h1 className="text-4xl font-headline font-bold">Our Paint Collection</h1>
         <p className="text-muted-foreground mt-2 text-lg">Find the perfect color and finish for your project.</p>
       </div>
-      <ProductsClient products={activeProducts} />
+      <ProductsClient products={activeProducts} attributes={attributes} />
     </div>
   );
 }

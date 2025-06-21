@@ -1,5 +1,5 @@
 'use client';
-import { LayoutDashboard, LogOut, Package, ShoppingCart, MessageSquareText, Palette } from 'lucide-react';
+import { LayoutDashboard, LogOut, Package, ShoppingCart, MessageSquareText, Palette, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -23,6 +23,7 @@ const adminNavLinks = [
     { href: "/admin/orders", label: "Orders", icon: <ShoppingCart /> },
     { href: "/admin/testimonials", label: "Testimonials", icon: <MessageSquareText /> },
     { href: "/admin/visualizer-colors", label: "Visualizer Colors", icon: <Palette /> },
+    { href: "/admin/configuration", label: "Configuration", icon: <Settings /> },
 ];
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {

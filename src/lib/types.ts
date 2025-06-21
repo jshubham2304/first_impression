@@ -4,10 +4,10 @@ export type Product = {
   id: string;
   name: string;
   brand: string;
-  category: ProductCategory;
+  category: string;
   isActive: boolean;
-  finish: 'Matte' | 'Satin' | 'Semi-Gloss' | 'Gloss';
-  colorFamily: 'Reds' | 'Blues' | 'Greens' | 'Yellows' | 'Neutrals' | 'Whites';
+  finish: string;
+  colorFamily: string;
   price: number;
   popularity: number;
   description: string;
@@ -17,6 +17,13 @@ export type Product = {
   variants: ColorVariant[];
   reviews: Review[];
 };
+
+export type ProductAttributes = {
+  brands: string[];
+  finishes: string[];
+  colorFamilies: string[];
+  categories: string[];
+}
 
 export type ColorVariant = {
   name: string;

@@ -9,14 +9,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import type { Product } from "@/lib/types";
+import type { Product, ProductAttributes } from "@/lib/types";
 import { addProduct, updateProduct } from "@/services/product-service";
 import { Loader2, PlusCircle, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getProductAttributes } from "@/services/configuration-service";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const variantSchema = z.object({
   name: z.string().min(1, "Variant name is required"),
@@ -25,12 +26,12 @@ const variantSchema = z.object({
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is too short"),
-  brand: z.string().min(2, "Brand is too short"),
-  category: z.enum(['Interior', 'Exterior', 'Texture', 'Wood']),
+  brand: z.string().min(1, "Brand is required"),
+  category: z.string().min(1, "Category is required"),
   price: z.coerce.number().min(0.01, "Price must be positive"),
   description: z.string().min(10, "Description is too short"),
-  finish: z.enum(['Matte', 'Satin', 'Semi-Gloss', 'Gloss']),
-  colorFamily: z.enum(['Reds', 'Blues', 'Greens', 'Yellows', 'Neutrals', 'Whites']),
+  finish: z.string().min(1, "Finish is required"),
+  colorFamily: z.string().min(1, "Color family is required"),
   isActive: z.boolean().default(true),
   image: z.any().optional(),
   variants: z.array(variantSchema).min(1, "At least one color variant is required."),
@@ -41,27 +42,52 @@ type ProductFormProps = {
   onSuccess: () => void;
 };
 
-const productCategories = ['Interior', 'Exterior', 'Texture', 'Wood'] as const;
-
 export function ProductForm({ product, onSuccess }: ProductFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [attributes, setAttributes] = useState<ProductAttributes | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+      async function fetchAttributes() {
+          const data = await getProductAttributes();
+          setAttributes(data);
+      }
+      fetchAttributes();
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: product?.name || '',
       brand: product?.brand || '',
-      category: product?.category || 'Interior',
+      category: product?.category || '',
       price: product?.price || 0,
       description: product?.description || '',
-      finish: product?.finish || 'Satin',
-      colorFamily: product?.colorFamily || 'Neutrals',
+      finish: product?.finish || '',
+      colorFamily: product?.colorFamily || '',
       isActive: product?.isActive ?? true,
       image: undefined,
       variants: product?.variants && product.variants.length > 0 ? product.variants : [{ name: 'Default', hex: '#ffffff' }],
     },
   });
+
+  useEffect(() => {
+    if (attributes && !product) {
+        form.reset({
+            ...form.getValues(),
+            brand: attributes.brands[0] || '',
+            category: attributes.categories[0] || '',
+            finish: attributes.finishes[0] || '',
+            colorFamily: attributes.colorFamilies[0] || '',
+        });
+    } else if (attributes && product) {
+        form.reset({
+            ...product,
+            image: undefined,
+        });
+    }
+  }, [attributes, product, form]);
+
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -95,28 +121,41 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
     }
   }
 
+  if (!attributes) {
+      return (
+          <div className="space-y-4 py-4 max-h-[80vh] overflow-y-auto pr-4">
+              <Skeleton className="h-10 w-full" />
+              <div className="grid grid-cols-2 gap-4"><Skeleton className="h-10 w-full" /><Skeleton className="h-10 w-full" /></div>
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <div className="grid grid-cols-2 gap-4"><Skeleton className="h-10 w-full" /><Skeleton className="h-10 w-full" /></div>
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-48 w-full" />
+          </div>
+      );
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4 max-h-[80vh] overflow-y-auto pr-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl><Input {...field} /></FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormField control={form.control} name="name" render={({ field }) => ( <FormItem><FormLabel>Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
         <div className="grid grid-cols-2 gap-4">
-            <FormField control={form.control} name="brand" render={({ field }) => ( <FormItem><FormLabel>Brand</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
+            <FormField control={form.control} name="brand" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Brand</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl><SelectTrigger><SelectValue placeholder="Select a brand" /></SelectTrigger></FormControl>
+                  <SelectContent>{attributes.brands.map(c => (<SelectItem key={c} value={c}>{c}</SelectItem>))}</SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}/>
             <FormField control={form.control} name="category" render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl><SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger></FormControl>
-                  <SelectContent>{productCategories.map(c => (<SelectItem key={c} value={c}>{c}</SelectItem>))}</SelectContent>
+                  <SelectContent>{attributes.categories.map(c => (<SelectItem key={c} value={c}>{c}</SelectItem>))}</SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
@@ -128,9 +167,9 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
           <FormField control={form.control} name="finish" render={({ field }) => (
               <FormItem>
                 <FormLabel>Finish</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl><SelectTrigger><SelectValue placeholder="Select a finish" /></SelectTrigger></FormControl>
-                  <SelectContent>{['Matte', 'Satin', 'Semi-Gloss', 'Gloss'].map(f => (<SelectItem key={f} value={f}>{f}</SelectItem>))}</SelectContent>
+                  <SelectContent>{attributes.finishes.map(f => (<SelectItem key={f} value={f}>{f}</SelectItem>))}</SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
@@ -138,9 +177,9 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
           <FormField control={form.control} name="colorFamily" render={({ field }) => (
               <FormItem>
                 <FormLabel>Color Family</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl><SelectTrigger><SelectValue placeholder="Select a color family" /></SelectTrigger></FormControl>
-                  <SelectContent>{['Reds', 'Blues', 'Greens', 'Yellows', 'Neutrals', 'Whites'].map(cf => (<SelectItem key={cf} value={cf}>{cf}</SelectItem>))}</SelectContent>
+                  <SelectContent>{attributes.colorFamilies.map(cf => (<SelectItem key={cf} value={cf}>{cf}</SelectItem>))}</SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
