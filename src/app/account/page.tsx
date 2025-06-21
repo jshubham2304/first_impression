@@ -6,7 +6,7 @@ import { useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, Package, User as UserIcon } from 'lucide-react';
+import { LogOut, Package, Truck, User as UserIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useOrders } from '@/context/order-context';
@@ -85,19 +85,37 @@ function OrderHistory() {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <Separator className="my-4" />
-                        <div className="space-y-4">
-                        {order.items.map(item => (
-                            <div key={item.id} className="flex items-center space-x-4">
-                                <Image src={item.imageUrl} alt={item.name} data-ai-hint={item.imageHint} width={64} height={64} className="rounded-md aspect-square object-cover" />
-                                <div>
-                                    <p className="font-semibold">{item.name}</p>
-                                    <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                        <div className="space-y-4 pt-4">
+                            <h4 className="font-semibold">Items</h4>
+                            {order.items.map(item => (
+                                <div key={item.id} className="flex items-center space-x-4">
+                                    <Image src={item.imageUrl} alt={item.name} data-ai-hint={item.imageHint} width={64} height={64} className="rounded-md aspect-square object-cover" />
+                                    <div>
+                                        <p className="font-semibold">{item.name}</p>
+                                        <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                                    </div>
+                                    <p className="ml-auto font-medium">${(item.price * item.quantity).toFixed(2)}</p>
                                 </div>
-                                <p className="ml-auto font-medium">${(item.price * item.quantity).toFixed(2)}</p>
-                            </div>
-                        ))}
+                            ))}
                         </div>
+                        
+                        {order.shippingAddress && (
+                            <>
+                                <Separator className="my-4" />
+                                <div>
+                                    <h4 className="font-semibold mb-2 flex items-center">
+                                        <Truck className="mr-2 h-4 w-4 text-muted-foreground" />
+                                        Shipping To
+                                    </h4>
+                                    <div className="text-sm text-muted-foreground rounded-md border p-4 bg-muted/50">
+                                        <p className="font-medium text-foreground">{order.shippingAddress.name}</p>
+                                        <p>{order.shippingAddress.address}</p>
+                                        <p>{order.shippingAddress.city}, {order.shippingAddress.zip}</p>
+                                        {order.shippingAddress.phone && <p className="mt-1">{order.shippingAddress.phone}</p>}
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </CardContent>
                 </Card>
             ))}
