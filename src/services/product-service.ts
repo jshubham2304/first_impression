@@ -43,27 +43,27 @@ type ProductFormData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'imageUrl
 
 // Function to add a new product
 export async function addProduct(productData: ProductFormData, imageFile: File): Promise<string> {
-    // 1. Create a new document reference in the 'products' collection to get a unique ID.
-    const newDocRef = doc(collection(db, PRODUCTS_COLLECTION));
-    const newProductId = newDocRef.id;
-
-    // 2. Upload the image using the new product ID.
-    const { imageUrl, imagePath } = await uploadImage(imageFile, newProductId);
-
-    // 3. Assemble the complete product object with all data.
-    const productToSave: Omit<Product, 'id'> = {
+    // A more robust 2-step process to ensure document creation before image URL update.
+    // 1. Prepare the product data with placeholder image info.
+    const productToSave = {
         ...productData,
-        imageUrl,
-        imagePath,
-        popularity: Math.floor(Math.random() * 50) + 1, // Add server-side data
+        popularity: Math.floor(Math.random() * 50) + 1,
         reviews: [],
-        imageHint: 'paint can', // Add a default hint
+        imageUrl: '',
+        imagePath: '',
+        imageHint: 'paint can',
     };
-
-    // 4. Use setDoc to create the document with the full data object.
-    await setDoc(newDocRef, productToSave);
-
-    return newProductId;
+    
+    // 2. Add the document to Firestore to get a new document reference and ID.
+    const docRef = await addDoc(collection(db, PRODUCTS_COLLECTION), productToSave);
+    
+    // 3. Upload the image using the new product ID.
+    const { imageUrl, imagePath } = await uploadImage(imageFile, docRef.id);
+    
+    // 4. Update the new document with the actual image URL and path.
+    await updateDoc(docRef, { imageUrl, imagePath });
+    
+    return docRef.id;
 }
 
 
