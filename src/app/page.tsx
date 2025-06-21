@@ -2,20 +2,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Star } from "lucide-react";
-import { featuredPalettes } from "@/lib/data";
+import { ArrowRight, Star, Paintbrush, Bed, Home } from "lucide-react";
+import { serviceCategories } from "@/lib/services";
 import { getTestimonials } from "@/services/testimonial-service";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const ColorSwatch = ({ color }: { color: string }) => (
-  <div
-    className="w-8 h-8 rounded-full border-2 border-white shadow-md"
-    style={{ backgroundColor: color }}
-  />
-);
+const serviceIcons = [
+  <Paintbrush key="living-room" className="h-8 w-8" />,
+  <Bed key="bed-room" className="h-8 w-8" />,
+  <Home key="exterior" className="h-8 w-8" />,
+];
+
 
 export default async function HomePage() {
   const testimonials = await getTestimonials();
+  const featuredServices = serviceCategories.find(c => c.id === 'painting')?.services.slice(0, 3) || [];
 
   return (
     <div className="flex flex-col">
@@ -48,32 +49,38 @@ export default async function HomePage() {
       <section className="py-16 md:py-24 bg-background">
         <div className="container px-4 md:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-headline font-semibold">Featured Palettes</h2>
+            <h2 className="text-3xl md:text-4xl font-headline font-semibold">Our Core Services</h2>
             <p className="text-muted-foreground mt-2 font-body">
-              Hand-picked collections to inspire your next project.
+              Professional solutions for every surface and space.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredPalettes.map((palette) => (
-              <Card key={palette.id} className="overflow-hidden group hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="p-0">
-                  <div className="flex h-32">
-                    {palette.colors.slice(0, 4).map((color, index) => (
-                       <div key={index} style={{ backgroundColor: color.hex }} className="flex-1" />
-                    ))}
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-headline text-xl font-semibold mb-2">{palette.name}</h3>
-                    <div className="flex -space-x-2">
-                      {palette.colors.map((color, index) => (
-                        <ColorSwatch key={index} color={color.hex} />
-                      ))}
+            {featuredServices.map((service, index) => (
+              <Card key={service.title} className="flex flex-col text-center items-center hover:shadow-lg transition-shadow duration-300">
+                <CardContent className="p-6 pt-6 flex flex-col items-center flex-grow">
+                    <div className="mb-6 bg-primary/10 text-primary p-4 rounded-full">
+                        {serviceIcons[index]}
                     </div>
-                  </div>
+                    <h3 className="font-headline text-xl font-semibold mb-2">{service.title}</h3>
+                    <p className="text-muted-foreground font-body text-sm mb-6 flex-grow">
+                        {service.description.substring(0, 120)}...
+                    </p>
+                    <Button asChild variant="outline" className="mt-auto">
+                        <Link href="/services">
+                          Learn More
+                        </Link>
+                    </Button>
                 </CardContent>
               </Card>
             ))}
           </div>
+           <div className="text-center mt-12">
+              <Button asChild size="lg">
+                <Link href="/services">
+                  View All Services
+                </Link>
+              </Button>
+            </div>
         </div>
       </section>
 
