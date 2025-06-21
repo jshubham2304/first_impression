@@ -1,6 +1,6 @@
 'use client';
 
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
 import { products } from "@/lib/data";
 import { Button } from "@/components/ui/button";
@@ -17,12 +17,6 @@ import { useState } from "react";
 import type { ColorVariant } from "@/lib/types";
 import { useCart } from "@/context/cart-context";
 import { cn } from "@/lib/utils";
-
-type ProductDetailPageProps = {
-  params: {
-    id: string;
-  };
-};
 
 const ColorSwatch = ({ name, hex, active = false, onClick }: { name: string; hex: string; active?: boolean, onClick: () => void }) => (
   <div className="flex flex-col items-center space-y-2 cursor-pointer" onClick={onClick}>
@@ -44,7 +38,8 @@ const Feature = ({ icon, title, description }: { icon: React.ReactNode; title: s
   </div>
 );
 
-export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+export default function ProductDetailPage() {
+  const params = useParams<{ id: string }>();
   const { addToCart } = useCart();
   const product = products.find((p) => p.id === params.id);
   
