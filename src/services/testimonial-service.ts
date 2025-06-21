@@ -33,14 +33,27 @@ async function uploadImage(imageFile: File, testimonialId: string): Promise<{ im
 type TestimonialData = Omit<Testimonial, 'id' | 'imageUrl' | 'imagePath'>;
 
 export async function addTestimonial(data: TestimonialData, imageFile?: File) {
-    const docRef = await addDoc(collection(db, TESTIMONIALS_COLLECTION), data);
+    const testimonialData: Omit<Testimonial, 'id'> = {
+        ...data,
+        imageUrl: '',
+        imagePath: '',
+    };
 
-    if (imageFile) {
-        const { imageUrl, imagePath } = await uploadImage(imageFile, docRef.id);
-        await updateDoc(docRef, { imageUrl, imagePath });
+    if (!imageFile) {
+        const docRef = await addDoc(collection(db, TESTIMONIALS_COLLECTION), testimonialData);
+        return docRef.id;
     }
     
-    return docRef.id;
+    // If there is an image, we need an ID first to build the storage path
+    const tempDocRef = doc(collection(db, TESTIMONIALS_COLLECTION));
+    const { imageUrl, imagePath } = await uploadImage(imageFile, tempDocRef.id);
+    
+    testimonialData.imageUrl = imageUrl;
+    testimonialData.imagePath = imagePath;
+    
+    await updateDoc(tempDocRef, testimonialData);
+    
+    return tempDocRef.id;
 }
 
 export async function updateTestimonial(id: string, data: Partial<TestimonialData>, imageFile?: File) {
