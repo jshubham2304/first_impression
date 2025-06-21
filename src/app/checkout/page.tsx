@@ -14,10 +14,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useOrders } from "@/context/order-context";
 import { useAuth } from "@/context/auth-context";
+import type { ShippingAddress } from "@/lib/types";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
+  phone: z.string().optional(),
   address: z.string().min(5, { message: "Please enter a valid address." }),
   city: z.string().min(2, { message: "Please enter a valid city." }),
   zip: z.string().min(5, { message: "Please enter a valid ZIP code." }),
@@ -36,7 +38,7 @@ export default function CheckoutPage() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "", email: "", address: "", city: "", zip: "", card: "", expiry: "", cvc: "",
+            name: "", email: "", phone: "", address: "", city: "", zip: "", card: "", expiry: "", cvc: "",
         },
     });
 
@@ -51,8 +53,11 @@ export default function CheckoutPage() {
             return;
         }
 
+        const { card, expiry, cvc, ...shippingDetails } = values;
+        const shippingAddress: ShippingAddress = shippingDetails;
+
         console.log("Order submitted:", { ...values, items: cartItems, total: cartTotal });
-        addOrder(cartItems, cartTotal, user.email);
+        addOrder(cartItems, cartTotal, user.email, shippingAddress);
         clearCart();
         toast({
             title: "Order Placed!",
@@ -98,6 +103,19 @@ export default function CheckoutPage() {
                                     <FormMessage />
                                 </FormItem>
                             )}/>
+                             <FormField
+                                control={form.control}
+                                name="phone"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Phone Number (Optional)</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="(123) 456-7890" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                              <FormField control={form.control} name="address" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Address</FormLabel>

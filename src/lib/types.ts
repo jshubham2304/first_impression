@@ -72,6 +72,15 @@ export type CartItem = {
     imageHint: string;
 };
 
+export type ShippingAddress = {
+  name: string;
+  email: string;
+  phone?: string;
+  address: string;
+  city: string;
+  zip: string;
+};
+
 export type Order = {
   id: string;
   userEmail: string;
@@ -79,6 +88,7 @@ export type Order = {
   items: CartItem[];
   total: number;
   status: 'Pending' | 'Shipped' | 'Delivered';
+  shippingAddress: ShippingAddress;
 };
 
 export type Testimonial = {

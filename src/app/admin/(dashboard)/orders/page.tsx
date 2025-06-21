@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ClipboardCopy, User, ShoppingCart } from 'lucide-react';
+import { ClipboardCopy, User, ShoppingCart, Truck } from 'lucide-react';
 
 function OrderDetailsDialog({ order, isOpen, onOpenChange, onStatusChange }: { order: Order | null; isOpen: boolean; onOpenChange: (open: boolean) => void; onStatusChange: (orderId: string, status: Order['status']) => void; }) {
     if (!order) return null;
@@ -54,10 +54,25 @@ function OrderDetailsDialog({ order, isOpen, onOpenChange, onStatusChange }: { o
                                 <CardTitle className="text-lg">Customer</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="font-medium capitalize">{order.userEmail.split('@')[0]}</p>
+                                <p className="font-medium capitalize">{order.shippingAddress?.name || order.userEmail.split('@')[0]}</p>
                                 <p className="text-sm text-muted-foreground">{order.userEmail}</p>
                             </CardContent>
                         </Card>
+                        {order.shippingAddress && (
+                            <Card>
+                                <CardHeader className="flex flex-row items-center space-x-3 space-y-0 pb-2">
+                                    <Truck className="h-5 w-5 text-muted-foreground" />
+                                    <CardTitle className="text-lg">Shipping Address</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="font-medium">{order.shippingAddress.name}</p>
+                                    <p className="text-sm text-muted-foreground">{order.shippingAddress.address}</p>
+                                    <p className="text-sm text-muted-foreground">{order.shippingAddress.city}, {order.shippingAddress.zip}</p>
+                                    <p className="text-sm text-muted-foreground mt-2">{order.shippingAddress.email}</p>
+                                    {order.shippingAddress.phone && <p className="text-sm text-muted-foreground">{order.shippingAddress.phone}</p>}
+                                </CardContent>
+                            </Card>
+                        )}
                          <Card>
                              <CardHeader className="flex flex-row items-center space-x-3 space-y-0 pb-2">
                                 <ShoppingCart className="h-5 w-5 text-muted-foreground" />
@@ -162,7 +177,7 @@ export default function AdminOrdersPage() {
                             {sortedOrders.length > 0 ? sortedOrders.map(order => (
                                 <TableRow key={order.id} onClick={() => setSelectedOrder(order)} className="cursor-pointer">
                                     <TableCell className="font-medium">#{order.id.slice(0, 8)}</TableCell>
-                                    <TableCell>{order.userEmail}</TableCell>
+                                    <TableCell>{order.shippingAddress?.name || order.userEmail}</TableCell>
                                     <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
                                     <TableCell>
                                         <Badge 

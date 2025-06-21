@@ -1,12 +1,12 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import type { Order, CartItem } from '@/lib/types';
+import type { Order, CartItem, ShippingAddress } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
 
 type OrderContextType = {
   orders: Order[];
-  addOrder: (items: CartItem[], total: number, userEmail: string) => void;
+  addOrder: (items: CartItem[], total: number, userEmail: string, shippingAddress: ShippingAddress) => void;
   getOrdersForUser: (userEmail: string) => Order[];
   updateOrderStatus: (orderId: string, status: Order['status']) => void;
 };
@@ -41,7 +41,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [orders, isLoading]);
 
-  const addOrder = (items: CartItem[], total: number, userEmail: string) => {
+  const addOrder = (items: CartItem[], total: number, userEmail: string, shippingAddress: ShippingAddress) => {
     const newOrder: Order = {
       id: uuidv4(),
       userEmail,
@@ -49,6 +49,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
       total,
       date: new Date().toISOString(),
       status: 'Pending',
+      shippingAddress,
     };
     setOrders(prevOrders => [...prevOrders, newOrder]);
   };
