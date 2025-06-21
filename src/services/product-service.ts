@@ -41,25 +41,20 @@ type AddProductData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'variants'
 
 // Function to add a new product
 export async function addProduct(productData: AddProductData, imageFile: File) {
-    const newDocRef = doc(collection(db, PRODUCTS_COLLECTION)); // Create a ref with a new ID
-    
-    // Upload image first using the new ID
+    const newDocRef = doc(collection(db, PRODUCTS_COLLECTION));
     const { imageUrl, imagePath } = await uploadImage(imageFile, newDocRef.id);
-    
-    // Prepare the full product data object
+
     const fullProductData: Omit<Product, 'id'> = {
         ...productData,
-        popularity: 0,
+        popularity: Math.floor(Math.random() * 50) + 1,
         reviews: [],
         variants: [{ name: 'Default', hex: '#FFFFFF' }],
         imageHint: 'paint can',
-        imageUrl: imageUrl,
-        imagePath: imagePath,
+        imageUrl,
+        imagePath,
     };
 
-    // Now create the document in Firestore with all data
     await setDoc(newDocRef, fullProductData);
-    
     return newDocRef.id;
 }
 
@@ -67,24 +62,21 @@ export async function addProduct(productData: AddProductData, imageFile: File) {
 // Function to update an existing product
 export async function updateProduct(productId: string, productData: Partial<Omit<Product, 'id'>>, imageFile?: File) {
     const productDocRef = doc(db, PRODUCTS_COLLECTION, productId);
-    const updateData: Partial<Product> = { ...productData };
+    const updateData: { [key: string]: any } = { ...productData };
 
     if (imageFile) {
-        // Delete old image if it exists
         const existingProduct = await getProduct(productId);
         if (existingProduct?.imagePath) {
             const oldImageRef = ref(storage, existingProduct.imagePath);
             try {
                 await deleteObject(oldImageRef);
             } catch (error: any) {
-                // It's okay if the old file doesn't exist.
                 if (error.code !== 'storage/object-not-found') {
                     console.error("Could not delete old image:", error);
                 }
             }
         }
 
-        // Upload new image
         const { imageUrl, imagePath } = await uploadImage(imageFile, productId);
         updateData.imageUrl = imageUrl;
         updateData.imagePath = imagePath;
@@ -98,7 +90,6 @@ export async function updateProduct(productId: string, productData: Partial<Omit
 export async function deleteProduct(productId: string) {
     const productDocRef = doc(db, PRODUCTS_COLLECTION, productId);
 
-    // Delete image from storage first
     try {
         const product = await getProduct(productId);
         if (product?.imagePath) {

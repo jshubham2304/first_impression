@@ -32,32 +32,27 @@ async function uploadImage(imageFile: File, testimonialId: string): Promise<{ im
 type TestimonialData = Omit<Testimonial, 'id' | 'imageUrl' | 'imagePath'>;
 
 export async function addTestimonial(data: TestimonialData, imageFile?: File) {
+    const newDocRef = doc(collection(db, TESTIMONIALS_COLLECTION));
+    
     const testimonialData: Omit<Testimonial, 'id'> = {
         ...data,
         imageUrl: '',
         imagePath: '',
     };
 
-    if (!imageFile) {
-        const docRef = await addDoc(collection(db, TESTIMONIALS_COLLECTION), testimonialData);
-        return docRef.id;
+    if (imageFile) {
+        const { imageUrl, imagePath } = await uploadImage(imageFile, newDocRef.id);
+        testimonialData.imageUrl = imageUrl;
+        testimonialData.imagePath = imagePath;
     }
     
-    // If there is an image, we need an ID first to build the storage path
-    const newDocRef = doc(collection(db, TESTIMONIALS_COLLECTION));
-    const { imageUrl, imagePath } = await uploadImage(imageFile, newDocRef.id);
-    
-    testimonialData.imageUrl = imageUrl;
-    testimonialData.imagePath = imagePath;
-    
-    await setDoc(newDocRef, testimonialData); // Use setDoc to CREATE the document with the generated ID
-    
+    await setDoc(newDocRef, testimonialData);
     return newDocRef.id;
 }
 
 export async function updateTestimonial(id: string, data: Partial<TestimonialData>, imageFile?: File) {
     const docRef = doc(db, TESTIMONIALS_COLLECTION, id);
-    const updateData: Partial<Testimonial> = { ...data };
+    const updateData: { [key: string]: any } = { ...data };
 
     if (imageFile) {
         const existing = await getTestimonial(id);
