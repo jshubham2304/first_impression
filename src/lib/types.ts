@@ -31,3 +31,14 @@ export type FeaturedPalette = {
   name:string;
   colors: ColorVariant[];
 };
+
+export type Service = {
+  title: string;
+  description: string;
+};
+
+export type ServiceCategory = {
+  id: string;
+  title: string;
+  services: Service[];
+};

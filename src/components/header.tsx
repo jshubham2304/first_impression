@@ -30,6 +30,7 @@ import * as React from "react";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/products", label: "Paints" },
+  { href: "/services", label: "Services" },
   { href: "/visualizer", label: "Visualizer" },
   { href: "/request-estimation", label: "Get Estimate" },
 ];
