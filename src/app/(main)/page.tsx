@@ -18,8 +18,8 @@ export default function HomePage() {
       <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center text-center text-white">
         <Image
           src="https://placehold.co/1920x1080.png"
-          alt="Colorful abstract paint background"
-          data-ai-hint="colorful abstract paint"
+          alt="Beautifully painted modern house exterior"
+          data-ai-hint="house exterior paint"
           fill
           className="object-cover -z-10"
         />
@@ -27,14 +27,14 @@ export default function HomePage() {
         <div className="container px-4 md:px-6">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-headline font-bold mb-4 tracking-wider">
-              Your Vision, Our Colors
+              Creating Lasting First Impressions
             </h1>
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto font-body">
-              Discover a world of color with our premium paints. Perfect for any project, big or small.
+              Expert painting and design services that transform your space and leave a mark.
             </p>
-            <Button asChild size="lg" className="bg-accent hover:bg-accent/90">
-              <Link href="/products">
-                Explore Paints <ArrowRight className="ml-2 h-5 w-5" />
+            <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Link href="/services">
+                Explore Services <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
@@ -76,7 +76,7 @@ export default function HomePage() {
       <section className="py-16 md:py-24 bg-secondary/50">
         <div className="container px-4 md:px-6">
            <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-headline font-semibold">Why Choose Color Palette Pro?</h2>
+            <h2 className="text-3xl md:text-4xl font-headline font-semibold">Why Choose First Impression?</h2>
             <p className="text-muted-foreground mt-2 font-body">
               The professional's choice for quality, variety, and support.
             </p>
@@ -118,12 +118,12 @@ export default function HomePage() {
           <Card className="bg-primary text-primary-foreground border-none">
             <div className="flex flex-col md:flex-row items-center justify-between p-8 md:p-12">
               <div className="text-center md:text-left mb-6 md:mb-0">
-                <h2 className="text-3xl font-headline font-semibold mb-2">Visualize Your Space</h2>
-                <p className="opacity-80 font-body">Try colors in your own room with our visualizer tool.</p>
+                <h2 className="text-3xl font-headline font-semibold mb-2">Ready for a Change?</h2>
+                <p className="opacity-80 font-body">Get a professional estimate for your project today.</p>
               </div>
               <Button asChild size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90">
-                <Link href="/visualizer">
-                  Start Visualizing <ArrowRight className="ml-2 h-5 w-5" />
+                <Link href="/request-estimation">
+                  Request an Estimate <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
             </div>

@@ -99,7 +99,7 @@ export function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <PaintBucket className="h-6 w-6 text-primary" />
             <span className="hidden font-bold sm:inline-block font-headline">
-              Color Palette Pro
+              First Impression
             </span>
           </Link>
           <NavLinks className="hidden md:flex"/>
@@ -116,7 +116,7 @@ export function Header() {
                <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
                 <PaintBucket className="h-6 w-6 text-primary" />
                 <span className="font-bold font-headline">
-                  Color Palette Pro
+                  First Impression
                 </span>
               </Link>
               <NavLinks className="flex flex-col space-y-4 space-x-0 items-start"/>

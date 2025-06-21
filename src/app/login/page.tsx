@@ -13,7 +13,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
             <Link href="/" className="mb-4 flex items-center justify-center space-x-2">
                 <PaintBucket className="h-7 w-7 text-primary" />
-                <span className="text-2xl font-bold font-headline">Color Palette Pro</span>
+                <span className="text-2xl font-bold font-headline">First Impression</span>
             </Link>
           <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>
           <CardDescription>Enter your credentials to access your account.</CardDescription>

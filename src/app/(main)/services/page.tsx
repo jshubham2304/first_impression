@@ -8,7 +8,7 @@ export default function ServicesPage() {
       <div className="mb-12 text-center">
         <h1 className="text-4xl font-headline font-bold">Our Services</h1>
         <p className="text-muted-foreground mt-2 text-lg">
-          Professional solutions for all your painting and design needs.
+          Interior & Architectural Services in Udaipur
         </p>
       </div>
 

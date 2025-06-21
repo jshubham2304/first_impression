@@ -13,7 +13,7 @@ export default function SignupPage() {
         <CardHeader className="text-center">
           <Link href="/" className="mb-4 flex items-center justify-center space-x-2">
             <PaintBucket className="h-7 w-7 text-primary" />
-            <span className="text-2xl font-bold font-headline">Color Palette Pro</span>
+            <span className="text-2xl font-bold font-headline">First Impression</span>
           </Link>
           <CardTitle className="text-2xl font-headline">Create an Account</CardTitle>
           <CardDescription>Join our community of color enthusiasts.</CardDescription>

@@ -30,7 +30,7 @@ export function Footer() {
           <div className="flex flex-col space-y-4">
             <Link href="/" className="flex items-center space-x-2">
               <PaintBucket className="h-6 w-6 text-primary" />
-              <span className="font-bold text-lg font-headline">Color Palette Pro</span>
+              <span className="font-bold text-lg font-headline">First Impression</span>
             </Link>
             <p className="text-muted-foreground text-sm">
               Bringing color to your life with premium quality paints and tools.
@@ -70,7 +70,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Color Palette Pro. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} First Impression. All rights reserved.</p>
         </div>
       </div>
     </footer>
