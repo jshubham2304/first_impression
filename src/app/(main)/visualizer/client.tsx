@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { roomColors } from '@/lib/data';
@@ -36,6 +36,24 @@ const ColorSwatch = ({
 
 export function VisualizerClient() {
   const [selectedColor, setSelectedColor] = useState(roomColors[0].hex);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
 
   return (
     <div className="grid lg:grid-cols-3 gap-8 items-start">
@@ -44,7 +62,7 @@ export function VisualizerClient() {
           <CardContent className="p-4">
             <div className="relative w-full aspect-[4/3] bg-muted-foreground/10 rounded-lg overflow-hidden">
               <Image
-                src="https://placehold.co/1200x900.png"
+                src={uploadedImage || "https://placehold.co/1200x900.png"}
                 alt="Living room with sofa and window"
                 data-ai-hint="modern living room"
                 fill
@@ -54,14 +72,16 @@ export function VisualizerClient() {
                 className="absolute inset-0 z-10"
                 style={{ mixBlendMode: 'multiply', backgroundColor: selectedColor }}
               />
-               <Image
-                src="https://placehold.co/1200x900/e2e8f0/e2e8f0.png"
-                alt="Living room highlights"
-                data-ai-hint="room lighting"
-                fill
-                className="object-cover z-20"
-                style={{ mixBlendMode: 'screen' }}
-              />
+              {!uploadedImage && (
+                <Image
+                  src="https://placehold.co/1200x900/e2e8f0/e2e8f0.png"
+                  alt="Living room highlights"
+                  data-ai-hint="room lighting"
+                  fill
+                  className="object-cover z-20"
+                  style={{ mixBlendMode: 'screen' }}
+                />
+              )}
             </div>
           </CardContent>
         </Card>
@@ -89,7 +109,14 @@ export function VisualizerClient() {
                     <Download className="mr-2 h-4 w-4"/>
                     Download Visualization
                 </Button>
-                <Button variant="outline">
+                 <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <Button variant="outline" onClick={handleUploadClick}>
                     <Upload className="mr-2 h-4 w-4"/>
                     Upload Your Own Room
                 </Button>
