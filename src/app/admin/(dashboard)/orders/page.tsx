@@ -27,8 +27,10 @@ function OrderDetailsDialog({ order, isOpen, onOpenChange, onStatusChange }: { o
     const { toast } = useToast();
 
     const handleCopyToClipboard = () => {
-        navigator.clipboard.writeText(order.id);
-        toast({ title: 'Copied!', description: 'Order ID copied to clipboard.' });
+        if (order?.id) {
+            navigator.clipboard.writeText(order.id);
+            toast({ title: 'Copied!', description: 'Order ID copied to clipboard.' });
+        }
     };
 
     return (

@@ -56,7 +56,6 @@ export default function CheckoutPage() {
         const { card, expiry, cvc, ...shippingDetails } = values;
         const shippingAddress: ShippingAddress = shippingDetails;
 
-        console.log("Order submitted:", { ...values, items: cartItems, total: cartTotal });
         addOrder(cartItems, cartTotal, user.email, shippingAddress);
         clearCart();
         toast({
