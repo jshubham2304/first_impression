@@ -4,6 +4,7 @@ import type { Product } from '@/lib/types';
 
 export default async function ProductsPage() {
   const allProducts: Product[] = await getProducts();
+  const activeProducts = allProducts.filter(p => p.isActive);
 
   return (
     <div className="container py-8 max-w-screen-2xl">
@@ -11,7 +12,7 @@ export default async function ProductsPage() {
         <h1 className="text-4xl font-headline font-bold">Our Paint Collection</h1>
         <p className="text-muted-foreground mt-2 text-lg">Find the perfect color and finish for your project.</p>
       </div>
-      <ProductsClient products={allProducts} />
+      <ProductsClient products={activeProducts} />
     </div>
   );
 }

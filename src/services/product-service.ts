@@ -1,7 +1,7 @@
 import { db, storage } from '@/lib/firebase';
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc, query, orderBy } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import type { Product } from '@/lib/types';
+import type { Product, ProductCategory } from '@/lib/types';
 
 const PRODUCTS_COLLECTION = 'products';
 
@@ -37,8 +37,10 @@ async function uploadImage(imageFile: File, productId: string): Promise<{ imageU
     return { imageUrl, imagePath };
 }
 
+type AddProductData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'variants' | 'imageUrl' | 'imagePath' | 'imageHint'>;
+
 // Function to add a new product
-export async function addProduct(productData: Pick<Product, 'name' | 'brand' | 'price' | 'description' | 'finish' | 'colorFamily'>, imageFile: File) {
+export async function addProduct(productData: AddProductData, imageFile: File) {
     const fullProductData = {
         ...productData,
         popularity: 0,

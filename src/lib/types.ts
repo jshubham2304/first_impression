@@ -1,7 +1,11 @@
+export type ProductCategory = 'Interior' | 'Exterior' | 'Texture' | 'Wood';
+
 export type Product = {
   id: string;
   name: string;
   brand: string;
+  category: ProductCategory;
+  isActive: boolean;
   finish: 'Matte' | 'Satin' | 'Semi-Gloss' | 'Gloss';
   colorFamily: 'Reds' | 'Blues' | 'Greens' | 'Yellows' | 'Neutrals' | 'Whites';
   price: number;
@@ -62,4 +66,13 @@ export type Order = {
   items: CartItem[];
   total: number;
   status: 'Pending' | 'Shipped' | 'Delivered';
+};
+
+export type Testimonial = {
+  id: string;
+  author: string;
+  comment: string;
+  priority: number;
+  imageUrl?: string;
+  imagePath?: string;
 };

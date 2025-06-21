@@ -16,13 +16,13 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import type { Product } from '@/lib/types';
+import type { Testimonial } from '@/lib/types';
 import { PlusCircle, MoreHorizontal, FilePenLine, Trash2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { deleteProduct, getProducts } from '@/services/product-service';
-import { ProductForm } from './product-form';
+import { deleteTestimonial, getTestimonials } from '@/services/testimonial-service';
+import { TestimonialForm } from './testimonial-form';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -33,78 +33,78 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/alert-dialog"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-export default function AdminProductsPage() {
-    const [allProducts, setAllProducts] = useState<Product[]>([]);
+export default function AdminTestimonialsPage() {
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
     const { toast } = useToast();
 
-    const fetchProducts = async () => {
+    const fetchTestimonials = async () => {
         setIsLoading(true);
         try {
-            const products = await getProducts();
-            setAllProducts(products);
+            const data = await getTestimonials();
+            setTestimonials(data);
         } catch (error) {
-            console.error("Failed to fetch products:", error);
-            toast({ title: 'Error', description: 'Failed to load products.', variant: 'destructive' });
+            console.error("Failed to fetch testimonials:", error);
+            toast({ title: 'Error', description: 'Failed to load testimonials.', variant: 'destructive' });
         } finally {
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchProducts();
+        fetchTestimonials();
     }, []);
     
     const handleAddClick = () => {
-        setEditingProduct(null);
+        setEditingTestimonial(null);
         setIsDialogOpen(true);
     };
 
-    const handleEditClick = (product: Product) => {
-        setEditingProduct(product);
+    const handleEditClick = (testimonial: Testimonial) => {
+        setEditingTestimonial(testimonial);
         setIsDialogOpen(true);
     };
 
-    const handleDeleteProduct = async (productId: string) => {
+    const handleDelete = async (testimonialId: string) => {
         try {
-            await deleteProduct(productId);
-            toast({ title: 'Success', description: 'Product deleted successfully.' });
-            fetchProducts(); // Refresh the list
+            await deleteTestimonial(testimonialId);
+            toast({ title: 'Success', description: 'Testimonial deleted successfully.' });
+            fetchTestimonials();
         } catch (error) {
-             toast({ title: 'Error', description: 'Failed to delete product.', variant: 'destructive' });
+             toast({ title: 'Error', description: 'Failed to delete testimonial.', variant: 'destructive' });
         }
     };
 
     const onFormSuccess = () => {
         setIsDialogOpen(false);
-        fetchProducts();
+        fetchTestimonials();
     };
 
     return (
         <div>
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Products</h1>
+                <h1 className="text-3xl font-bold">Testimonials</h1>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button onClick={handleAddClick}><PlusCircle className="mr-2 h-4 w-4"/>Add Product</Button>
+                        <Button onClick={handleAddClick}><PlusCircle className="mr-2 h-4 w-4"/>Add Testimonial</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
-                            <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
+                            <DialogTitle>{editingTestimonial ? 'Edit Testimonial' : 'Add New Testimonial'}</DialogTitle>
                         </DialogHeader>
-                        <ProductForm product={editingProduct} onSuccess={onFormSuccess} />
+                        <TestimonialForm testimonial={editingTestimonial} onSuccess={onFormSuccess} />
                     </DialogContent>
                 </Dialog>
             </div>
             <Card>
                 <CardHeader>
-                    <CardTitle>Product List</CardTitle>
-                    <CardDescription>A list of all available products in your store.</CardDescription>
+                    <CardTitle>Manage Testimonials</CardTitle>
+                    <CardDescription>A list of all customer testimonials for the homepage.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     {isLoading ? (
@@ -115,37 +115,26 @@ export default function AdminProductsPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="hidden w-[100px] sm:table-cell">Image</TableHead>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Category</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Price</TableHead>
+                                <TableHead className="w-[100px]">Author</TableHead>
+                                <TableHead>Comment</TableHead>
+                                <TableHead>Priority</TableHead>
                                 <TableHead>
                                     <span className="sr-only">Actions</span>
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {allProducts.map((product) => (
-                                <TableRow key={product.id}>
-                                    <TableCell className="hidden sm:table-cell">
-                                        <Image
-                                            alt={product.name}
-                                            className="aspect-square rounded-md object-cover"
-                                            height="64"
-                                            src={product.imageUrl}
-                                            data-ai-hint={product.imageHint}
-                                            width="64"
-                                        />
+                            {testimonials.map((testimonial) => (
+                                <TableRow key={testimonial.id}>
+                                    <TableCell className="font-medium flex items-center gap-3">
+                                        <Avatar>
+                                            {testimonial.imageUrl && <AvatarImage src={testimonial.imageUrl} alt={testimonial.author} />}
+                                            <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        {testimonial.author}
                                     </TableCell>
-                                    <TableCell className="font-medium">{product.name}</TableCell>
-                                    <TableCell>{product.category}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={product.isActive ? 'default' : 'secondary'}>
-                                            {product.isActive ? 'Active' : 'Inactive'}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>${product.price.toFixed(2)}</TableCell>
+                                    <TableCell className="max-w-[400px] truncate">{testimonial.comment}</TableCell>
+                                    <TableCell>{testimonial.priority}</TableCell>
                                     <TableCell>
                                          <AlertDialog>
                                             <DropdownMenu>
@@ -157,7 +146,7 @@ export default function AdminProductsPage() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                    <DropdownMenuItem onSelect={() => handleEditClick(product)}>
+                                                    <DropdownMenuItem onSelect={() => handleEditClick(testimonial)}>
                                                         <FilePenLine className="mr-2 h-4 w-4"/>Edit
                                                     </DropdownMenuItem>
                                                      <AlertDialogTrigger asChild>
@@ -171,12 +160,12 @@ export default function AdminProductsPage() {
                                                 <AlertDialogHeader>
                                                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                                 <AlertDialogDescription>
-                                                    This action cannot be undone. This will permanently delete this product.
+                                                    This action cannot be undone. This will permanently delete this testimonial.
                                                 </AlertDialogDescription>
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
                                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                <AlertDialogAction onClick={() => handleDeleteProduct(product.id)}>Continue</AlertDialogAction>
+                                                <AlertDialogAction onClick={() => handleDelete(testimonial.id)}>Continue</AlertDialogAction>
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>

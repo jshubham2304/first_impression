@@ -1,9 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Palette, Eye, ShieldCheck, ArrowRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowRight, Star } from "lucide-react";
 import { featuredPalettes } from "@/lib/data";
+import { getTestimonials } from "@/services/testimonial-service";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const ColorSwatch = ({ color }: { color: string }) => (
   <div
@@ -12,7 +14,9 @@ const ColorSwatch = ({ color }: { color: string }) => (
   />
 );
 
-export default function HomePage() {
+export default async function HomePage() {
+  const testimonials = await getTestimonials();
+
   return (
     <div className="flex flex-col">
       <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center text-center text-white">
@@ -73,42 +77,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-secondary/50">
+       <section className="py-16 md:py-24 bg-secondary/50">
         <div className="container px-4 md:px-6">
            <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-headline font-semibold">Why Choose First Impression?</h2>
+            <h2 className="text-3xl md:text-4xl font-headline font-semibold">What Our Clients Say</h2>
             <p className="text-muted-foreground mt-2 font-body">
-              The professional's choice for quality, variety, and support.
+              Real stories from satisfied customers.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="flex flex-col items-center">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-4">
-                <Palette className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-headline font-semibold mb-2">Infinite Variety</h3>
-              <p className="text-muted-foreground font-body">
-                Thousands of colors and finishes to match your unique style.
-              </p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-4">
-                <ShieldCheck className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-headline font-semibold mb-2">Premium Quality</h3>
-              <p className="text-muted-foreground font-body">
-                Durable, long-lasting paints with excellent coverage and a flawless finish.
-              </p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-4">
-                <Eye className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-headline font-semibold mb-2">Expert Visualization</h3>
-              <p className="text-muted-foreground font-body">
-                Use our state-of-the-art tools to see your vision come to life before you paint.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.slice(0, 3).map((testimonial) => (
+              <Card key={testimonial.id} className="flex flex-col">
+                  <CardContent className="p-6 flex-grow flex flex-col items-center text-center">
+                      <Avatar className="w-20 h-20 mb-4 border-4 border-background shadow-md">
+                          <AvatarImage src={testimonial.imageUrl} alt={testimonial.author} />
+                          <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <p className="text-muted-foreground font-body flex-grow">"{testimonial.comment}"</p>
+                      <footer className="mt-4">
+                          <p className="font-headline font-semibold">{testimonial.author}</p>
+                      </footer>
+                  </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
