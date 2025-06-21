@@ -1,8 +1,7 @@
 import { db, storage } from '@/lib/firebase';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc, query, orderBy, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import type { Testimonial } from '@/lib/types';
-import { v4 as uuidv4 } from 'uuid';
 
 const TESTIMONIALS_COLLECTION = 'testimonials';
 
@@ -45,15 +44,15 @@ export async function addTestimonial(data: TestimonialData, imageFile?: File) {
     }
     
     // If there is an image, we need an ID first to build the storage path
-    const tempDocRef = doc(collection(db, TESTIMONIALS_COLLECTION));
-    const { imageUrl, imagePath } = await uploadImage(imageFile, tempDocRef.id);
+    const newDocRef = doc(collection(db, TESTIMONIALS_COLLECTION));
+    const { imageUrl, imagePath } = await uploadImage(imageFile, newDocRef.id);
     
     testimonialData.imageUrl = imageUrl;
     testimonialData.imagePath = imagePath;
     
-    await updateDoc(tempDocRef, testimonialData);
+    await setDoc(newDocRef, testimonialData); // Use setDoc to CREATE the document with the generated ID
     
-    return tempDocRef.id;
+    return newDocRef.id;
 }
 
 export async function updateTestimonial(id: string, data: Partial<TestimonialData>, imageFile?: File) {
