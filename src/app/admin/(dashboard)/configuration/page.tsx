@@ -7,7 +7,6 @@ import { Loader2, PlusCircle, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getProductAttributes, updateProductAttributes } from '@/services/configuration-service';
 import type { ProductAttributes } from '@/lib/types';
-import { Separator } from '@/components/ui/separator';
 
 function AttributeManager({ title, items, onSave }: { title: string; items: string[]; onSave: (newItems: string[]) => Promise<void> }) {
     const [currentItems, setCurrentItems] = useState(items);
@@ -19,8 +18,10 @@ function AttributeManager({ title, items, onSave }: { title: string; items: stri
     }, [items]);
 
     const handleAddItem = () => {
-        if (newItem && !currentItems.includes(newItem)) {
-            const updatedItems = [...currentItems, newItem];
+        const trimmedNewItem = newItem.trim();
+        // Case-insensitive check to prevent duplicates
+        if (trimmedNewItem && !currentItems.some(item => item.toLowerCase() === trimmedNewItem.toLowerCase())) {
+            const updatedItems = [...currentItems, trimmedNewItem];
             setCurrentItems(updatedItems);
             setNewItem('');
         }
@@ -32,9 +33,22 @@ function AttributeManager({ title, items, onSave }: { title: string; items: stri
     
     const handleSave = async () => {
         setIsSaving(true);
-        await onSave(currentItems);
-        setIsSaving(false);
+        try {
+            await onSave(currentItems);
+        } catch (error) {
+             // The parent component will show a toast
+             console.error(`Failed to save ${title}`, error);
+        } finally {
+            setIsSaving(false);
+        }
     };
+    
+    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleAddItem();
+        }
+    }
 
     return (
         <Card>
@@ -44,8 +58,8 @@ function AttributeManager({ title, items, onSave }: { title: string; items: stri
             </CardHeader>
             <CardContent>
                 <div className="space-y-3">
-                    {currentItems.map(item => (
-                        <div key={item} className="flex items-center justify-between p-2 rounded-md border">
+                    {currentItems.map((item, index) => (
+                        <div key={`${item}-${index}`} className="flex items-center justify-between p-2 rounded-md border">
                             <span>{item}</span>
                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleRemoveItem(item)}>
                                 <Trash2 className="h-4 w-4 text-destructive" />
@@ -54,7 +68,12 @@ function AttributeManager({ title, items, onSave }: { title: string; items: stri
                     ))}
                 </div>
                 <div className="flex gap-2 mt-4">
-                    <Input value={newItem} onChange={e => setNewItem(e.target.value)} placeholder={`New ${title.slice(0, -1)}...`} />
+                    <Input 
+                        value={newItem} 
+                        onChange={e => setNewItem(e.target.value)} 
+                        onKeyDown={handleInputKeyDown}
+                        placeholder={`New ${title.slice(0, -1)}...`} 
+                    />
                     <Button onClick={handleAddItem}><PlusCircle className="mr-2 h-4 w-4"/> Add</Button>
                 </div>
                  <Button onClick={handleSave} className="mt-4" disabled={isSaving}>
@@ -95,6 +114,8 @@ export default function ConfigurationPage() {
             setAttributes(prev => prev ? { ...prev, [key]: newItems } : null);
         } catch (error) {
             toast({ title: 'Error', description: 'Failed to save configuration.', variant: 'destructive' });
+            // re-fetch attributes to revert optimistic UI on failure
+            await fetchAttributes();
         }
     };
     
