@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useOrders } from '@/context/order-context';
 import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 
 function AccountDetails() {
   const { user, logout } = useAuth();
@@ -78,7 +79,9 @@ function OrderHistory() {
                         </div>
                         <div className="text-right">
                            <p className="font-semibold">${order.total.toFixed(2)}</p>
-                           <p className={`text-sm font-medium ${order.status === 'Pending' ? 'text-orange-500' : 'text-green-500'}`}>{order.status}</p>
+                            <Badge variant={order.status === 'Pending' ? 'secondary' : 'default'} className="mt-1">
+                                {order.status}
+                            </Badge>
                         </div>
                     </CardHeader>
                     <CardContent>
