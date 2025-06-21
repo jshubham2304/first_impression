@@ -13,6 +13,7 @@ import { GoogleIcon } from "@/components/icons/google";
 import { PaintBucket } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -21,7 +22,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user, isLoading } = useAuth();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -32,14 +33,23 @@ export default function LoginPage() {
     },
   });
 
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.push('/account');
+    }
+  }, [user, isLoading, router]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Simulate login
     login({ name: values.email.split('@')[0], email: values.email });
     toast({
       title: "Login Successful",
       description: "Welcome back!",
     });
     router.push("/");
+  }
+
+  if (isLoading || user) {
+    return null; 
   }
 
   return (
@@ -87,8 +97,8 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Log In
+              <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? 'Logging in...' : 'Log In'}
               </Button>
               <Button variant="outline" className="w-full">
                 <GoogleIcon className="mr-2 h-4 w-4" />

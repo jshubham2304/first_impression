@@ -13,6 +13,7 @@ import { GoogleIcon } from "@/components/icons/google";
 import { PaintBucket } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
@@ -22,7 +23,7 @@ const formSchema = z.object({
 
 export default function SignupPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user, isLoading } = useAuth();
   const { toast } = useToast();
   
   const form = useForm<z.infer<typeof formSchema>>({
@@ -34,14 +35,23 @@ export default function SignupPage() {
     },
   });
 
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.push('/account');
+    }
+  }, [user, isLoading, router]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Simulate signup and login
     login({ name: values.fullName, email: values.email });
     toast({
       title: "Account Created",
       description: "Welcome to First Impression!",
     });
     router.push("/");
+  }
+
+  if (isLoading || user) {
+    return null;
   }
 
   return (
@@ -97,8 +107,8 @@ export default function SignupPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Create Account
+              <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
               </Button>
               <Button variant="outline" className="w-full">
                 <GoogleIcon className="mr-2 h-4 w-4" />

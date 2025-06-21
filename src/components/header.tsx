@@ -27,12 +27,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 import { useAuth } from "@/context/auth-context";
 import { useCart } from "@/context/cart-context";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "./ui/skeleton";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -43,11 +44,22 @@ const navLinks = [
 ];
 
 export function Header() {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const { cartCount } = useCart();
   const pathname = usePathname();
+  const router = useRouter();
 
-  const UserMenu = () => (
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  }
+
+  const UserMenu = () => {
+    if (isLoading) {
+      return <Skeleton className="h-10 w-10 rounded-full" />;
+    }
+
+    return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="secondary" size="icon" className="rounded-full">
@@ -61,12 +73,12 @@ export function Header() {
         {user ? (
           <>
             <DropdownMenuItem asChild>
-              <Link href="#">
+              <Link href="/account">
                 <LayoutDashboard className="mr-2 h-4 w-4" />
-                <span>Dashboard</span>
+                <span>Account</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={logout}>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
             </DropdownMenuItem>
@@ -82,6 +94,7 @@ export function Header() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
 
   const CartButton = () => (
     <Button asChild variant="ghost" size="icon" className="relative">
