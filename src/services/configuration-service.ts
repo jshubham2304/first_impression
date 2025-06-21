@@ -1,9 +1,10 @@
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import type { ProductAttributes } from '@/lib/types';
+import type { ProductAttributes, SiteSettings } from '@/lib/types';
 
 const CONFIG_COLLECTION = 'configuration';
 const ATTRIBUTES_DOC = 'productAttributes';
+const SETTINGS_DOC = 'siteSettings';
 
 const defaultAttributes: ProductAttributes = {
     brands: ['Prestige Paints', 'GreenSheen', 'ProTect', 'Pure Hues', 'MetroPaints', 'GoldenRay'],
@@ -34,4 +35,28 @@ export async function getProductAttributes(): Promise<ProductAttributes> {
 export async function updateProductAttributes(attributes: Partial<ProductAttributes>): Promise<void> {
     const docRef = doc(db, CONFIG_COLLECTION, ATTRIBUTES_DOC);
     await setDoc(docRef, attributes, { merge: true });
+}
+
+const defaultSiteSettings: SiteSettings = {
+    visibleLinks: ["Home", "Paints", "Services", "Visualizer", "Get Estimate"],
+};
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+    const docRef = doc(db, CONFIG_COLLECTION, SETTINGS_DOC);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        const data = docSnap.data();
+        return {
+            visibleLinks: data.visibleLinks || defaultSiteSettings.visibleLinks,
+        };
+    } else {
+        await setDoc(docRef, defaultSiteSettings);
+        return defaultSiteSettings;
+    }
+}
+
+export async function updateSiteSettings(settings: Partial<SiteSettings>): Promise<void> {
+    const docRef = doc(db, CONFIG_COLLECTION, SETTINGS_DOC);
+    await setDoc(docRef, settings, { merge: true });
 }

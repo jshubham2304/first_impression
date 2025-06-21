@@ -26,6 +26,10 @@ export type ProductAttributes = {
   categories: string[];
 }
 
+export type SiteSettings = {
+  visibleLinks: string[];
+};
+
 export type ColorVariant = {
   name: string;
   hex: string;

@@ -34,17 +34,11 @@ import { useAuth } from "@/context/auth-context";
 import { useCart } from "@/context/cart-context";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "./ui/skeleton";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/products", label: "Paints" },
-  { href: "/services", label: "Services" },
-  { href: "/visualizer", label: "Visualizer" },
-  { href: "/request-estimation", label: "Get Estimate" },
-];
+import { useSiteSettings } from "@/context/settings-context";
 
 export function Header() {
-  const { user, logout, isLoading } = useAuth();
+  const { user, logout, isLoading: isAuthLoading } = useAuth();
+  const { settings, isLoading: areSettingsLoading, allPossibleLinks } = useSiteSettings();
   const { cartCount } = useCart();
   const pathname = usePathname();
   const router = useRouter();
@@ -55,7 +49,7 @@ export function Header() {
   }
 
   const UserMenu = () => {
-    if (isLoading) {
+    if (isAuthLoading) {
       return <Skeleton className="h-10 w-10 rounded-full" />;
     }
 
@@ -108,24 +102,40 @@ export function Header() {
     </Button>
   );
   
-  const NavLinks = ({className}: {className?: string}) => (
-     <nav className={cn("items-center space-x-4 lg:space-x-6", className)}>
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={cn(
-              "text-sm font-medium transition-colors hover:text-primary",
-              pathname === link.href
-                ? "text-primary"
-                : "text-muted-foreground"
-            )}
-          >
-            {link.label}
-          </Link>
-        ))}
-      </nav>
-  );
+  const visibleLinks = React.useMemo(() => {
+    if (areSettingsLoading || !settings) return [];
+    return allPossibleLinks.filter(link => settings.visibleLinks.includes(link.label));
+  }, [settings, areSettingsLoading, allPossibleLinks]);
+  
+  const NavLinks = ({className}: {className?: string}) => {
+    if (areSettingsLoading) {
+        return (
+            <div className={cn("items-center space-x-4 lg:space-x-6 flex", className)}>
+                {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-5 w-20" />)}
+            </div>
+        )
+    }
+
+     return (
+        <nav className={cn("items-center space-x-4 lg:space-x-6", className)}>
+            {visibleLinks.map((link) => (
+            <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                pathname === link.href
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                )}
+            >
+                {link.label}
+            </Link>
+            ))}
+        </nav>
+      );
+  };
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

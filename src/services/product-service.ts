@@ -41,19 +41,22 @@ type AddProductData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'imageUrl'
 
 // Function to add a new product
 export async function addProduct(productData: AddProductData, imageFile: File) {
-    const newDocRef = doc(collection(db, PRODUCTS_COLLECTION));
-    const { imageUrl, imagePath } = await uploadImage(imageFile, newDocRef.id);
-
-    const fullProductData: Omit<Product, 'id'> = {
+    const dataToSave: Omit<Product, 'id' | 'imageUrl' | 'imagePath'> = {
         ...productData,
         popularity: Math.floor(Math.random() * 50) + 1,
         reviews: [],
         imageHint: 'paint can',
+    };
+    
+    const newDocRef = await addDoc(collection(db, PRODUCTS_COLLECTION), dataToSave);
+    
+    const { imageUrl, imagePath } = await uploadImage(imageFile, newDocRef.id);
+
+    await updateDoc(newDocRef, {
         imageUrl,
         imagePath,
-    };
+    });
 
-    await setDoc(newDocRef, fullProductData);
     return newDocRef.id;
 }
 
