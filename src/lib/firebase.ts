@@ -25,7 +25,7 @@ const remoteConfig = getRemoteConfig(app);
 if (typeof window !== 'undefined') {
     remoteConfig.settings.minimumFetchIntervalMillis = 3600000; // 1 hour
     remoteConfig.defaultConfig = {
-      'admin_pin': '123456' // A default PIN for development
+      'admin_pin': '230498' // Default PIN. For production, set this in the Firebase Remote Config console.
     };
 }
 

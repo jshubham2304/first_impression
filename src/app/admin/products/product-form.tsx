@@ -13,12 +13,15 @@ import type { Product } from "@/lib/types";
 import { addProduct, updateProduct } from "@/services/product-service";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is too short"),
   brand: z.string().min(2, "Brand is too short"),
   price: z.coerce.number().min(0.01, "Price must be positive"),
   description: z.string().min(10, "Description is too short"),
+  finish: z.enum(['Matte', 'Satin', 'Semi-Gloss', 'Gloss']),
+  colorFamily: z.enum(['Reds', 'Blues', 'Greens', 'Yellows', 'Neutrals', 'Whites']),
   image: z.any().optional(),
 });
 
@@ -38,6 +41,8 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
       brand: product?.brand || '',
       price: product?.price || 0,
       description: product?.description || '',
+      finish: product?.finish || 'Satin',
+      colorFamily: product?.colorFamily || 'Neutrals',
       image: undefined,
     },
   });
@@ -45,10 +50,12 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
-      const imageFile = values.image?.[0];
+      const { image, ...productData } = values;
+      const imageFile = image?.[0];
+
       if (product) {
         // Update existing product
-        await updateProduct(product.id, values, imageFile);
+        await updateProduct(product.id, productData, imageFile);
         toast({ title: 'Success', description: 'Product updated successfully.' });
       } else {
         // Add new product
@@ -57,7 +64,7 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
             setIsSubmitting(false);
             return;
         }
-        await addProduct(values, imageFile);
+        await addProduct(productData, imageFile);
         toast({ title: 'Success', description: 'Product added successfully.' });
       }
       onSuccess();
@@ -116,6 +123,52 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
             </FormItem>
           )}
         />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="finish"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Finish</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a finish" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {['Matte', 'Satin', 'Semi-Gloss', 'Gloss'].map(f => (
+                      <SelectItem key={f} value={f}>{f}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="colorFamily"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Color Family</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a color family" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {['Reds', 'Blues', 'Greens', 'Yellows', 'Neutrals', 'Whites'].map(cf => (
+                      <SelectItem key={cf} value={cf}>{cf}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="image"

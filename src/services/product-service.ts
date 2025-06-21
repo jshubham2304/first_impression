@@ -38,12 +38,9 @@ async function uploadImage(imageFile: File, productId: string): Promise<{ imageU
 }
 
 // Function to add a new product
-export async function addProduct(productData: Omit<Product, 'id' | 'imageUrl' | 'imagePath' | 'variants' | 'reviews' | 'popularity' | 'finish' | 'colorFamily'>, imageFile: File) {
-    // In a real app, you'd get this from the form
+export async function addProduct(productData: Pick<Product, 'name' | 'brand' | 'price' | 'description' | 'finish' | 'colorFamily'>, imageFile: File) {
     const fullProductData = {
         ...productData,
-        finish: 'Satin',
-        colorFamily: 'Neutrals',
         popularity: 0,
         reviews: [],
         variants: [{ name: 'Default', hex: '#FFFFFF' }],
