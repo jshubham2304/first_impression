@@ -97,6 +97,18 @@ export type Order = {
   shippingAddress: ShippingAddress;
 };
 
+export type EstimationRequest = {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  address: string;
+  description: string;
+  photoUrl?: string;
+  photoPath?: string;
+  createdAt: string;
+};
+
 export type Testimonial = {
   id: string;
   author: string;
