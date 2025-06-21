@@ -1,0 +1,93 @@
+'use client';
+
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import type { CartItem, Product, ColorVariant } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
+import { v4 as uuidv4 } from 'uuid';
+
+type CartContextType = {
+  cartItems: CartItem[];
+  addToCart: (product: Product, variant: ColorVariant, quantity: number) => void;
+  removeFromCart: (cartItemId: string) => void;
+  updateQuantity: (cartItemId: string, newQuantity: number) => void;
+  clearCart: () => void;
+  cartCount: number;
+  cartTotal: number;
+};
+
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const { toast } = useToast();
+
+  const addToCart = (product: Product, variant: ColorVariant, quantity: number) => {
+    setCartItems(prevItems => {
+      const existingItem = prevItems.find(item => item.productId === product.id && item.variant.hex === variant.hex);
+
+      if (existingItem) {
+        return prevItems.map(item =>
+          item.id === existingItem.id ? { ...item, quantity: item.quantity + quantity } : item
+        );
+      } else {
+        const newItem: CartItem = {
+          id: uuidv4(),
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          quantity,
+          variant,
+          imageUrl: product.imageUrl,
+          imageHint: product.imageHint,
+        };
+        return [...prevItems, newItem];
+      }
+    });
+    toast({
+      title: "Added to Cart",
+      description: `${quantity} x ${product.name} (${variant.name}) has been added to your cart.`,
+    });
+  };
+  
+  const removeFromCart = (cartItemId: string) => {
+    setCartItems(prevItems => prevItems.filter(item => item.id !== cartItemId));
+    toast({
+      title: "Item Removed",
+      description: "The item has been removed from your cart.",
+      variant: 'destructive',
+    });
+  };
+
+  const updateQuantity = (cartItemId: string, newQuantity: number) => {
+    if (newQuantity <= 0) {
+        removeFromCart(cartItemId);
+        return;
+    }
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.id === cartItemId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
+  const cartTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  return (
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartTotal }}>
+      {children}
+    </CartContext.Provider>
+  );
+};
+
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
+};

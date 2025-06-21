@@ -8,6 +8,7 @@ import {
   LogOut,
   LayoutDashboard,
   Menu,
+  ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,12 +23,16 @@ import {
   Sheet,
   SheetContent,
   SheetDescription,
+  SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import * as React from "react";
+import { useAuth } from "@/context/auth-context";
+import { useCart } from "@/context/cart-context";
+import { Badge } from "@/components/ui/badge";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -38,7 +43,8 @@ const navLinks = [
 ];
 
 export function Header() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const { user, logout } = useAuth();
+  const { cartCount } = useCart();
   const pathname = usePathname();
 
   const UserMenu = () => (
@@ -50,9 +56,9 @@ export function Header() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>{user ? user.name : "My Account"}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {isLoggedIn ? (
+        {user ? (
           <>
             <DropdownMenuItem asChild>
               <Link href="#">
@@ -60,19 +66,33 @@ export function Header() {
                 <span>Dashboard</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
+            <DropdownMenuItem onClick={logout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
             </DropdownMenuItem>
           </>
         ) : (
-          <DropdownMenuItem onClick={() => setIsLoggedIn(true)}>
-            <LogIn className="mr-2 h-4 w-4" />
-            <span>Log In</span>
+          <DropdownMenuItem asChild>
+             <Link href="/login">
+                <LogIn className="mr-2 h-4 w-4" />
+                <span>Log In</span>
+             </Link>
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+
+  const CartButton = () => (
+    <Button asChild variant="ghost" size="icon" className="relative">
+      <Link href="/cart">
+        <ShoppingCart className="h-5 w-5" />
+        {cartCount > 0 && (
+          <Badge className="absolute -top-2 -right-2 h-5 w-5 justify-center p-0">{cartCount}</Badge>
+        )}
+        <span className="sr-only">View cart</span>
+      </Link>
+    </Button>
   );
   
   const NavLinks = ({className}: {className?: string}) => (
@@ -115,8 +135,10 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
-              <SheetTitle className="sr-only">Menu</SheetTitle>
-              <SheetDescription className="sr-only">The main navigation menu for the mobile site.</SheetDescription>
+               <SheetHeader>
+                <SheetTitle className="sr-only">Menu</SheetTitle>
+                <SheetDescription className="sr-only">Main navigation menu for the mobile site.</SheetDescription>
+              </SheetHeader>
                <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
                 <PaintBucket className="h-6 w-6 text-primary" />
                 <span className="font-bold font-headline">
@@ -128,7 +150,8 @@ export function Header() {
           </Sheet>
         </div>
 
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        <div className="flex flex-1 items-center justify-end space-x-2">
+          <CartButton />
           <UserMenu />
         </div>
       </div>

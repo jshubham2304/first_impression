@@ -1,17 +1,22 @@
+'use client';
+
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { products } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, ShieldCheck, Droplets, PaintRoller } from "lucide-react";
+import { Star, ShieldCheck, Droplets, PaintRoller, Minus, Plus } from "lucide-react";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
+import type { ColorVariant } from "@/lib/types";
+import { useCart } from "@/context/cart-context";
+import { cn } from "@/lib/utils";
 
 type ProductDetailPageProps = {
   params: {
@@ -19,10 +24,10 @@ type ProductDetailPageProps = {
   };
 };
 
-const ColorSwatch = ({ name, hex, active = false }: { name: string; hex: string; active?: boolean }) => (
-  <div className="flex flex-col items-center space-y-2">
+const ColorSwatch = ({ name, hex, active = false, onClick }: { name: string; hex: string; active?: boolean, onClick: () => void }) => (
+  <div className="flex flex-col items-center space-y-2 cursor-pointer" onClick={onClick}>
     <div
-      className={`w-12 h-12 rounded-full cursor-pointer transition-transform duration-200 ${active ? 'ring-2 ring-primary ring-offset-2 scale-110' : 'hover:scale-110'}`}
+      className={cn('w-12 h-12 rounded-full transition-transform duration-200', active ? 'ring-2 ring-primary ring-offset-2 scale-110' : 'hover:scale-110')}
       style={{ backgroundColor: hex }}
     />
     <span className="text-xs text-muted-foreground">{name}</span>
@@ -39,12 +44,22 @@ const Feature = ({ icon, title, description }: { icon: React.ReactNode; title: s
   </div>
 );
 
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const { addToCart } = useCart();
   const product = products.find((p) => p.id === params.id);
+  
+  const [selectedVariant, setSelectedVariant] = useState<ColorVariant | null>(product?.variants[0] || null);
+  const [quantity, setQuantity] = useState(1);
 
   if (!product) {
     notFound();
   }
+
+  const handleAddToCart = () => {
+    if (product && selectedVariant) {
+        addToCart(product, selectedVariant, quantity);
+    }
+  };
 
   return (
     <div className="container py-12 max-w-screen-2xl">
@@ -97,15 +112,36 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           <div>
             <h3 className="text-xl font-headline font-semibold mb-4">Select a Color</h3>
             <div className="flex space-x-4">
-              {product.variants.map((variant, index) => (
-                <ColorSwatch key={variant.hex} name={variant.name} hex={variant.hex} active={index === 0} />
+              {product.variants.map((variant) => (
+                <ColorSwatch 
+                  key={variant.hex} 
+                  name={variant.name} 
+                  hex={variant.hex} 
+                  active={selectedVariant?.hex === variant.hex}
+                  onClick={() => setSelectedVariant(variant)}
+                />
               ))}
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="text-xl font-headline font-semibold mb-4">Quantity</h3>
+            <div className="flex items-center gap-4">
+              <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.max(1, q - 1))}>
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="text-lg font-semibold w-8 text-center">{quantity}</span>
+               <Button variant="outline" size="icon" onClick={() => setQuantity(q => q + 1)}>
+                <Plus className="h-4 w-4" />
+              </Button>
             </div>
           </div>
 
           <div className="flex items-center justify-between gap-4 pt-4 border-t">
-            <p className="text-3xl font-bold text-primary">${product.price.toFixed(2)}</p>
-            <Button size="lg" className="flex-grow md:flex-grow-0">Add to Cart</Button>
+            <p className="text-3xl font-bold text-primary">${(product.price * quantity).toFixed(2)}</p>
+            <Button size="lg" className="flex-grow md:flex-grow-0" onClick={handleAddToCart} disabled={!selectedVariant}>
+              Add to Cart
+            </Button>
           </div>
         </div>
       </div>

@@ -42,3 +42,14 @@ export type ServiceCategory = {
   title: string;
   services: Service[];
 };
+
+export type CartItem = {
+    id: string;
+    productId: string;
+    name: string;
+    price: number;
+    quantity: number;
+    variant: ColorVariant;
+    imageUrl: string;
+    imageHint: string;
+};
