@@ -1,7 +1,7 @@
 import { db, storage } from '@/lib/firebase';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc, query, orderBy, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import type { Product, ProductCategory } from '@/lib/types';
+import type { Product } from '@/lib/types';
 
 const PRODUCTS_COLLECTION = 'products';
 
@@ -41,24 +41,26 @@ type AddProductData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'variants'
 
 // Function to add a new product
 export async function addProduct(productData: AddProductData, imageFile: File) {
-    const fullProductData = {
+    const newDocRef = doc(collection(db, PRODUCTS_COLLECTION)); // Create a ref with a new ID
+    
+    // Upload image first using the new ID
+    const { imageUrl, imagePath } = await uploadImage(imageFile, newDocRef.id);
+    
+    // Prepare the full product data object
+    const fullProductData: Omit<Product, 'id'> = {
         ...productData,
         popularity: 0,
         reviews: [],
         variants: [{ name: 'Default', hex: '#FFFFFF' }],
         imageHint: 'paint can',
-        imageUrl: '',
-        imagePath: '',
+        imageUrl: imageUrl,
+        imagePath: imagePath,
     };
-    
-    const docRef = await addDoc(collection(db, PRODUCTS_COLLECTION), {});
-    const { imageUrl, imagePath } = await uploadImage(imageFile, docRef.id);
-    
-    fullProductData.imageUrl = imageUrl;
-    fullProductData.imagePath = imagePath;
 
-    await updateDoc(docRef, fullProductData);
-    return docRef.id;
+    // Now create the document in Firestore with all data
+    await setDoc(newDocRef, fullProductData);
+    
+    return newDocRef.id;
 }
 
 
