@@ -134,10 +134,10 @@ export default function AdminProductsPage() {
                                         <Image
                                             alt={product.name}
                                             className="aspect-square rounded-md object-cover"
-                                            height="64"
+                                            height={64}
                                             src={product.imageUrl}
                                             data-ai-hint={product.imageHint}
-                                            width="64"
+                                            width={64}
                                         />
                                     </TableCell>
                                     <TableCell className="font-medium">{product.name}</TableCell>
