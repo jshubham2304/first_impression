@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Star, Paintbrush, Bed, Home } from "lucide-react";
+import { ArrowRight, Bed, Home, Paintbrush, Quote } from "lucide-react";
 import { serviceCategories } from "@/lib/services";
 import { getTestimonials } from "@/services/testimonial-service";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -84,7 +84,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-       <section className="py-16 md:py-24 bg-secondary/50">
+       <section className="py-16 md:py-24 bg-card">
         <div className="container px-4 md:px-6">
            <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-headline font-semibold">What Our Clients Say</h2>
@@ -94,15 +94,16 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.slice(0, 3).map((testimonial) => (
-              <Card key={testimonial.id} className="flex flex-col">
-                  <CardContent className="p-6 flex-grow flex flex-col items-center text-center">
-                      <Avatar className="w-20 h-20 mb-4 border-4 border-background shadow-md">
-                          <AvatarImage src={testimonial.imageUrl} alt={testimonial.author} />
-                          <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <p className="text-muted-foreground font-body flex-grow">"{testimonial.comment}"</p>
-                      <footer className="mt-4">
-                          <p className="font-headline font-semibold">{testimonial.author}</p>
+              <Card key={testimonial.id} className="bg-background flex flex-col transform transition-shadow duration-300 hover:shadow-2xl">
+                  <CardContent className="p-8 flex-grow flex flex-col items-center text-center">
+                      <Quote className="w-10 h-10 text-primary/30 mb-4" />
+                      <p className="text-muted-foreground font-body flex-grow italic mb-6">"{testimonial.comment}"</p>
+                      <footer className="mt-auto">
+                          <Avatar className="w-16 h-16 mb-2 mx-auto border-4 border-card shadow-lg">
+                              <AvatarImage src={testimonial.imageUrl} alt={testimonial.author} />
+                              <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <p className="font-headline font-semibold text-primary">{testimonial.author}</p>
                       </footer>
                   </CardContent>
               </Card>
