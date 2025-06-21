@@ -17,8 +17,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Poppins', 'sans-serif'],
+        body: ['Alegreya', 'serif'],
+        headline: ['Belleza', 'sans-serif'],
       },
       colors: {
         background: 'hsl(var(--background))',

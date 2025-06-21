@@ -53,3 +53,12 @@ export type CartItem = {
     imageUrl: string;
     imageHint: string;
 };
+
+export type Order = {
+  id: string;
+  userEmail: string;
+  date: string;
+  items: CartItem[];
+  total: number;
+  status: 'Pending' | 'Shipped' | 'Delivered';
+};
