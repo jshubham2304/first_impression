@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { roomColors } from '@/lib/data';
+import { type VisualizerColor } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Download, Upload } from 'lucide-react';
+import { Download, Upload, Loader2 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ColorSwatch = ({
   color,
@@ -34,10 +35,20 @@ const ColorSwatch = ({
   </div>
 );
 
-export function VisualizerClient() {
-  const [selectedColor, setSelectedColor] = useState(roomColors[0].hex);
+type VisualizerClientProps = {
+    initialColors: VisualizerColor[];
+}
+
+export function VisualizerClient({ initialColors }: VisualizerClientProps) {
+  const [selectedColor, setSelectedColor] = useState(initialColors?.[0]?.hex || '#ffffff');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+      if (initialColors && initialColors.length > 0 && !selectedColor) {
+          setSelectedColor(initialColors[0].hex)
+      }
+  }, [initialColors, selectedColor])
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -93,17 +104,23 @@ export function VisualizerClient() {
             <CardTitle className="font-headline text-2xl">Choose a Color</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-4 gap-4">
-              {roomColors.map((color) => (
-                <ColorSwatch
-                  key={color.hex}
-                  color={color.hex}
-                  name={color.name}
-                  isSelected={selectedColor === color.hex}
-                  onSelect={() => setSelectedColor(color.hex)}
-                />
-              ))}
-            </div>
+            {initialColors.length === 0 ? (
+                <div className="grid grid-cols-4 gap-4">
+                    {[...Array(8)].map((_, i) => <Skeleton key={i} className="w-12 h-12 rounded-full" />)}
+                </div>
+            ) : (
+                <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-4 gap-4">
+                {initialColors.map((color) => (
+                    <ColorSwatch
+                    key={color.hex}
+                    color={color.hex}
+                    name={color.name}
+                    isSelected={selectedColor === color.hex}
+                    onSelect={() => setSelectedColor(color.hex)}
+                    />
+                ))}
+                </div>
+            )}
             <div className="mt-8 flex flex-col space-y-3">
                 <Button>
                     <Download className="mr-2 h-4 w-4"/>

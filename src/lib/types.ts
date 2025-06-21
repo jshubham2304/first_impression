@@ -19,9 +19,15 @@ export type Product = {
 };
 
 export type ColorVariant = {
-  hex: string;
   name: string;
+  hex: string;
 };
+
+export type VisualizerColor = {
+  id: string;
+  name: string;
+  hex: string;
+}
 
 export type Review = {
   id: string;

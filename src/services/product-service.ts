@@ -37,7 +37,7 @@ async function uploadImage(imageFile: File, productId: string): Promise<{ imageU
     return { imageUrl, imagePath };
 }
 
-type AddProductData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'variants' | 'imageUrl' | 'imagePath' | 'imageHint'>;
+type AddProductData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'imageUrl' | 'imagePath' | 'imageHint'>;
 
 // Function to add a new product
 export async function addProduct(productData: AddProductData, imageFile: File) {
@@ -48,7 +48,6 @@ export async function addProduct(productData: AddProductData, imageFile: File) {
         ...productData,
         popularity: Math.floor(Math.random() * 50) + 1,
         reviews: [],
-        variants: [{ name: 'Default', hex: '#FFFFFF' }],
         imageHint: 'paint can',
         imageUrl,
         imagePath,

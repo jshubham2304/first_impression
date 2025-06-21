@@ -44,6 +44,9 @@ export async function addTestimonial(data: TestimonialData, imageFile?: File) {
         const { imageUrl, imagePath } = await uploadImage(imageFile, newDocRef.id);
         testimonialData.imageUrl = imageUrl;
         testimonialData.imagePath = imagePath;
+    } else {
+        // Use a placeholder avatar if no image is uploaded
+        testimonialData.imageUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.author)}`;
     }
     
     await setDoc(newDocRef, testimonialData);

@@ -1,6 +1,9 @@
+import { getVisualizerColors } from '@/services/visualizer-colors-service';
 import { VisualizerClient } from './client';
 
-export default function VisualizerPage() {
+export default async function VisualizerPage() {
+  const colors = await getVisualizerColors();
+
   return (
     <div className="container py-8 max-w-screen-2xl">
       <div className="mb-8 text-center">
@@ -9,7 +12,7 @@ export default function VisualizerPage() {
           Bring your vision to life. Select a color to see it in a room.
         </p>
       </div>
-      <VisualizerClient />
+      <VisualizerClient initialColors={colors} />
     </div>
   );
 }

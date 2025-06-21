@@ -1,8 +1,8 @@
 import type { FeaturedPalette } from './types';
 
-// This file used to contain static product data.
-// It has been removed and all product data is now managed in Firebase Firestore.
-// Please add products via the Admin Panel -> Products -> Add Product.
+// This file used to contain static data.
+// It has been removed and all dynamic data is now managed in Firebase Firestore.
+// Please add/edit content via the Admin Panel.
 
 export const featuredPalettes: FeaturedPalette[] = [
   {
@@ -35,16 +35,4 @@ export const featuredPalettes: FeaturedPalette[] = [
       { name: 'Natural Wood', hex: '#ad9b87' },
     ],
   },
-];
-
-export const roomColors = [
-    { name: 'Crimson Red', hex: '#990000' },
-    { name: 'Midnight Blue', hex: '#003366' },
-    { name: 'Forest Green', hex: '#228B22' },
-    { name: 'Goldenrod', hex: '#DAA520' },
-    { name: 'Cool Gray', hex: '#8C92AC' },
-    { name: 'Cloud White', hex: '#F5F5F5' },
-    { name: 'Orchid', hex: '#DA70D6' },
-    { name: 'Teal', hex: '#008080' },
-    { name: 'Coral', hex: '#FF7F50' },
 ];
