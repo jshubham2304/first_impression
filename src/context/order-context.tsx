@@ -8,6 +8,7 @@ type OrderContextType = {
   orders: Order[];
   addOrder: (items: CartItem[], total: number, userEmail: string) => void;
   getOrdersForUser: (userEmail: string) => Order[];
+  updateOrderStatus: (orderId: string, status: Order['status']) => void;
 };
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -56,12 +57,20 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     return orders.filter(order => order.userEmail === userEmail);
   };
 
+  const updateOrderStatus = (orderId: string, status: Order['status']) => {
+    setOrders(prevOrders =>
+        prevOrders.map(order =>
+            order.id === orderId ? { ...order, status } : order
+        )
+    );
+  };
+
   if (isLoading) {
       return null;
   }
 
   return (
-    <OrderContext.Provider value={{ orders, addOrder, getOrdersForUser }}>
+    <OrderContext.Provider value={{ orders, addOrder, getOrdersForUser, updateOrderStatus }}>
       {children}
     </OrderContext.Provider>
   );
