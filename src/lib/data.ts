@@ -1,0 +1,163 @@
+import type { Product, FeaturedPalette } from './types';
+
+export const products: Product[] = [
+  {
+    id: 'pr-1',
+    name: 'Royal Touch',
+    brand: 'Prestige Paints',
+    finish: 'Satin',
+    colorFamily: 'Blues',
+    price: 45.99,
+    popularity: 4.8,
+    description: 'A premium, silky smooth finish that is easy to clean and resistant to mildew. Perfect for high-traffic areas like living rooms and hallways.',
+    imageUrl: 'https://placehold.co/600x600.png',
+    imageHint: 'paint can',
+    variants: [
+      { name: 'Midnight Blue', hex: '#003366' },
+      { name: 'Sky Blue', hex: '#87CEEB' },
+      { name: 'Cerulean', hex: '#007BA7' },
+    ],
+    reviews: [
+      { id: 'rev-1', author: 'Jane D.', rating: 5, comment: 'Absolutely stunning color and coverage!', date: '2023-10-15' },
+    ],
+  },
+  {
+    id: 'pr-2',
+    name: 'EcoClean',
+    brand: 'GreenSheen',
+    finish: 'Matte',
+    colorFamily: 'Greens',
+    price: 39.99,
+    popularity: 4.5,
+    description: 'A zero-VOC, environmentally friendly paint with a beautiful matte finish. Odorless and safe for all rooms, including nurseries.',
+    imageUrl: 'https://placehold.co/600x600.png',
+    imageHint: 'paint roller',
+    variants: [
+      { name: 'Sage Green', hex: '#B2AC88' },
+      { name: 'Forest Green', hex: '#228B22' },
+      { name: 'Mint Green', hex: '#98FF98' },
+    ],
+    reviews: [
+      { id: 'rev-2', author: 'John S.', rating: 4, comment: 'Great eco-friendly option, needed two coats.', date: '2023-09-22' },
+    ],
+  },
+  {
+    id: 'pr-3',
+    name: 'DuraCoat',
+    brand: 'ProTect',
+    finish: 'Gloss',
+    colorFamily: 'Reds',
+    price: 52.50,
+    popularity: 4.7,
+    description: 'An ultra-durable, high-gloss enamel for trim, doors, and cabinets. Provides a hard, protective shell that withstands chipping and scuffing.',
+    imageUrl: 'https://placehold.co/600x600.png',
+    imageHint: 'paint brush',
+    variants: [
+      { name: 'Crimson Red', hex: '#990000' },
+      { name: 'Fire Engine Red', hex: '#CE2029' },
+      { name: 'Burgundy', hex: '#800020' },
+    ],
+    reviews: [],
+  },
+  {
+    id: 'pr-4',
+    name: 'Simply White',
+    brand: 'Pure Hues',
+    finish: 'Satin',
+    colorFamily: 'Whites',
+    price: 35.00,
+    popularity: 4.9,
+    description: 'A timeless, versatile white with a hint of warmth. Its clean and crisp look brightens any space, creating a serene and inviting atmosphere.',
+    imageUrl: 'https://placehold.co/600x600.png',
+    imageHint: 'white paint',
+    variants: [
+      { name: 'Cloud White', hex: '#F5F5F5' },
+      { name: 'Chantilly Lace', hex: '#F0EAD6' },
+      { name: 'Dove White', hex: '#F3F2ED' },
+    ],
+    reviews: [
+        { id: 'rev-3', author: 'Emily R.', rating: 5, comment: 'The perfect white! Not too stark, not too creamy.', date: '2023-11-01' },
+    ],
+  },
+  {
+    id: 'pr-5',
+    name: 'Urban Loft',
+    brand: 'MetroPaints',
+    finish: 'Semi-Gloss',
+    colorFamily: 'Neutrals',
+    price: 42.75,
+    popularity: 4.6,
+    description: 'A sophisticated palette of modern neutrals. The semi-gloss finish adds a subtle sheen, ideal for kitchens, bathrooms, and architectural details.',
+    imageUrl: 'https://placehold.co/600x600.png',
+    imageHint: 'gray paint',
+    variants: [
+      { name: 'Cool Gray', hex: '#8C92AC' },
+      { name: 'Greige', hex: '#BDBAAE' },
+      { name: 'Charcoal', hex: '#36454F' },
+    ],
+    reviews: [],
+  },
+  {
+    id: 'pr-6',
+    name: 'Sun-Kissed',
+    brand: 'GoldenRay',
+    finish: 'Matte',
+    colorFamily: 'Yellows',
+    price: 38.00,
+    popularity: 4.3,
+    description: 'Bring the warmth of the sun indoors with these cheerful yellows. The flat matte finish minimizes imperfections and diffuses light beautifully.',
+    imageUrl: 'https://placehold.co/600x600.png',
+    imageHint: 'yellow paint',
+    variants: [
+      { name: 'Lemon Yellow', hex: '#FFF44F' },
+      { name: 'Goldenrod', hex: '#DAA520' },
+      { name: 'Mustard', hex: '#FFDB58' },
+    ],
+    reviews: [],
+  },
+];
+
+export const featuredPalettes: FeaturedPalette[] = [
+  {
+    id: 'fp-1',
+    name: 'Coastal Calm',
+    colors: [
+      { name: 'Sea Salt', hex: '#a7b4a8' },
+      { name: 'Light Sky', hex: '#d5e2ea' },
+      { name: 'Sandy Tan', hex: '#e3d5c1' },
+      { name: 'Deep Ocean', hex: '#4f6d7a' },
+    ],
+  },
+  {
+    id: 'fp-2',
+    name: 'Urban Jungle',
+    colors: [
+      { name: 'Terracotta', hex: '#c97b61' },
+      { name: 'Olive Green', hex: '#7a8a6b' },
+      { name: 'Charcoal Gray', hex: '#5b5b5b' },
+      { name: 'Warm Beige', hex: '#d4c7b0' },
+    ],
+  },
+  {
+    id: 'fp-3',
+    name: 'Modern Minimalist',
+    colors: [
+      { name: 'Crisp White', hex: '#ffffff' },
+      { name: 'Soft Gray', hex: '#d3d3d3' },
+      { name: 'Black Accent', hex: '#343434' },
+      { name: 'Natural Wood', hex: '#ad9b87' },
+    ],
+  },
+];
+
+export const roomColors = [
+    { name: 'Crimson Red', hex: '#990000' },
+    { name: 'Midnight Blue', hex: '#003366' },
+    { name: 'Forest Green', hex: '#228B22' },
+    { name: 'Goldenrod', hex: '#DAA520' },
+    { name: 'Cool Gray', hex: '#8C92AC' },
+    { name: 'Cloud White', hex: '#F5F5F5' },
+    { name: 'Orchid', hex: '#DA70D6' },
+    { name: 'Teal', hex: '#008080' },
+    { name: 'Coral', hex: '#FF7F50' },
+];
