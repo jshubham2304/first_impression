@@ -9,6 +9,7 @@ export type Product = {
   finish: string;
   colorFamily: string;
   price: number;
+  stock: number;
   popularity: number;
   description: string;
   imageUrl: string;
@@ -28,6 +29,7 @@ export type ProductAttributes = {
 export type ColorVariant = {
   name: string;
   hex: string;
+  stock: number;
 };
 
 export type VisualizerColor = {

@@ -1,7 +1,7 @@
 import { db, storage } from '@/lib/firebase';
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc, query, orderBy, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import type { Product } from '@/lib/types';
+import type { Product, CartItem } from '@/lib/types';
 
 const PRODUCTS_COLLECTION = 'products';
 
@@ -100,4 +100,36 @@ export async function deleteProduct(productId: string) {
     }
     
     await deleteDoc(productDocRef);
+}
+
+// Function to decrement stock for items after an order is placed
+export async function decrementStock(items: CartItem[]) {
+    const productsToUpdate: Map<string, Product> = new Map();
+
+    for (const item of items) {
+        if (!productsToUpdate.has(item.productId)) {
+            const product = await getProduct(item.productId);
+            if (product) {
+                productsToUpdate.set(item.productId, product);
+            }
+        }
+    }
+
+    for (const item of items) {
+        const product = productsToUpdate.get(item.productId);
+        if (product) {
+            const variantIndex = product.variants.findIndex(v => v.hex === item.variant.hex);
+            if (variantIndex > -1) {
+                product.variants[variantIndex].stock = Math.max(0, product.variants[variantIndex].stock - item.quantity);
+            }
+        }
+    }
+
+    for (const [productId, product] of productsToUpdate.entries()) {
+        const newTotalStock = product.variants.reduce((sum, v) => sum + v.stock, 0);
+        await updateDoc(doc(db, PRODUCTS_COLLECTION, productId), {
+            variants: product.variants,
+            stock: newTotalStock,
+        });
+    }
 }

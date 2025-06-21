@@ -22,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const variantSchema = z.object({
   name: z.string().min(1, "Variant name is required"),
   hex: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Must be a valid hex color (e.g., #RRGGBB)"),
+  stock: z.coerce.number().int().min(0, "Stock cannot be negative"),
 });
 
 const formSchema = z.object({
@@ -67,7 +68,7 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
       colorFamily: product?.colorFamily || '',
       isActive: product?.isActive ?? true,
       image: undefined,
-      variants: product?.variants && product.variants.length > 0 ? product.variants : [{ name: 'Default', hex: '#ffffff' }],
+      variants: product?.variants && product.variants.length > 0 ? product.variants : [{ name: 'Default', hex: '#ffffff', stock: 10 }],
     },
   });
 
@@ -83,6 +84,7 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
     } else if (attributes && product) {
         form.reset({
             ...product,
+            price: product.price || 0,
             image: undefined,
         });
     }
@@ -100,8 +102,11 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
       const { image, ...productData } = values;
       const imageFile = image?.[0];
 
+      const totalStock = values.variants.reduce((sum, variant) => sum + variant.stock, 0);
+      const dataWithStock = { ...productData, stock: totalStock };
+
       if (product) {
-        await updateProduct(product.id, productData, imageFile);
+        await updateProduct(product.id, dataWithStock, imageFile);
         toast({ title: 'Success', description: 'Product updated successfully.' });
       } else {
         if (!imageFile) {
@@ -109,7 +114,7 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
             setIsSubmitting(false);
             return;
         }
-        await addProduct(productData, imageFile);
+        await addProduct(dataWithStock, imageFile);
         toast({ title: 'Success', description: 'Product added successfully.' });
       }
       onSuccess();
@@ -192,14 +197,15 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
           <CardHeader><CardTitle>Color Variants</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             {fields.map((field, index) => (
-              <div key={field.id} className="flex items-end gap-2 p-2 border rounded-md">
+              <div key={field.id} className="grid grid-cols-[1fr_auto_auto_auto] items-end gap-2 p-2 border rounded-md">
                 <FormField control={form.control} name={`variants.${index}.name`} render={({ field }) => (<FormItem className="flex-grow"><FormLabel>Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage/></FormItem>)}/>
                 <FormField control={form.control} name={`variants.${index}.hex`} render={({ field }) => (<FormItem><FormLabel>Hex</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage/></FormItem>)}/>
+                <FormField control={form.control} name={`variants.${index}.stock`} render={({ field }) => (<FormItem><FormLabel>Stock</FormLabel><FormControl><Input type="number" {...field} className="w-20" /></FormControl><FormMessage/></FormItem>)}/>
                 <div className="w-8 h-10 rounded" style={{ backgroundColor: form.watch(`variants.${index}.hex`) }} />
                 <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4"/></Button>
               </div>
             ))}
-            <Button type="button" variant="outline" size="sm" onClick={() => append({ name: '', hex: '#000000' })}>
+            <Button type="button" variant="outline" size="sm" onClick={() => append({ name: '', hex: '#000000', stock: 0 })}>
               <PlusCircle className="mr-2 h-4 w-4" /> Add Variant
             </Button>
              <FormMessage>{form.formState.errors.variants?.message}</FormMessage>

@@ -70,6 +70,8 @@ export default function ProductDetailPage() {
   const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedVariant, setSelectedVariant] = useState<ColorVariant | null>(null);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (params.id) {
@@ -79,7 +81,13 @@ export default function ProductDetailPage() {
                 const fetchedProduct = await getProduct(params.id as string);
                 if (fetchedProduct) {
                     setProduct(fetchedProduct);
-                    setSelectedVariant(fetchedProduct.variants?.[0] || null)
+                    const initialVariant = fetchedProduct.variants?.[0] || null;
+                    setSelectedVariant(initialVariant);
+                    if (initialVariant?.stock === 0) {
+                      setQuantity(0);
+                    } else {
+                      setQuantity(1);
+                    }
                 } else {
                     notFound();
                 }
@@ -93,9 +101,17 @@ export default function ProductDetailPage() {
         fetchProduct();
     }
   }, [params.id]);
-  
-  const [selectedVariant, setSelectedVariant] = useState<ColorVariant | null>(null);
-  const [quantity, setQuantity] = useState(1);
+
+  const handleVariantSelect = (variant: ColorVariant) => {
+    setSelectedVariant(variant);
+    setQuantity(variant.stock > 0 ? 1 : 0);
+  };
+
+  const handleAddToCart = () => {
+    if (product && selectedVariant && quantity > 0) {
+        addToCart(product, selectedVariant, quantity);
+    }
+  };
 
   if (isLoading) {
     return <ProductDetailSkeleton />;
@@ -105,11 +121,7 @@ export default function ProductDetailPage() {
     notFound();
   }
 
-  const handleAddToCart = () => {
-    if (product && selectedVariant) {
-        addToCart(product, selectedVariant, quantity);
-    }
-  };
+  const isAddToCartDisabled = !selectedVariant || selectedVariant.stock === 0 || quantity === 0 || quantity > selectedVariant.stock;
 
   return (
     <div className="container py-12 max-w-screen-2xl">
@@ -160,30 +172,37 @@ export default function ProductDetailPage() {
           </Card>
           
           {product.variants && product.variants.length > 0 && (
-          <div>
-            <h3 className="text-xl font-headline font-semibold mb-4">Select a Color</h3>
-            <div className="flex space-x-4">
-              {product.variants.map((variant) => (
-                <ColorSwatch 
-                  key={variant.hex} 
-                  name={variant.name} 
-                  hex={variant.hex} 
-                  active={selectedVariant?.hex === variant.hex}
-                  onClick={() => setSelectedVariant(variant)}
-                />
-              ))}
+            <div>
+              <h3 className="text-xl font-headline font-semibold mb-4">Select a Color</h3>
+              <div className="flex flex-wrap gap-4">
+                {product.variants.map((variant) => (
+                  <ColorSwatch 
+                    key={variant.hex} 
+                    name={variant.name} 
+                    hex={variant.hex} 
+                    active={selectedVariant?.hex === variant.hex}
+                    onClick={() => handleVariantSelect(variant)}
+                  />
+                ))}
+              </div>
+               {selectedVariant && (
+                <p className="mt-4 text-sm font-medium h-5">
+                    {selectedVariant.stock > 10 && <span className="text-green-600">In Stock</span>}
+                    {selectedVariant.stock <= 10 && selectedVariant.stock > 0 && <span className="text-amber-600">Only {selectedVariant.stock} left in stock!</span>}
+                    {selectedVariant.stock === 0 && <span className="text-destructive">Out of Stock</span>}
+                </p>
+            )}
             </div>
-          </div>
           )}
           
           <div>
             <h3 className="text-xl font-headline font-semibold mb-4">Quantity</h3>
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.max(1, q - 1))}>
+              <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.max(1, q - 1))} disabled={isAddToCartDisabled}>
                 <Minus className="h-4 w-4" />
               </Button>
               <span className="text-lg font-semibold w-8 text-center">{quantity}</span>
-               <Button variant="outline" size="icon" onClick={() => setQuantity(q => q + 1)}>
+               <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.min(selectedVariant?.stock || 1, q + 1))} disabled={isAddToCartDisabled || quantity >= (selectedVariant?.stock || 0)}>
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -191,8 +210,8 @@ export default function ProductDetailPage() {
 
           <div className="flex items-center justify-between gap-4 pt-4 border-t">
             <p className="text-3xl font-bold text-primary">${(product.price * quantity).toFixed(2)}</p>
-            <Button size="lg" className="flex-grow md:flex-grow-0" onClick={handleAddToCart} disabled={!selectedVariant}>
-              Add to Cart
+            <Button size="lg" className="flex-grow md:flex-grow-0" onClick={handleAddToCart} disabled={isAddToCartDisabled}>
+              {selectedVariant?.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
             </Button>
           </div>
         </div>

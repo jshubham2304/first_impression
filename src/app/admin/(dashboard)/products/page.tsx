@@ -33,6 +33,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from '@/components/ui/badge';
 
@@ -93,7 +94,7 @@ export default function AdminProductsPage() {
                     <DialogTrigger asChild>
                         <Button onClick={handleAddClick}><PlusCircle className="mr-2 h-4 w-4"/>Add Product</Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-xl">
                         <DialogHeader>
                             <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
                         </DialogHeader>
@@ -119,6 +120,7 @@ export default function AdminProductsPage() {
                                 <TableHead>Name</TableHead>
                                 <TableHead>Category</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead>Stock</TableHead>
                                 <TableHead>Price</TableHead>
                                 <TableHead>
                                     <span className="sr-only">Actions</span>
@@ -144,6 +146,15 @@ export default function AdminProductsPage() {
                                         <Badge variant={product.isActive ? 'default' : 'secondary'}>
                                             {product.isActive ? 'Active' : 'Inactive'}
                                         </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        {product.stock > 10 ? (
+                                            <Badge>{product.stock} in stock</Badge>
+                                        ) : product.stock > 0 ? (
+                                            <Badge variant="secondary">{product.stock} in stock</Badge>
+                                        ) : (
+                                            <Badge variant="destructive">Out of stock</Badge>
+                                        )}
                                     </TableCell>
                                     <TableCell>${product.price.toFixed(2)}</TableCell>
                                     <TableCell>

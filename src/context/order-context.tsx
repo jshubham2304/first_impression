@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import type { Order, CartItem, ShippingAddress } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
+import { decrementStock } from '@/services/product-service';
 
 type OrderContextType = {
   orders: Order[];
@@ -52,6 +53,11 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
       shippingAddress,
     };
     setOrders(prevOrders => [...prevOrders, newOrder]);
+
+    decrementStock(items).catch(error => {
+      console.error("Failed to update stock after order:", error);
+      // In a real application, you might want to add a retry mechanism or flag this for manual review.
+    });
   };
 
   const getOrdersForUser = (userEmail: string) => {
