@@ -1,3 +1,4 @@
+
 import { db, storage } from '@/lib/firebase';
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc, query, orderBy, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
@@ -37,27 +38,32 @@ async function uploadImage(imageFile: File, productId: string): Promise<{ imageU
     return { imageUrl, imagePath };
 }
 
-type AddProductData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'imageUrl' | 'imagePath' | 'imageHint'>;
+// Type for data coming from the form, before we add server-generated fields.
+type ProductFormData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'imageUrl' | 'imagePath' | 'imageHint'>;
 
 // Function to add a new product
-export async function addProduct(productData: AddProductData, imageFile: File) {
-    const dataToSave: Omit<Product, 'id' | 'imageUrl' | 'imagePath'> = {
-        ...productData,
-        popularity: Math.floor(Math.random() * 50) + 1,
-        reviews: [],
-        imageHint: 'paint can',
-    };
-    
-    const newDocRef = await addDoc(collection(db, PRODUCTS_COLLECTION), dataToSave);
-    
-    const { imageUrl, imagePath } = await uploadImage(imageFile, newDocRef.id);
+export async function addProduct(productData: ProductFormData, imageFile: File): Promise<string> {
+    // 1. Create a new document reference in the 'products' collection to get a unique ID.
+    const newDocRef = doc(collection(db, PRODUCTS_COLLECTION));
+    const newProductId = newDocRef.id;
 
-    await updateDoc(newDocRef, {
+    // 2. Upload the image using the new product ID.
+    const { imageUrl, imagePath } = await uploadImage(imageFile, newProductId);
+
+    // 3. Assemble the complete product object with all data.
+    const productToSave: Omit<Product, 'id'> = {
+        ...productData,
         imageUrl,
         imagePath,
-    });
+        popularity: Math.floor(Math.random() * 50) + 1, // Add server-side data
+        reviews: [],
+        imageHint: 'paint can', // Add a default hint
+    };
 
-    return newDocRef.id;
+    // 4. Use setDoc to create the document with the full data object.
+    await setDoc(newDocRef, productToSave);
+
+    return newProductId;
 }
 
 
