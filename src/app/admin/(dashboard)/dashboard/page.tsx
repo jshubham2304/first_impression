@@ -139,7 +139,7 @@ export default function DashboardPage() {
                             {recentOrders.map(order => (
                                 <TableRow key={order.id}>
                                     <TableCell>
-                                        <div className="font-medium">{order.shippingAddress.name}</div>
+                                        <div className="font-medium">{order.shippingAddress?.name || order.userEmail}</div>
                                         <div className="hidden text-sm text-muted-foreground md:inline">{order.userEmail}</div>
                                     </TableCell>
                                     <TableCell className="hidden sm:table-cell">{new Date(order.date).toLocaleDateString()}</TableCell>
@@ -165,11 +165,11 @@ export default function DashboardPage() {
                         {recentOrders.map(order => (
                             <div key={order.id} className="flex items-center">
                                 <Avatar className="h-9 w-9">
-                                    <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${order.shippingAddress.name}`} alt="Avatar" />
-                                    <AvatarFallback>{order.shippingAddress.name.charAt(0).toUpperCase()}</AvatarFallback>
+                                    <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${order.shippingAddress?.name || order.userEmail}`} alt="Avatar" />
+                                    <AvatarFallback>{(order.shippingAddress?.name || order.userEmail).charAt(0).toUpperCase()}</AvatarFallback>
                                 </Avatar>
                                 <div className="ml-4 space-y-1">
-                                    <p className="text-sm font-medium leading-none">{order.shippingAddress.name}</p>
+                                    <p className="text-sm font-medium leading-none">{order.shippingAddress?.name || order.userEmail}</p>
                                     <p className="text-sm text-muted-foreground">{order.userEmail}</p>
                                 </div>
                                 <div className="ml-auto font-medium">${order.total.toFixed(2)}</div>
