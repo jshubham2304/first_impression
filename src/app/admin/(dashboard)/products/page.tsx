@@ -17,7 +17,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import type { Product } from '@/lib/types';
-import { PlusCircle, MoreHorizontal, FilePenLine, Trash2, Loader2 } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, FilePenLine, Trash2, Loader2, Package } from 'lucide-react';
 import Image from 'next/image';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -131,14 +131,20 @@ export default function AdminProductsPage() {
                             {allProducts.map((product) => (
                                 <TableRow key={product.id}>
                                     <TableCell className="hidden sm:table-cell">
-                                        <Image
-                                            alt={product.name}
-                                            className="aspect-square rounded-md object-cover"
-                                            height={64}
-                                            src={product.imageUrl}
-                                            data-ai-hint={product.imageHint}
-                                            width={64}
-                                        />
+                                        {product.imageUrl ? (
+                                            <Image
+                                                alt={product.name}
+                                                className="aspect-square rounded-md object-cover"
+                                                height={64}
+                                                src={product.imageUrl}
+                                                data-ai-hint={product.imageHint}
+                                                width={64}
+                                            />
+                                        ) : (
+                                            <div className="aspect-square h-16 w-16 rounded-md bg-muted flex items-center justify-center">
+                                                <Package className="h-8 w-8 text-muted-foreground" />
+                                            </div>
+                                        )}
                                     </TableCell>
                                     <TableCell className="font-medium">{product.name}</TableCell>
                                     <TableCell>{product.category}</TableCell>
