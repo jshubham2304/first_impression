@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, Star } from "lucide-react";
+import { Heart, Star, Package } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/lib/types";
@@ -22,14 +22,20 @@ export function ProductCard({ product }: ProductCardProps) {
       <Link href={`/products/${product.id}`} className="block">
         <CardContent className="p-0">
           <div className="relative">
-            <Image
-              src={product.imageUrl}
-              alt={product.name}
-              data-ai-hint={product.imageHint}
-              width={400}
-              height={400}
-              className="object-cover w-full aspect-square transition-transform duration-300 group-hover:scale-105"
-            />
+            {product.imageUrl ? (
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                data-ai-hint={product.imageHint}
+                width={400}
+                height={400}
+                className="object-cover w-full aspect-square transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+               <div className="w-full aspect-square bg-muted flex items-center justify-center">
+                <Package className="h-16 w-16 text-muted-foreground" />
+              </div>
+            )}
             <Button
               variant="secondary"
               size="icon"
