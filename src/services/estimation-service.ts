@@ -1,70 +1,85 @@
 'use server';
 
-import { db, storage } from '@/lib/firebase';
-import { collection, getDocs, addDoc, doc, deleteDoc, getDoc, query, orderBy, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import type { EstimationRequest } from '@/lib/types';
+import { v4 as uuidv4 } from 'uuid';
+import { db, storage } from '@/lib/firebase';
+import { collection, getDocs, doc, addDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
-const ESTIMATIONS_COLLECTION = 'estimationRequests';
-
-export async function getEstimations(): Promise<EstimationRequest[]> {
-    const collectionRef = collection(db, ESTIMATIONS_COLLECTION);
-    const q = query(collectionRef, orderBy('createdAt', 'desc'));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-            id: doc.id,
-            ...data,
-            createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
-        } as EstimationRequest
-    });
-}
-
-async function uploadPhoto(photoFile: File, estimationId: string): Promise<{ photoUrl: string, photoPath: string }> {
-    const photoPath = `estimations/${estimationId}/${photoFile.name}`;
-    const storageRef = ref(storage, photoPath);
-    await uploadBytes(storageRef, photoFile);
-    const photoUrl = await getDownloadURL(storageRef);
-    return { photoUrl, photoPath };
-}
+const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
 
 type EstimationFormData = Omit<EstimationRequest, 'id' | 'createdAt' | 'photoUrl' | 'photoPath'>;
 
-export async function addEstimationRequest(data: EstimationFormData, photoFile?: File): Promise<string> {
-    const dataToSave = {
+// --- Mock Data ---
+let mockEstimations: EstimationRequest[] = [];
+
+
+// --- Firebase Implementation ---
+
+const estimationsCollection = collection(db, 'estimations');
+
+const getEstimationsFirebase = async (): Promise<EstimationRequest[]> => {
+    const q = query(estimationsCollection, orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as EstimationRequest));
+};
+
+const addEstimationRequestFirebase = async (data: EstimationFormData, photoFile?: File): Promise<string> => {
+    const newEstimation: Omit<EstimationRequest, 'id'> = {
         ...data,
-        createdAt: serverTimestamp()
+        createdAt: new Date().toISOString(),
     };
-    
-    const newDocRef = await addDoc(collection(db, ESTIMATIONS_COLLECTION), dataToSave);
-    
+
     if (photoFile) {
-        const { photoUrl, photoPath } = await uploadPhoto(photoFile, newDocRef.id);
-        await updateDoc(newDocRef, { photoUrl, photoPath });
-    }
-    
-    return newDocRef.id;
-}
-
-
-export async function deleteEstimationRequest(estimationId: string) {
-    const docRef = doc(db, ESTIMATIONS_COLLECTION, estimationId);
-    
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-        const data = docSnap.data();
-        if (data.photoPath) {
-             try {
-                const photoRef = ref(storage, data.photoPath);
-                await deleteObject(photoRef);
-            } catch (error: any) {
-                 if (error.code !== 'storage/object-not-found') {
-                    console.error("Error deleting estimation photo:", error);
-                 }
-            }
-        }
+        const imagePath = `estimations/${uuidv4()}/${photoFile.name}`;
+        const storageRef = ref(storage, imagePath);
+        await uploadBytes(storageRef, photoFile);
+        newEstimation.photoUrl = await getDownloadURL(storageRef);
+        newEstimation.photoPath = imagePath;
     }
 
+    const docRef = await addDoc(estimationsCollection, newEstimation);
+    return docRef.id;
+};
+
+const deleteEstimationRequestFirebase = async (estimationId: string): Promise<void> => {
+    const docRef = doc(db, 'estimations', estimationId);
+    const estimationSnap = await docRef.get();
+    const estimation = estimationSnap.data() as EstimationRequest;
+
+    if (estimation.photoPath) {
+        await deleteObject(ref(storage, estimation.photoPath));
+    }
     await deleteDoc(docRef);
-}
+};
+
+
+// --- Mock Implementation ---
+
+const getEstimationsMock = async (): Promise<EstimationRequest[]> => {
+    const sorted = [...mockEstimations].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return Promise.resolve(sorted);
+};
+
+const addEstimationRequestMock = async (data: EstimationFormData, photoFile?: File): Promise<string> => {
+    const newEstimation: EstimationRequest = {
+        id: uuidv4(),
+        ...data,
+        createdAt: new Date().toISOString(),
+        photoUrl: photoFile ? URL.createObjectURL(photoFile) : undefined, // In-memory URL
+        photoPath: photoFile ? photoFile.name : undefined,
+    };
+    mockEstimations.push(newEstimation);
+    return Promise.resolve(newEstimation.id);
+};
+
+const deleteEstimationRequestMock = async (estimationId: string): Promise<void> => {
+    mockEstimations = mockEstimations.filter(req => req.id !== estimationId);
+    return Promise.resolve();
+};
+
+// --- Exports ---
+
+export const getEstimations = USE_FIREBASE ? getEstimationsFirebase : getEstimationsMock;
+export const addEstimationRequest = USE_FIREBASE ? addEstimationRequestFirebase : addEstimationRequestMock;
+export const deleteEstimationRequest = USE_FIREBASE ? deleteEstimationRequestFirebase : deleteEstimationRequestMock;

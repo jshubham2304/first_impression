@@ -1,144 +1,208 @@
+'use server';
 
+import type { Product, CartItem, ProductFormData, Review, ColorVariant } from '@/lib/types';
+import { v4 as uuidv4 } from 'uuid';
 import { db, storage } from '@/lib/firebase';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc, query, orderBy, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import type { Product, CartItem } from '@/lib/types';
+import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, query, where, writeBatch, runTransaction } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
-const PRODUCTS_COLLECTION = 'products';
+const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
 
-// Function to fetch all products
-export async function getProducts(): Promise<Product[]> {
-    const productsCollection = collection(db, PRODUCTS_COLLECTION);
-    const q = query(productsCollection, orderBy('name', 'asc'));
-    const productSnapshot = await getDocs(q);
-    const productList = productSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-    })) as Product[];
-    return productList;
-}
-
-// Function to fetch a single product by ID
-export async function getProduct(id: string): Promise<Product | null> {
-    const productDocRef = doc(db, PRODUCTS_COLLECTION, id);
-    const productSnapshot = await getDoc(productDocRef);
-    if (productSnapshot.exists()) {
-        return { id: productSnapshot.id, ...productSnapshot.data() } as Product;
-    } else {
-        return null;
+// In a real app, this would come from a database.
+// For this project, we use mock data.
+let mockProducts: Product[] = [
+    {
+        id: 'prod-1',
+        name: 'Royal Touch Interior',
+        brand: 'Prestige Paints',
+        category: 'Interior',
+        isActive: true,
+        finish: 'Satin',
+        colorFamily: 'Blues',
+        price: 45.99,
+        stock: 150,
+        popularity: 4.8,
+        description: 'A premium, washable satin finish paint that offers a smooth, luxurious feel. Perfect for high-traffic areas like living rooms and hallways.',
+        imageUrl: 'https://images.unsplash.com/photo-1572204541188-a32f7a179b5c?q=80&w=1200&auto=format&fit=crop',
+        imageHint: 'paint can',
+        variants: [
+            { name: 'Sky Blue', hex: '#87CEEB', stock: 50 },
+            { name: 'Navy', hex: '#000080', stock: 40 },
+            { name: 'Teal', hex: '#008080', stock: 60 },
+        ],
+        reviews: [
+            { id: 'rev-1', author: 'Jane Doe', rating: 5, comment: 'Beautiful color and great coverage!', date: '2023-05-15' }
+        ],
     }
-}
+];
 
-// Function to upload an image and return its URL and path
-async function uploadImage(imageFile: File, productId: string): Promise<{ imageUrl: string, imagePath: string }> {
-    const imagePath = `products/${productId}/${imageFile.name}`;
+// --- Firebase Implementation ---
+
+const productsCollection = collection(db, 'products');
+
+const getProductsFirebase = async (): Promise<Product[]> => {
+    const snapshot = await getDocs(productsCollection);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+};
+
+const getProductFirebase = async (id: string): Promise<Product | null> => {
+    const docRef = doc(db, 'products', id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as Product : null;
+};
+
+const addProductFirebase = async (productData: ProductFormData, imageFile: File): Promise<string> => {
+    const newProductId = uuidv4();
+    const imagePath = `products/${newProductId}/${imageFile.name}`;
     const storageRef = ref(storage, imagePath);
+    
     await uploadBytes(storageRef, imageFile);
     const imageUrl = await getDownloadURL(storageRef);
-    return { imageUrl, imagePath };
-}
 
-// Type for data coming from the form, before we add server-generated fields.
-type ProductFormData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'imageUrl' | 'imagePath' | 'imageHint'>;
+    const docRef = doc(db, 'products', newProductId);
 
-// Function to add a new product
-export async function addProduct(productData: ProductFormData, imageFile: File): Promise<string> {
-    // A more robust 2-step process to ensure document creation before image URL update.
-    // 1. Prepare the product data with placeholder image info.
-    const productToSave = {
+    const newProduct: Omit<Product, 'id'> = {
         ...productData,
-        popularity: Math.floor(Math.random() * 50) + 1,
+        id: newProductId,
+        popularity: Math.floor(Math.random() * 50) / 10 + 1,
         reviews: [],
-        imageUrl: '',
-        imagePath: '',
+        imageUrl,
+        imagePath,
         imageHint: 'paint can',
     };
     
-    // 2. Add the document to Firestore to get a new document reference and ID.
-    const docRef = await addDoc(collection(db, PRODUCTS_COLLECTION), productToSave);
-    
-    // 3. Upload the image using the new product ID.
-    const { imageUrl, imagePath } = await uploadImage(imageFile, docRef.id);
-    
-    // 4. Update the new document with the actual image URL and path.
-    await updateDoc(docRef, { imageUrl, imagePath });
+    await addDoc(productsCollection, newProduct);
     
     return docRef.id;
-}
+};
 
 
-// Function to update an existing product
-export async function updateProduct(productId: string, productData: Partial<Omit<Product, 'id'>>, imageFile?: File) {
-    const productDocRef = doc(db, PRODUCTS_COLLECTION, productId);
-    const updateData: { [key: string]: any } = { ...productData };
+const updateProductFirebase = async (productId: string, productData: Partial<ProductFormData>, imageFile?: File): Promise<void> => {
+    const docRef = doc(db, 'products', productId);
+    const updateData: Partial<Product> = { ...productData };
 
     if (imageFile) {
-        const existingProduct = await getProduct(productId);
-        if (existingProduct?.imagePath) {
+        const productSnap = await getDoc(docRef);
+        const existingProduct = productSnap.data() as Product;
+        if (existingProduct.imagePath) {
             const oldImageRef = ref(storage, existingProduct.imagePath);
-            try {
-                await deleteObject(oldImageRef);
-            } catch (error: any) {
-                if (error.code !== 'storage/object-not-found') {
-                    console.error("Could not delete old image:", error);
-                }
-            }
+            await deleteObject(oldImageRef).catch(e => console.error("Could not delete old image", e));
         }
 
-        const { imageUrl, imagePath } = await uploadImage(imageFile, productId);
-        updateData.imageUrl = imageUrl;
+        const imagePath = `products/${productId}/${imageFile.name}`;
+        const storageRef = ref(storage, imagePath);
+        await uploadBytes(storageRef, imageFile);
+        updateData.imageUrl = await getDownloadURL(storageRef);
         updateData.imagePath = imagePath;
     }
-
-    await updateDoc(productDocRef, updateData);
-}
-
-
-// Function to delete a product
-export async function deleteProduct(productId: string) {
-    const productDocRef = doc(db, PRODUCTS_COLLECTION, productId);
-
-    try {
-        const product = await getProduct(productId);
-        if (product?.imagePath) {
-            const imageRef = ref(storage, product.imagePath);
-            await deleteObject(imageRef);
-        }
-    } catch (error) {
-        console.error("Error deleting product image, continuing to delete document:", error);
-    }
     
-    await deleteDoc(productDocRef);
-}
+    await updateDoc(docRef, updateData);
+};
 
-// Function to decrement stock for items after an order is placed
-export async function decrementStock(items: CartItem[]) {
-    const productsToUpdate: Map<string, Product> = new Map();
+const deleteProductFirebase = async (productId: string): Promise<void> => {
+    const docRef = doc(db, 'products', productId);
+    const productSnap = await getDoc(docRef);
+    const product = productSnap.data() as Product;
+    
+    if (product.imagePath) {
+        const imageRef = ref(storage, product.imagePath);
+        await deleteObject(imageRef);
+    }
+    await deleteDoc(docRef);
+};
 
-    for (const item of items) {
-        if (!productsToUpdate.has(item.productId)) {
-            const product = await getProduct(item.productId);
-            if (product) {
-                productsToUpdate.set(item.productId, product);
+const decrementStockFirebase = async (items: CartItem[]): Promise<void> => {
+     await runTransaction(db, async (transaction) => {
+        for (const item of items) {
+            const productRef = doc(db, 'products', item.productId);
+            const productDoc = await transaction.get(productRef);
+
+            if (!productDoc.exists()) {
+                throw `Product ${item.productId} does not exist!`;
+            }
+
+            const productData = productDoc.data() as Product;
+            const variantIndex = productData.variants.findIndex(v => v.hex === item.variant.hex);
+
+            if (variantIndex > -1) {
+                const currentStock = productData.variants[variantIndex].stock;
+                if (currentStock < item.quantity) {
+                    throw `Not enough stock for ${productData.name} - ${item.variant.name}. Requested: ${item.quantity}, Available: ${currentStock}`;
+                }
+                productData.variants[variantIndex].stock -= item.quantity;
+                productData.stock = productData.variants.reduce((sum, v) => sum + v.stock, 0);
+                transaction.update(productRef, { variants: productData.variants, stock: productData.stock });
             }
         }
-    }
+    });
+};
 
+
+// --- Mock Implementation ---
+
+const getProductsMock = async (): Promise<Product[]> => {
+    return Promise.resolve(mockProducts.sort((a, b) => a.name.localeCompare(b.name)));
+};
+
+const getProductMock = async (id: string): Promise<Product | null> => {
+    const product = mockProducts.find(p => p.id === id) || null;
+    return Promise.resolve(product);
+};
+
+const addProductMock = async (productData: ProductFormData, imageFile: File): Promise<string> => {
+    const newProduct: Product = {
+        id: uuidv4(),
+        ...productData,
+        popularity: Math.floor(Math.random() * 50) / 10 + 1,
+        reviews: [],
+        imageUrl: URL.createObjectURL(imageFile),
+        imagePath: imageFile.name,
+        imageHint: 'paint can',
+    };
+    mockProducts.push(newProduct);
+    return Promise.resolve(newProduct.id);
+};
+
+const updateProductMock = async (productId: string, productData: Partial<ProductFormData>, imageFile?: File): Promise<void> => {
+    const productIndex = mockProducts.findIndex(p => p.id === productId);
+    if (productIndex === -1) throw new Error("Product not found");
+
+    const updatedProduct = { ...mockProducts[productIndex], ...productData };
+    if (imageFile) {
+        updatedProduct.imageUrl = URL.createObjectURL(imageFile);
+        updatedProduct.imagePath = imageFile.name;
+    }
+    
+    mockProducts[productIndex] = updatedProduct as Product;
+    return Promise.resolve();
+};
+
+const deleteProductMock = async (productId: string): Promise<void> => {
+    mockProducts = mockProducts.filter(p => p.id !== productId);
+    return Promise.resolve();
+};
+
+const decrementStockMock = async (items: CartItem[]): Promise<void> => {
     for (const item of items) {
-        const product = productsToUpdate.get(item.productId);
-        if (product) {
+        const productIndex = mockProducts.findIndex(p => p.id === item.productId);
+        if (productIndex > -1) {
+            const product = mockProducts[productIndex];
             const variantIndex = product.variants.findIndex(v => v.hex === item.variant.hex);
             if (variantIndex > -1) {
                 product.variants[variantIndex].stock = Math.max(0, product.variants[variantIndex].stock - item.quantity);
+                product.stock = product.variants.reduce((sum, v) => sum + v.stock, 0);
+                mockProducts[productIndex] = product;
             }
         }
     }
+    return Promise.resolve();
+};
 
-    for (const [productId, product] of productsToUpdate.entries()) {
-        const newTotalStock = product.variants.reduce((sum, v) => sum + v.stock, 0);
-        await updateDoc(doc(db, PRODUCTS_COLLECTION, productId), {
-            variants: product.variants,
-            stock: newTotalStock,
-        });
-    }
-}
+// --- Exported Functions ---
+
+export const getProducts = USE_FIREBASE ? getProductsFirebase : getProductsMock;
+export const getProduct = USE_FIREBASE ? getProductFirebase : getProductMock;
+export const addProduct = USE_FIREBASE ? addProductFirebase : addProductMock;
+export const updateProduct = USE_FIREBASE ? updateProductFirebase : updateProductMock;
+export const deleteProduct = USE_FIREBASE ? deleteProductFirebase : deleteProductMock;
+export const decrementStock = USE_FIREBASE ? decrementStockFirebase : decrementStockMock;

@@ -1,11 +1,10 @@
 'use client';
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
-import { remoteConfig } from '@/lib/firebase';
-import { fetchAndActivate, getString } from 'firebase/remote-config';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
 const ADMIN_AUTH_KEY = 'admin_authed';
+const ADMIN_PIN = '230498'; // Hardcoded admin PIN
 
 type AdminAuthContextType = {
     isAuthenticated: boolean;
@@ -35,31 +34,16 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const checkPin = useCallback(async (pin: string) => {
-        const defaultPin = '230498'; // The default PIN from firebase.ts
-
-        try {
-            await fetchAndActivate(remoteConfig);
-            const correctPin = getString(remoteConfig, 'admin_pin');
-            
-            // The correctPin will be the remote value, or the default '230498' if not set remotely.
-            // An empty string can be returned if the default is not configured correctly or the remote value is empty.
-            if (pin === correctPin && correctPin) {
+        if (pin === ADMIN_PIN) {
+            try {
                 sessionStorage.setItem(ADMIN_AUTH_KEY, 'true');
-                setIsAuthenticated(true);
-                return true;
+            } catch (e) {
+                console.error('Could not write to session storage', e);
             }
-            return false;
-        } catch (error) {
-            console.error("Error fetching remote config. Falling back to default PIN check.", error);
-            // If remote config fails (e.g. no internet, misconfigured keys),
-            // allow login with the hardcoded default PIN. This improves local dev experience.
-            if (pin === defaultPin) {
-                sessionStorage.setItem(ADMIN_AUTH_KEY, 'true');
-                setIsAuthenticated(true);
-                return true;
-            }
-            return false;
+            setIsAuthenticated(true);
+            return true;
         }
+        return false;
     }, []);
 
     const logout = () => {
