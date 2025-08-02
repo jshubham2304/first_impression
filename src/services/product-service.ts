@@ -1,12 +1,15 @@
 'use server';
 
-import type { Product, CartItem, ProductFormData, Review, ColorVariant } from '@/lib/types';
+import type { Product, CartItem } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
 import { db, storage } from '@/lib/firebase';
-import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, query, where, writeBatch, runTransaction } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, runTransaction, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
+
+type ProductFormData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'imageUrl' | 'imageHint' | 'imagePath'>;
+
 
 // In a real app, this would come from a database.
 // For this project, we use mock data.
@@ -61,9 +64,9 @@ const addProductFirebase = async (productData: ProductFormData, imageFile: File)
 
     const docRef = doc(db, 'products', newProductId);
 
-    const newProduct: Omit<Product, 'id'> = {
-        ...productData,
+    const newProduct: Product = {
         id: newProductId,
+        ...productData,
         popularity: Math.floor(Math.random() * 50) / 10 + 1,
         reviews: [],
         imageUrl,
@@ -71,7 +74,7 @@ const addProductFirebase = async (productData: ProductFormData, imageFile: File)
         imageHint: 'paint can',
     };
     
-    await addDoc(productsCollection, newProduct);
+    await setDoc(docRef, newProduct);
     
     return docRef.id;
 };
@@ -106,7 +109,7 @@ const deleteProductFirebase = async (productId: string): Promise<void> => {
     
     if (product.imagePath) {
         const imageRef = ref(storage, product.imagePath);
-        await deleteObject(imageRef);
+        await deleteObject(imageRef).catch(e => console.error("Failed to delete product image", e));
     }
     await deleteDoc(docRef);
 };
