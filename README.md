@@ -2,9 +2,6 @@
 
 This is a NextJS starter in Firebase Studio.
 
-To get started, take a look at src/app/page.tsx.
-# first_impression
-
 ## Running the Project Locally
 
 To run this project on your local machine, you must configure your Firebase credentials.
@@ -18,9 +15,9 @@ To run this project on your local machine, you must configure your Firebase cred
     *   Enable Firestore and Storage in your Firebase project.
 
 2.  **Configure Environment Variables:**
-    *   In the root directory of this project, find the file named `.env.local.example`.
-    *   Create a copy of this file and rename it to `.env.local`.
-    *   Open `.env.local` and replace the placeholder values (like `YOUR_API_KEY`) with the actual credentials you copied from your Firebase project settings.
+    *   In the root directory of this project, create a new file named `.env.local`.
+    *   Copy the content from the `.env.local.example` file into your new `.env.local` file.
+    *   Replace the placeholder values (like `YOUR_API_KEY`) with the actual credentials you copied from your Firebase project settings.
 
     Your `.env.local` file should look something like this:
     ```
@@ -31,4 +28,8 @@ To run this project on your local machine, you must configure your Firebase cred
     NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="1234567890"
     NEXT_PUBLIC_FIREBASE_APP_ID="1:1234567890:web:abcdef123456"
     ```
-3. **Run the app**: Once your `.env.local` is configured, you can run the app without credential errors.
+3. **Install Dependencies and Run:**
+    *   Open a terminal in the project directory.
+    *   Run `npm install` to install all the required packages.
+    *   Run `npm run dev` to start the local development server.
+    *   Open your browser and go to `http://localhost:9002` to see your app running.

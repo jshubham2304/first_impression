@@ -7,17 +7,17 @@ import { getRemoteConfig } from "firebase/remote-config";
 // Your web app's Firebase configuration.
 // For production, it's recommended to load these from environment variables.
 const firebaseConfig = {
-  apiKey: "AIzaSyA328cOcUnh1t_t4ebAgX34EpSQA_-t-jA",
-  authDomain: "exampletest-be77e.firebaseapp.com",
-  projectId: "exampletest-be77e",
-  storageBucket: "exampletest-be77e.appspot.com",
-  messagingSenderId: "388649945103",
-  appId: "1:388649945103:web:f2a9a100801d4059047b7a"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
 // Warn if the config is using placeholder values.
-if (firebaseConfig.projectId === "your-project-id") {
-    console.warn('Firebase configuration is using placeholder values. Please copy .env.local.example to .env.local and add your project credentials for full functionality.');
+if (!firebaseConfig.projectId || firebaseConfig.projectId === 'YOUR_PROJECT_ID') {
+    console.warn('Firebase configuration is missing or using placeholder values. Please copy .env.local.example to .env.local and add your project credentials for full functionality.');
 }
 
 // Initialize Firebase
