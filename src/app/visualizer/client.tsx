@@ -42,6 +42,8 @@ type VisualizerClientProps = {
 export function VisualizerClient({ initialColors }: VisualizerClientProps) {
   const [selectedColor, setSelectedColor] = useState(initialColors?.[0]?.hex || '#ffffff');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [baseImage, setBaseImage] = useState('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1200&auto=format&fit=crop');
+  const [overlayImage, setOverlayImage] = useState('/overlays/living-room-walls.png');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -60,6 +62,8 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setUploadedImage(reader.result as string);
+        setBaseImage(reader.result as string);
+        setOverlayImage('/overlays/blank.png');
       };
       reader.readAsDataURL(file);
     }
@@ -73,7 +77,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
           <CardContent className="p-4">
             <div className="relative w-full aspect-[4/3] bg-muted-foreground/10 rounded-lg overflow-hidden">
               <Image
-                src={uploadedImage || "https://placehold.co/1200x900.png"}
+                src={baseImage}
                 alt="Living room with sofa and window"
                 data-ai-hint="modern living room"
                 fill
@@ -83,16 +87,14 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                 className="absolute inset-0 z-10"
                 style={{ mixBlendMode: 'multiply', backgroundColor: selectedColor }}
               />
-              {!uploadedImage && (
-                <Image
-                  src="https://placehold.co/1200x900/e2e8f0/e2e8f0.png"
-                  alt="Living room highlights"
-                  data-ai-hint="room lighting"
-                  fill
-                  className="object-cover z-20"
-                  style={{ mixBlendMode: 'screen' }}
-                />
-              )}
+              <Image
+                src={overlayImage}
+                alt="Living room highlights"
+                data-ai-hint="room lighting"
+                fill
+                className="object-cover z-20"
+                style={{ mixBlendMode: 'screen' }}
+              />
             </div>
           </CardContent>
         </Card>

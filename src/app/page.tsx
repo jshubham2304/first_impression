@@ -22,11 +22,12 @@ export default async function HomePage() {
     <div className="flex flex-col">
       <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center text-center text-white">
         <Image
-          src="https://placehold.co/1920x1080.png"
+          src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?q=80&w=1920&auto=format&fit=crop"
           alt="Beautifully painted modern house exterior"
           data-ai-hint="house exterior paint"
           fill
           className="object-cover -z-10"
+          priority
         />
         <div className="absolute inset-0 bg-primary/60 -z-10" />
         <div className="container px-4 md:px-6">
