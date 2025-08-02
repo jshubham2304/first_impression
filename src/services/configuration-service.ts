@@ -4,85 +4,50 @@ import type { ProductAttributes, SiteSettings } from '@/lib/types';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
-
-if (USE_FIREBASE) {
-    console.log('Configuration Service: Using Firebase');
-} else {
-    console.log('Configuration Service: Using Mock Data');
-}
-
-// --- Mock Data ---
-let mockAttributes: ProductAttributes = {
+// Default data to seed Firestore if it's empty
+const defaultAttributes: ProductAttributes = {
     brands: ['Prestige Paints', 'GreenSheen', 'ProTect', 'Pure Hues', 'MetroPaints', 'GoldenRay'],
     finishes: ['Matte', 'Satin', 'Semi-Gloss', 'Gloss'],
     colorFamilies: ['Reds', 'Blues', 'Greens', 'Yellows', 'Neutrals', 'Whites'],
     categories: ['Interior', 'Exterior', 'Texture', 'Wood'],
 };
 
-let mockSiteSettings: SiteSettings = {
+const defaultSiteSettings: SiteSettings = {
     visibleLinks: ["Home", "Paints", "Services", "Visualizer", "Get Estimate"],
 };
 
 
 // --- Firebase Implementation ---
 
-const getProductAttributesFirebase = async (): Promise<ProductAttributes> => {
+export const getProductAttributes = async (): Promise<ProductAttributes> => {
     const attributesDocRef = doc(db, 'configuration', 'productAttributes');
     const docSnap = await getDoc(attributesDocRef);
     if (docSnap.exists()) {
         return docSnap.data() as ProductAttributes;
     }
-    // If it doesn't exist in Firestore, create it from mock data
-    await setDoc(attributesDocRef, mockAttributes);
-    return mockAttributes;
+    // If it doesn't exist in Firestore, create it from default data
+    console.log("No product attributes found in Firebase. Seeding with default data.");
+    await setDoc(attributesDocRef, defaultAttributes);
+    return defaultAttributes;
 };
 
-const updateProductAttributesFirebase = async (attributes: Partial<ProductAttributes>): Promise<void> => {
+export const updateProductAttributes = async (attributes: Partial<ProductAttributes>): Promise<void> => {
     const attributesDocRef = doc(db, 'configuration', 'productAttributes');
     await setDoc(attributesDocRef, attributes, { merge: true });
 };
 
-const getSiteSettingsFirebase = async (): Promise<SiteSettings> => {
+export const getSiteSettings = async (): Promise<SiteSettings> => {
     const siteSettingsDocRef = doc(db, 'configuration', 'siteSettings');
     const docSnap = await getDoc(siteSettingsDocRef);
     if (docSnap.exists()) {
         return docSnap.data() as SiteSettings;
     }
-    await setDoc(siteSettingsDocRef, mockSiteSettings);
-    return mockSiteSettings;
+    console.log("No site settings found in Firebase. Seeding with default data.");
+    await setDoc(siteSettingsDocRef, defaultSiteSettings);
+    return defaultSiteSettings;
 };
 
-const updateSiteSettingsFirebase = async (settings: Partial<SiteSettings>): Promise<void> => {
+export const updateSiteSettings = async (settings: Partial<SiteSettings>): Promise<void> => {
     const siteSettingsDocRef = doc(db, 'configuration', 'siteSettings');
     await setDoc(siteSettingsDocRef, settings, { merge: true });
 };
-
-
-// --- Mock Implementation ---
-
-const getProductAttributesMock = async (): Promise<ProductAttributes> => {
-    return Promise.resolve(mockAttributes);
-};
-
-const updateProductAttributesMock = async (attributes: Partial<ProductAttributes>): Promise<void> => {
-    mockAttributes = { ...mockAttributes, ...attributes };
-    return Promise.resolve();
-};
-
-const getSiteSettingsMock = async (): Promise<SiteSettings> => {
-    return Promise.resolve(mockSiteSettings);
-};
-
-const updateSiteSettingsMock = async (settings: Partial<SiteSettings>): Promise<void> => {
-    mockSiteSettings = { ...mockSiteSettings, ...settings };
-    return Promise.resolve();
-};
-
-
-// --- Exports ---
-
-export const getProductAttributes = USE_FIREBASE ? getProductAttributesFirebase : getProductAttributesMock;
-export const updateProductAttributes = USE_FIREBASE ? updateProductAttributesFirebase : updateProductAttributesMock;
-export const getSiteSettings = USE_FIREBASE ? getSiteSettingsFirebase : getSiteSettingsMock;
-export const updateSiteSettings = USE_FIREBASE ? updateSiteSettingsFirebase : updateSiteSettingsMock;

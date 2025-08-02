@@ -4,8 +4,6 @@ import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getFirestore, type Firestore } from "firebase/firestore";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
 
-const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -19,21 +17,13 @@ const firebaseConfig = {
 
 // Initialize Firebase
 let app: FirebaseApp;
-let db: Firestore | null;
-let storage: FirebaseStorage | null;
+let db: Firestore;
+let storage: FirebaseStorage;
 
-if (USE_FIREBASE) {
-    console.log('Firebase: Initializing services...');
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-    db = getFirestore(app);
-    storage = getStorage(app);
-    console.log('Firebase: Firestore and Storage initialized.');
-} else {
-    console.log('Firebase: Skipping initialization (mock mode).');
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApp(); // still needed for some sdk
-    db = null;
-    storage = null;
-}
-
+console.log('Firebase: Initializing services...');
+app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+db = getFirestore(app);
+storage = getStorage(app);
+console.log('Firebase: Firestore and Storage initialized.');
 
 export { app, db, storage };
