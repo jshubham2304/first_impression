@@ -22,15 +22,15 @@ let mockEstimations: EstimationRequest[] = [];
 
 // --- Firebase Implementation ---
 
-const estimationsCollection = collection(db, 'estimations');
-
 const getEstimationsFirebase = async (): Promise<EstimationRequest[]> => {
+    const estimationsCollection = collection(db, 'estimations');
     const q = query(estimationsCollection, orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as EstimationRequest));
 };
 
 const addEstimationRequestFirebase = async (data: EstimationFormData, photoFile?: File): Promise<string> => {
+    const estimationsCollection = collection(db, 'estimations');
     const newEstimation: Omit<EstimationRequest, 'id'> = {
         ...data,
         createdAt: new Date().toISOString(),
@@ -57,7 +57,7 @@ const deleteEstimationRequestFirebase = async (estimationId: string): Promise<vo
     }
     const estimation = estimationSnap.data() as EstimationRequest;
 
-    if (estimation.photoPath) {
+    if (estimation.photoPath && storage) {
         await deleteObject(ref(storage, estimation.photoPath));
     }
     await deleteDoc(docRef);

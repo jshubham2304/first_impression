@@ -48,9 +48,8 @@ let mockProducts: Product[] = [
 
 // --- Firebase Implementation ---
 
-const productsCollection = collection(db, 'products');
-
 const getProductsFirebase = async (): Promise<Product[]> => {
+    const productsCollection = collection(db, 'products');
     const snapshot = await getDocs(productsCollection);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
 };
@@ -94,7 +93,7 @@ const updateProductFirebase = async (productId: string, productData: Partial<Pro
     if (imageFile) {
         const productSnap = await getDoc(docRef);
         const existingProduct = productSnap.data() as Product;
-        if (existingProduct.imagePath) {
+        if (existingProduct.imagePath && storage) {
             const oldImageRef = ref(storage, existingProduct.imagePath);
             await deleteObject(oldImageRef).catch(e => console.error("Could not delete old image", e));
         }
@@ -114,7 +113,7 @@ const deleteProductFirebase = async (productId: string): Promise<void> => {
     const productSnap = await getDoc(docRef);
     const product = productSnap.data() as Product;
     
-    if (product.imagePath) {
+    if (product.imagePath && storage) {
         const imageRef = ref(storage, product.imagePath);
         await deleteObject(imageRef).catch(e => console.error("Failed to delete product image", e));
     }

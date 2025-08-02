@@ -27,15 +27,15 @@ let mockColors: VisualizerColor[] = [
 
 // --- Firebase Implementation ---
 
-const colorsCollection = collection(db, 'visualizerColors');
-
 const getVisualizerColorsFirebase = async (): Promise<VisualizerColor[]> => {
+    const colorsCollection = collection(db, 'visualizerColors');
     const q = query(colorsCollection, orderBy('name'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as VisualizerColor));
 };
 
 const addVisualizerColorFirebase = async (data: ColorData): Promise<string> => {
+    const colorsCollection = collection(db, 'visualizerColors');
     const docRef = await addDoc(colorsCollection, data);
     return docRef.id;
 };

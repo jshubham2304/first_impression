@@ -27,10 +27,8 @@ let mockSiteSettings: SiteSettings = {
 
 // --- Firebase Implementation ---
 
-const attributesDocRef = doc(db, 'configuration', 'productAttributes');
-const siteSettingsDocRef = doc(db, 'configuration', 'siteSettings');
-
 const getProductAttributesFirebase = async (): Promise<ProductAttributes> => {
+    const attributesDocRef = doc(db, 'configuration', 'productAttributes');
     const docSnap = await getDoc(attributesDocRef);
     if (docSnap.exists()) {
         return docSnap.data() as ProductAttributes;
@@ -41,10 +39,12 @@ const getProductAttributesFirebase = async (): Promise<ProductAttributes> => {
 };
 
 const updateProductAttributesFirebase = async (attributes: Partial<ProductAttributes>): Promise<void> => {
+    const attributesDocRef = doc(db, 'configuration', 'productAttributes');
     await setDoc(attributesDocRef, attributes, { merge: true });
 };
 
 const getSiteSettingsFirebase = async (): Promise<SiteSettings> => {
+    const siteSettingsDocRef = doc(db, 'configuration', 'siteSettings');
     const docSnap = await getDoc(siteSettingsDocRef);
     if (docSnap.exists()) {
         return docSnap.data() as SiteSettings;
@@ -54,6 +54,7 @@ const getSiteSettingsFirebase = async (): Promise<SiteSettings> => {
 };
 
 const updateSiteSettingsFirebase = async (settings: Partial<SiteSettings>): Promise<void> => {
+    const siteSettingsDocRef = doc(db, 'configuration', 'siteSettings');
     await setDoc(siteSettingsDocRef, settings, { merge: true });
 };
 
