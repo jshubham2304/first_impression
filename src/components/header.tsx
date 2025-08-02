@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  PaintBucket,
   User,
   LogIn,
   LogOut,
@@ -35,6 +34,7 @@ import { useCart } from "@/context/cart-context";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "./ui/skeleton";
 import { useSiteSettings } from "@/context/settings-context";
+import { BrandIcon } from "./icons/brand-icon";
 
 export function Header() {
   const { user, logout, isLoading: isAuthLoading } = useAuth();
@@ -142,7 +142,7 @@ export function Header() {
       <div className="container flex h-16 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <PaintBucket className="h-6 w-6 text-primary" />
+            <BrandIcon className="h-6 w-6 text-primary" />
             <span className="hidden font-bold sm:inline-block font-headline">
               First Impression
             </span>
@@ -163,7 +163,7 @@ export function Header() {
                 <SheetDescription className="sr-only">Main navigation menu for the mobile site.</SheetDescription>
               </SheetHeader>
                <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
-                <PaintBucket className="h-6 w-6 text-primary" />
+                <BrandIcon className="h-6 w-6 text-primary" />
                 <span className="font-bold font-headline">
                   First Impression
                 </span>

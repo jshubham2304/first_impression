@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { PaintBucket } from 'lucide-react';
+import { BrandIcon } from './icons/brand-icon';
 
 const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -29,7 +29,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="flex flex-col space-y-4">
             <Link href="/" className="flex items-center space-x-2">
-              <PaintBucket className="h-6 w-6 text-primary" />
+              <BrandIcon className="h-6 w-6 text-primary" />
               <span className="font-bold text-lg font-headline">First Impression</span>
             </Link>
             <p className="text-muted-foreground text-sm">

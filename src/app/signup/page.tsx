@@ -10,10 +10,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { GoogleIcon } from "@/components/icons/google";
-import { PaintBucket } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
+import { BrandIcon } from "@/components/icons/brand-icon";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
@@ -59,7 +59,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link href="/" className="mb-4 flex items-center justify-center space-x-2">
-            <PaintBucket className="h-7 w-7 text-primary" />
+            <BrandIcon className="h-7 w-7 text-primary" />
             <span className="text-2xl font-bold font-headline">First Impression</span>
           </Link>
           <CardTitle className="text-2xl font-headline">Create an Account</CardTitle>

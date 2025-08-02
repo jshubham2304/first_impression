@@ -8,8 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAdminAuth } from '@/hooks/use-admin-auth';
-import { Loader2, PaintBucket } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { BrandIcon } from '@/components/icons/brand-icon';
 
 export default function AdminPinPage() {
     const [pin, setPin] = useState('');
@@ -57,7 +58,7 @@ export default function AdminPinPage() {
             <Card className="w-full max-w-sm">
                 <CardHeader className="text-center">
                     <Link href="/" className="mb-4 flex items-center justify-center space-x-2">
-                        <PaintBucket className="h-7 w-7 text-primary" />
+                        <BrandIcon className="h-7 w-7 text-primary" />
                         <span className="text-2xl font-bold font-headline">First Impression</span>
                     </Link>
                     <CardTitle className="text-2xl font-headline">Admin Access</CardTitle>
