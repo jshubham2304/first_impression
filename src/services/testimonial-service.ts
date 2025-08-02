@@ -8,6 +8,12 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage
 
 const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
 
+if (USE_FIREBASE) {
+    console.log('Testimonial Service: Using Firebase');
+} else {
+    console.log('Testimonial Service: Using Mock Data');
+}
+
 type TestimonialData = Omit<Testimonial, 'id' | 'imageUrl' | 'imagePath'>;
 
 // --- Mock Data ---
@@ -30,9 +36,8 @@ let mockTestimonials: Testimonial[] = [
 
 // --- Firebase Implementation ---
 
-const testimonialsCollection = collection(db, 'testimonials');
-
 const getTestimonialsFirebase = async (): Promise<Testimonial[]> => {
+    const testimonialsCollection = collection(db, 'testimonials');
     const q = query(testimonialsCollection, orderBy('priority'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial));
@@ -45,6 +50,7 @@ const getTestimonialFirebase = async (id: string): Promise<Testimonial | null> =
 };
 
 const addTestimonialFirebase = async (data: TestimonialData, imageFile?: File): Promise<string> => {
+    const testimonialsCollection = collection(db, 'testimonials');
     const newTestimonial: Omit<Testimonial, 'id'> = { ...data };
     
     if (imageFile) {
@@ -68,7 +74,7 @@ const updateTestimonialFirebase = async (id: string, data: Partial<TestimonialDa
     if (imageFile) {
         const testimonialSnap = await getDoc(docRef);
         const existing = testimonialSnap.data() as Testimonial;
-        if (existing.imagePath) {
+        if (existing.imagePath && storage) {
             await deleteObject(ref(storage, existing.imagePath)).catch(e => console.error("Failed to delete old image", e));
         }
 
@@ -85,9 +91,13 @@ const updateTestimonialFirebase = async (id: string, data: Partial<TestimonialDa
 const deleteTestimonialFirebase = async (id: string): Promise<void> => {
     const docRef = doc(db, 'testimonials', id);
     const testimonialSnap = await getDoc(docRef);
+    if (!testimonialSnap.exists()) {
+        console.error(`Testimonial with id ${id} not found.`);
+        return;
+    }
     const testimonial = testimonialSnap.data() as Testimonial;
 
-    if (testimonial.imagePath) {
+    if (testimonial.imagePath && storage) {
         await deleteObject(ref(storage, testimonial.imagePath));
     }
     await deleteDoc(docRef);

@@ -7,6 +7,12 @@ import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc, orderBy, query 
 
 const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
 
+if (USE_FIREBASE) {
+    console.log('Visualizer Color Service: Using Firebase');
+} else {
+    console.log('Visualizer Color Service: Using Mock Data');
+}
+
 type ColorData = Omit<VisualizerColor, 'id'>;
 
 // --- Mock Data ---
@@ -21,15 +27,15 @@ let mockColors: VisualizerColor[] = [
 
 // --- Firebase Implementation ---
 
-const colorsCollection = collection(db, 'visualizerColors');
-
 const getVisualizerColorsFirebase = async (): Promise<VisualizerColor[]> => {
+    const colorsCollection = collection(db, 'visualizerColors');
     const q = query(colorsCollection, orderBy('name'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as VisualizerColor));
 };
 
 const addVisualizerColorFirebase = async (data: ColorData): Promise<string> => {
+    const colorsCollection = collection(db, 'visualizerColors');
     const docRef = await addDoc(colorsCollection, data);
     return docRef.id;
 };

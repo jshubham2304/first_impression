@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -13,7 +14,6 @@ import { GoogleIcon } from "@/components/icons/google";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
-import { BrandIcon } from "@/components/icons/brand-icon";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
@@ -59,7 +59,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link href="/" className="mb-4 flex items-center justify-center space-x-2">
-            <BrandIcon className="h-7 w-7 text-primary" />
+            <Image src="https://placehold.co/40x40.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={28} height={28} />
             <span className="text-2xl font-bold font-headline">First Impression</span>
           </Link>
           <CardTitle className="text-2xl font-headline">Create an Account</CardTitle>

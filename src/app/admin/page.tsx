@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +11,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useAdminAuth } from '@/hooks/use-admin-auth';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { BrandIcon } from '@/components/icons/brand-icon';
 
 export default function AdminPinPage() {
     const [pin, setPin] = useState('');
@@ -58,7 +58,7 @@ export default function AdminPinPage() {
             <Card className="w-full max-w-sm">
                 <CardHeader className="text-center">
                     <Link href="/" className="mb-4 flex items-center justify-center space-x-2">
-                        <BrandIcon className="h-7 w-7 text-primary" />
+                        <Image src="https://placehold.co/40x40.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={28} height={28} />
                         <span className="text-2xl font-bold font-headline">First Impression</span>
                     </Link>
                     <CardTitle className="text-2xl font-headline">Admin Access</CardTitle>

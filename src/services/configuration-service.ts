@@ -6,6 +6,12 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
 
+if (USE_FIREBASE) {
+    console.log('Configuration Service: Using Firebase');
+} else {
+    console.log('Configuration Service: Using Mock Data');
+}
+
 // --- Mock Data ---
 let mockAttributes: ProductAttributes = {
     brands: ['Prestige Paints', 'GreenSheen', 'ProTect', 'Pure Hues', 'MetroPaints', 'GoldenRay'],
@@ -21,10 +27,8 @@ let mockSiteSettings: SiteSettings = {
 
 // --- Firebase Implementation ---
 
-const attributesDocRef = doc(db, 'configuration', 'productAttributes');
-const siteSettingsDocRef = doc(db, 'configuration', 'siteSettings');
-
 const getProductAttributesFirebase = async (): Promise<ProductAttributes> => {
+    const attributesDocRef = doc(db, 'configuration', 'productAttributes');
     const docSnap = await getDoc(attributesDocRef);
     if (docSnap.exists()) {
         return docSnap.data() as ProductAttributes;
@@ -35,10 +39,12 @@ const getProductAttributesFirebase = async (): Promise<ProductAttributes> => {
 };
 
 const updateProductAttributesFirebase = async (attributes: Partial<ProductAttributes>): Promise<void> => {
+    const attributesDocRef = doc(db, 'configuration', 'productAttributes');
     await setDoc(attributesDocRef, attributes, { merge: true });
 };
 
 const getSiteSettingsFirebase = async (): Promise<SiteSettings> => {
+    const siteSettingsDocRef = doc(db, 'configuration', 'siteSettings');
     const docSnap = await getDoc(siteSettingsDocRef);
     if (docSnap.exists()) {
         return docSnap.data() as SiteSettings;
@@ -48,6 +54,7 @@ const getSiteSettingsFirebase = async (): Promise<SiteSettings> => {
 };
 
 const updateSiteSettingsFirebase = async (settings: Partial<SiteSettings>): Promise<void> => {
+    const siteSettingsDocRef = doc(db, 'configuration', 'siteSettings');
     await setDoc(siteSettingsDocRef, settings, { merge: true });
 };
 

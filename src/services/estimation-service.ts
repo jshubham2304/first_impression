@@ -3,10 +3,16 @@
 import type { EstimationRequest } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
 import { db, storage } from '@/lib/firebase';
-import { collection, getDocs, doc, addDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, addDoc, deleteDoc, query, orderBy, getDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
+
+if (USE_FIREBASE) {
+    console.log('Estimation Service: Using Firebase');
+} else {
+    console.log('Estimation Service: Using Mock Data');
+}
 
 type EstimationFormData = Omit<EstimationRequest, 'id' | 'createdAt' | 'photoUrl' | 'photoPath'>;
 
@@ -16,15 +22,15 @@ let mockEstimations: EstimationRequest[] = [];
 
 // --- Firebase Implementation ---
 
-const estimationsCollection = collection(db, 'estimations');
-
 const getEstimationsFirebase = async (): Promise<EstimationRequest[]> => {
+    const estimationsCollection = collection(db, 'estimations');
     const q = query(estimationsCollection, orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as EstimationRequest));
 };
 
 const addEstimationRequestFirebase = async (data: EstimationFormData, photoFile?: File): Promise<string> => {
+    const estimationsCollection = collection(db, 'estimations');
     const newEstimation: Omit<EstimationRequest, 'id'> = {
         ...data,
         createdAt: new Date().toISOString(),
@@ -44,10 +50,14 @@ const addEstimationRequestFirebase = async (data: EstimationFormData, photoFile?
 
 const deleteEstimationRequestFirebase = async (estimationId: string): Promise<void> => {
     const docRef = doc(db, 'estimations', estimationId);
-    const estimationSnap = await docRef.get();
+    const estimationSnap = await getDoc(docRef);
+    if (!estimationSnap.exists()) {
+        console.error(`Estimation with id ${estimationId} not found.`);
+        return;
+    }
     const estimation = estimationSnap.data() as EstimationRequest;
 
-    if (estimation.photoPath) {
+    if (estimation.photoPath && storage) {
         await deleteObject(ref(storage, estimation.photoPath));
     }
     await deleteDoc(docRef);
