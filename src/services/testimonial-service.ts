@@ -8,6 +8,12 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage
 
 const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
 
+if (USE_FIREBASE) {
+    console.log('Testimonial Service: Using Firebase');
+} else {
+    console.log('Testimonial Service: Using Mock Data');
+}
+
 type TestimonialData = Omit<Testimonial, 'id' | 'imageUrl' | 'imagePath'>;
 
 // --- Mock Data ---
@@ -85,6 +91,10 @@ const updateTestimonialFirebase = async (id: string, data: Partial<TestimonialDa
 const deleteTestimonialFirebase = async (id: string): Promise<void> => {
     const docRef = doc(db, 'testimonials', id);
     const testimonialSnap = await getDoc(docRef);
+    if (!testimonialSnap.exists()) {
+        console.error(`Testimonial with id ${id} not found.`);
+        return;
+    }
     const testimonial = testimonialSnap.data() as Testimonial;
 
     if (testimonial.imagePath) {

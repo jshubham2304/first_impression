@@ -8,6 +8,13 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage
 
 const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
 
+if (USE_FIREBASE) {
+    console.log('Product Service: Using Firebase');
+} else {
+    console.log('Product Service: Using Mock Data');
+}
+
+
 type ProductFormData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'imageUrl' | 'imageHint' | 'imagePath'>;
 
 

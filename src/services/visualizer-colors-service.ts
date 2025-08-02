@@ -7,6 +7,12 @@ import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc, orderBy, query 
 
 const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
 
+if (USE_FIREBASE) {
+    console.log('Visualizer Color Service: Using Firebase');
+} else {
+    console.log('Visualizer Color Service: Using Mock Data');
+}
+
 type ColorData = Omit<VisualizerColor, 'id'>;
 
 // --- Mock Data ---

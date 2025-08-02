@@ -6,6 +6,12 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const USE_FIREBASE = process.env.NEXT_PUBLIC_USE_FIREBASE === 'true';
 
+if (USE_FIREBASE) {
+    console.log('Configuration Service: Using Firebase');
+} else {
+    console.log('Configuration Service: Using Mock Data');
+}
+
 // --- Mock Data ---
 let mockAttributes: ProductAttributes = {
     brands: ['Prestige Paints', 'GreenSheen', 'ProTect', 'Pure Hues', 'MetroPaints', 'GoldenRay'],
