@@ -18,7 +18,7 @@ const formSchema = z.object({
   author: z.string().min(2, "Author name is too short"),
   comment: z.string().min(10, "Comment is too short"),
   priority: z.coerce.number().int().min(0, "Priority must be a positive number"),
-  image: z.any().optional(),
+  imageUrl: z.string().url("Please enter a valid URL").optional().or(z.literal('')),
 });
 
 type TestimonialFormProps = {
@@ -36,21 +36,18 @@ export function TestimonialForm({ testimonial, onSuccess }: TestimonialFormProps
       author: testimonial?.author || '',
       comment: testimonial?.comment || '',
       priority: testimonial?.priority || 0,
-      image: undefined,
+      imageUrl: testimonial?.imageUrl || '',
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
-      const { image, ...data } = values;
-      const imageFile = image?.[0];
-
       if (testimonial) {
-        await updateTestimonial(testimonial.id, data, imageFile);
+        await updateTestimonial(testimonial.id, values);
         toast({ title: 'Success', description: 'Testimonial updated successfully.' });
       } else {
-        await addTestimonial(data, imageFile);
+        await addTestimonial(values);
         toast({ title: 'Success', description: 'Testimonial added successfully.' });
       }
       onSuccess();
@@ -100,12 +97,12 @@ export function TestimonialForm({ testimonial, onSuccess }: TestimonialFormProps
         />
         <FormField
           control={form.control}
-          name="image"
+          name="imageUrl"
           render={({ field }) => (
              <FormItem>
-                <Label>Author Image (Optional)</Label>
+                <Label>Author Image URL (Optional)</Label>
                 <FormControl>
-                    <Input type="file" accept="image/*" onChange={(e) => field.onChange(e.target.files)} />
+                    <Input placeholder="https://..." {...field} />
                 </FormControl>
                  <FormMessage />
              </FormItem>

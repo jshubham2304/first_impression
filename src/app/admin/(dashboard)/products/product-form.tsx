@@ -34,7 +34,7 @@ const formSchema = z.object({
   finish: z.string().min(1, "Finish is required"),
   colorFamily: z.string().min(1, "Color family is required"),
   isActive: z.boolean().default(true),
-  image: z.any().optional(),
+  imageUrl: z.string().url("Please enter a valid URL").min(1, "Image URL is required"),
   variants: z.array(variantSchema).min(1, "At least one color variant is required."),
 });
 
@@ -67,7 +67,7 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
       finish: product?.finish || '',
       colorFamily: product?.colorFamily || '',
       isActive: product?.isActive ?? true,
-      image: undefined,
+      imageUrl: product?.imageUrl || '',
       variants: product?.variants && product.variants.length > 0 ? product.variants : [{ name: 'Default', hex: '#ffffff', stock: 10 }],
     },
   });
@@ -85,7 +85,6 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
         form.reset({
             ...product,
             price: product.price || 0,
-            image: undefined,
         });
     }
   }, [attributes, product, form]);
@@ -99,22 +98,14 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
-      const { image, ...productData } = values;
-      const imageFile = image?.[0];
-
       const totalStock = values.variants.reduce((sum, variant) => sum + variant.stock, 0);
-      const dataWithStock = { ...productData, stock: totalStock };
+      const dataWithStock = { ...values, stock: totalStock };
 
       if (product) {
-        await updateProduct(product.id, dataWithStock, imageFile);
+        await updateProduct(product.id, dataWithStock);
         toast({ title: 'Success', description: 'Product updated successfully.' });
       } else {
-        if (!imageFile) {
-            form.setError('image', { type: 'manual', message: 'An image is required for a new product.' });
-            setIsSubmitting(false);
-            return;
-        }
-        await addProduct(dataWithStock, imageFile);
+        await addProduct(dataWithStock);
         toast({ title: 'Success', description: 'Product added successfully.' });
       }
       onSuccess();
@@ -191,7 +182,7 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
           )}/>
         </div>
         
-        <FormField control={form.control} name="image" render={({ field }) => ( <FormItem><Label>Product Image</Label><FormControl><Input type="file" accept="image/*" onChange={(e) => field.onChange(e.target.files)} /></FormControl><FormMessage /></FormItem> )}/>
+        <FormField control={form.control} name="imageUrl" render={({ field }) => ( <FormItem><FormLabel>Product Image URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem> )}/>
         
         <Card>
           <CardHeader><CardTitle>Color Variants</CardTitle></CardHeader>

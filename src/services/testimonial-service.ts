@@ -2,11 +2,11 @@
 
 import type { Testimonial } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
-import { db, storage } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, orderBy, query, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+// import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
-type TestimonialData = Omit<Testimonial, 'id' | 'imageUrl' | 'imagePath'>;
+type TestimonialData = Omit<Testimonial, 'id' | 'imagePath'>;
 
 // --- Firebase Implementation ---
 
@@ -49,17 +49,11 @@ export const getTestimonial = async (id: string): Promise<Testimonial | null> =>
     return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as Testimonial : null;
 };
 
-export const addTestimonial = async (data: TestimonialData, imageFile?: File): Promise<string> => {
+export const addTestimonial = async (data: TestimonialData): Promise<string> => {
     const testimonialsCollection = collection(db, 'testimonials');
     const newTestimonial: Omit<Testimonial, 'id'> = { ...data };
     
-    if (imageFile) {
-        const imagePath = `testimonials/${uuidv4()}/${imageFile.name}`;
-        const storageRef = ref(storage, imagePath);
-        await uploadBytes(storageRef, imageFile);
-        newTestimonial.imageUrl = await getDownloadURL(storageRef);
-        newTestimonial.imagePath = imagePath;
-    } else {
+    if (!data.imageUrl) {
         newTestimonial.imageUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.author)}`;
     }
 
@@ -67,38 +61,24 @@ export const addTestimonial = async (data: TestimonialData, imageFile?: File): P
     return docRef.id;
 };
 
-export const updateTestimonial = async (id: string, data: Partial<TestimonialData>, imageFile?: File): Promise<void> => {
+export const updateTestimonial = async (id: string, data: Partial<TestimonialData>): Promise<void> => {
     const docRef = doc(db, 'testimonials', id);
     const updateData: Partial<Testimonial> = { ...data };
-
-    if (imageFile) {
-        const testimonialSnap = await getDoc(docRef);
-        const existing = testimonialSnap.data() as Testimonial;
-        if (existing.imagePath && storage) {
-            await deleteObject(ref(storage, existing.imagePath)).catch(e => console.error("Failed to delete old image", e));
-        }
-
-        const imagePath = `testimonials/${id}/${imageFile.name}`;
-        const storageRef = ref(storage, imagePath);
-        await uploadBytes(storageRef, imageFile);
-        updateData.imageUrl = await getDownloadURL(storageRef);
-        updateData.imagePath = imagePath;
-    }
     
     await updateDoc(docRef, updateData);
 };
 
 export const deleteTestimonial = async (id: string): Promise<void> => {
     const docRef = doc(db, 'testimonials', id);
-    const testimonialSnap = await getDoc(docRef);
-    if (!testimonialSnap.exists()) {
-        console.error(`Testimonial with id ${id} not found.`);
-        return;
-    }
-    const testimonial = testimonialSnap.data() as Testimonial;
+    // const testimonialSnap = await getDoc(docRef);
+    // if (!testimonialSnap.exists()) {
+    //     console.error(`Testimonial with id ${id} not found.`);
+    //     return;
+    // }
+    // const testimonial = testimonialSnap.data() as Testimonial;
 
-    if (testimonial.imagePath && storage) {
-        await deleteObject(ref(storage, testimonial.imagePath));
-    }
+    // if (testimonial.imagePath && storage) {
+    //     await deleteObject(ref(storage, testimonial.imagePath));
+    // }
     await deleteDoc(docRef);
 };

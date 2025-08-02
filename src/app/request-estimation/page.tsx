@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Loader2 } from "lucide-react";
+import { Image as ImageIcon, Loader2 } from "lucide-react";
 import { addEstimationRequest } from "@/services/estimation-service";
 
 const formSchema = z.object({
@@ -28,7 +28,7 @@ const formSchema = z.object({
   phone: z.string().optional(),
   address: z.string().min(5, { message: "Please enter a valid address.", }),
   description: z.string().min(20, { message: "Please describe your project in at least 20 characters.", }),
-  photos: z.any().optional(),
+  photoUrl: z.string().url("Please enter a valid URL for the photo.").optional().or(z.literal('')),
 });
 
 export default function RequestEstimationPage() {
@@ -37,16 +37,13 @@ export default function RequestEstimationPage() {
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: { name: "", email: "", phone: "", address: "", description: "", },
+        defaultValues: { name: "", email: "", phone: "", address: "", description: "", photoUrl: "" },
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSubmitting(true);
         try {
-            const { photos, ...estimationData } = values;
-            const photoFile = photos?.[0];
-
-            await addEstimationRequest(estimationData, photoFile);
+            await addEstimationRequest(values);
             
             toast({
                 title: "Estimate Request Sent!",
@@ -86,17 +83,17 @@ export default function RequestEstimationPage() {
                                 <FormField control={form.control} name="address" render={({ field }) => ( <FormItem> <FormLabel>Project Address</FormLabel> <FormControl> <Input placeholder="123 Paint St, Colorville" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
                             </div>
                             <FormField control={form.control} name="description" render={({ field }) => ( <FormItem> <FormLabel>Project Description</FormLabel> <FormControl> <Textarea placeholder="e.g., I want to paint my living room (approx. 200 sq ft) and ceiling..." className="min-h-[120px]" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                            <FormField control={form.control} name="photos" render={({ field: { onChange, value, ...rest } }) => (
+                            <FormField control={form.control} name="photoUrl" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Upload Photos</FormLabel>
+                                    <FormLabel>Photo URL</FormLabel>
                                     <FormControl>
                                         <div className="relative">
-                                            <Input type="file" className="h-12 pl-12" accept="image/*" onChange={(e) => onChange(e.target.files)} {...rest} />
-                                            <Upload className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground"/>
+                                            <Input placeholder="https://..." className="pl-12" {...field} />
+                                            <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground"/>
                                         </div>
                                     </FormControl>
                                     <FormDescription>
-                                        Attach photos of the area you intend to paint.
+                                        Attach a URL to a photo of the area you intend to paint.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
