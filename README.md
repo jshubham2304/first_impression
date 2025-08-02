@@ -4,7 +4,7 @@ This is a NextJS starter in Firebase Studio.
 
 ## Running the Project Locally
 
-This project is configured to run with a full Firebase backend (for production or for local development connected to Firebase). You need to configure your Firebase project credentials to get started.
+This project is configured to run with a full Firebase backend for both production and local development. You need to configure your Firebase project credentials to get started.
 
 1.  **Install Dependencies:**
     *   Open a terminal in the project directory.
@@ -18,7 +18,12 @@ This project is configured to run with a full Firebase backend (for production o
 3.  **Get Firebase Config:**
     *   After creating the web app, Firebase will provide you with a `firebaseConfig` object. Keep this object handy.
 
-4.  **Create Environment File:**
+4. **Create `public` directory**
+    * In the root of your project, create a folder named `public`.
+    * Inside `public`, create another folder named `assets`.
+    * Place your `logo.jpeg` file inside the `public/assets` directory. Next.js automatically serves files from the `public` directory.
+
+5.  **Create Environment File:**
     *   In the root of your project directory, create a new file named `.env.local`.
     *   Add the following environment variables to this file, replacing the placeholder values with the ones from your `firebaseConfig` object.
 
@@ -32,11 +37,11 @@ This project is configured to run with a full Firebase backend (for production o
     NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
     ```
 
-5.  **Enable Firestore and Storage:**
+6.  **Enable Firestore and Storage:**
     *   In the Firebase Console, go to the **Firestore Database** section and create a database. Start in **test mode** for easy setup.
     *   Go to the **Storage** section and enable it.
 
-6.  **Run the Development Server:**
+7.  **Run the Development Server:**
     *   Run `npm run dev` to start the local development server.
     *   Open your browser and go to `http://localhost:9002` to see your app running.
     *   The first time you run the app, it will automatically seed your Firestore database with some default products, testimonials, and settings.
