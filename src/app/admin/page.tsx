@@ -76,7 +76,7 @@ export default function AdminPinPage() {
                                 maxLength={6}
                                 required
                                 className="text-center tracking-[1em]"
-                                placeholder="230498"
+                                placeholder="******"
                             />
                         </div>
                         <Button type="submit" className="w-full" disabled={isSubmitting || pin.length !== 6}>
