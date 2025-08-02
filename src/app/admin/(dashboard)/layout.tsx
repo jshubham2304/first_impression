@@ -2,6 +2,7 @@
 import { LayoutDashboard, LogOut, Package, ShoppingCart, MessageSquareText, Palette, Settings, Users, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 import {
     Sidebar,
@@ -14,7 +15,6 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Button } from '@/components/ui/button';
-import { BrandIcon } from '@/components/icons/brand-icon';
 import { AdminAuthGuard, useAdminAuth } from '@/hooks/use-admin-auth';
 
 const adminNavLinks = [
@@ -40,7 +40,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                         <div className="flex items-center gap-2">
                             <Button variant="ghost" size="icon" className="w-8 h-8" asChild>
                                 <Link href="/">
-                                    <BrandIcon />
+                                    <Image src="https://placehold.co/40x40.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={28} height={28} />
                                 </Link>
                             </Button>
                             <h2 className="font-bold text-lg group-data-[collapsible=icon]:hidden">
