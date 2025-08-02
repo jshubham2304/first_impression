@@ -1,4 +1,3 @@
-'use client';
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getFirestore, type Firestore } from "firebase/firestore";
@@ -20,10 +19,16 @@ let app: FirebaseApp;
 let db: Firestore;
 let storage: FirebaseStorage;
 
-console.log('Firebase: Initializing services...');
-app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-db = getFirestore(app);
-storage = getStorage(app);
-console.log('Firebase: Firestore and Storage initialized.');
+try {
+    console.log('Firebase: Initializing services...');
+    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+    db = getFirestore(app);
+    storage = getStorage(app);
+    console.log('Firebase: Firestore and Storage initialized.');
+} catch (error) {
+    console.error("Firebase initialization error", error);
+    // In a real app, you might want to handle this more gracefully
+}
+
 
 export { app, db, storage };
