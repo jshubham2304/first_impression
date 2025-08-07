@@ -101,7 +101,7 @@ export default async function HomePage() {
                       <p className="text-muted-foreground font-body flex-grow italic mb-6">"{testimonial.comment}"</p>
                       <footer className="mt-auto">
                           <Avatar className="w-16 h-16 mb-2 mx-auto border-4 border-card shadow-lg">
-                              <AvatarImage src={testimonial.imageUrl} alt={testimonial.author} />
+                              {testimonial.imageUrl && <AvatarImage src={testimonial.imageUrl} alt={testimonial.author} />}
                               <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
                           </Avatar>
                           <p className="font-headline font-semibold text-primary">{testimonial.author}</p>
