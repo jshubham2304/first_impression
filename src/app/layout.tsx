@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 import { AppContent } from "./app-content";
 
 export const metadata: Metadata = {
-  title: "Color Palette Pro",
+  title: "First Impression",
   description: "Professional painting and design services to make a lasting impression.",
 };
 

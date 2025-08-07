@@ -1,4 +1,4 @@
-# **App Name**: Color Palette Pro
+# **App Name**: First Impression
 
 ## Core Features:
 
