@@ -58,7 +58,7 @@ export default function AdminPinPage() {
             <Card className="w-full max-w-sm">
                 <CardHeader className="text-center">
                     <Link href="/" className="mb-4 flex items-center justify-center space-x-2">
-                        <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={32} height={32} />
+                        <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={40} height={40} />
                         <span className="text-2xl font-bold font-headline">First Impression</span>
                     </Link>
                     <CardTitle className="text-2xl font-headline">Admin Access</CardTitle>

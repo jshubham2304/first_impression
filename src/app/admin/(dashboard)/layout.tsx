@@ -40,7 +40,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                         <div className="flex items-center gap-2">
                             <Button variant="ghost" size="icon" className="w-8 h-8" asChild>
                                 <Link href="/">
-                                    <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={32} height={32} />
+                                    <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={40} height={40} />
                                 </Link>
                             </Button>
                             <h2 className="font-bold text-lg group-data-[collapsible=icon]:hidden">
