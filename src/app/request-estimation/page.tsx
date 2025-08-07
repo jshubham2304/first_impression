@@ -83,15 +83,15 @@ export default function RequestEstimationPage() {
                                 <FormField control={form.control} name="address" render={({ field }) => ( <FormItem> <FormLabel>Project Address</FormLabel> <FormControl> <Input placeholder="123 Paint St, Colorville" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
                             </div>
                             <FormField control={form.control} name="description" render={({ field }) => ( <FormItem> <FormLabel>Project Description</FormLabel> <FormControl> <Textarea placeholder="e.g., I want to paint my living room (approx. 200 sq ft) and ceiling..." className="min-h-[120px]" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                            <FormField control={form.control} name="photoUrl" render={({ field }) => (
+                             <FormField control={form.control} name="photoUrl" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Photo URL</FormLabel>
-                                    <FormControl>
-                                        <div className="relative">
-                                            <Input placeholder="https://..." className="pl-12" {...field} />
-                                            <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground"/>
-                                        </div>
-                                    </FormControl>
+                                    <div className="relative">
+                                        <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none"/>
+                                        <FormControl>
+                                            <Input placeholder="https://..." className="pl-10" {...field} />
+                                        </FormControl>
+                                    </div>
                                     <FormDescription>
                                         Attach a URL to a photo of the area you intend to paint.
                                     </FormDescription>
