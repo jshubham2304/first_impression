@@ -29,7 +29,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="flex flex-col space-y-4">
             <Link href="/" className="flex items-center space-x-2">
-              <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754545949/logo_lxaae2.jpg" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={24} height={24} />
+              <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754546514/logo_nfxywf.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={24} height={24} />
               <span className="font-bold text-lg font-headline">First Impression</span>
             </Link>
             <p className="text-muted-foreground text-sm">

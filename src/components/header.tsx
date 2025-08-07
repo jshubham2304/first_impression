@@ -142,7 +142,7 @@ export function Header() {
       <div className="container flex h-16 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-           <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754545949/logo_lxaae2.jpg" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={24} height={24} />
+           <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754546514/logo_nfxywf.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={24} height={24} />
             <span className="hidden font-bold sm:inline-block font-headline">
               First Impression
             </span>
@@ -163,7 +163,7 @@ export function Header() {
                 <SheetDescription className="sr-only">Main navigation menu for the mobile site.</SheetDescription>
               </SheetHeader>
                <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
-               <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754545949/logo_lxaae2.jpg" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={24} height={24} />
+               <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754546514/logo_nfxywf.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={24} height={24} />
                 <span className="font-bold font-headline">
                   First Impression
                 </span>
