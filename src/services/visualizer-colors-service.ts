@@ -7,14 +7,7 @@ import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc, orderBy, query,
 
 type ColorData = Omit<VisualizerColor, 'id'>;
 
-const defaultColors: VisualizerColor[] = [
-    { id: 'color-1', name: 'Sea Salt', hex: '#a7b4a8' },
-    { id: 'color-2', name: 'Light Sky', hex: '#d5e2ea' },
-    { id: 'color-3', name: 'Sandy Tan', hex: '#e3d5c1' },
-    { id: 'color-4', name: 'Deep Ocean', hex: '#4f6d7a' },
-    { id: 'color-5', name: 'Terracotta', hex: '#c97b61' },
-    { id: 'color-6', name: 'Olive Green', hex: '#7a8a6b' },
-];
+const defaultColors: VisualizerColor[] = [];
 
 // --- Firebase Implementation ---
 
@@ -26,11 +19,7 @@ export const getVisualizerColors = async (): Promise<VisualizerColor[]> => {
         const colors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as VisualizerColor));
 
         if (colors.length === 0) {
-            console.log("No visualizer colors found in Firebase. Creating default colors.");
-            for (const color of defaultColors) {
-                await setDoc(doc(db, 'visualizerColors', color.id), color);
-            }
-            return defaultColors;
+            return [];
         }
         
         return colors;

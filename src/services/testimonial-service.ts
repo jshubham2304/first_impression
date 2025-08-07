@@ -31,10 +31,7 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
     const testimonials = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Testimonial));
 
     if (testimonials.length === 0) {
-      console.log("No testimonials found in Firebase. Creating default testimonials.");
-      for (const testimonial of defaultTestimonials) {
-      }
-      return defaultTestimonials;
+      return [];
     }
 
     return testimonials;

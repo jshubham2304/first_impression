@@ -27,7 +27,6 @@ export const getProducts = async (): Promise<Product[]> => {
     const products = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Product));
 
     if (products.length === 0) {
-      console.log("No products found in Firebase. Creating a default product.");
       return [];
     }
 
