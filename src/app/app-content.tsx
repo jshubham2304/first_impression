@@ -13,7 +13,7 @@ export function AppContent({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsAppLoading(false);
-        }, 2000); // Show splash screen for 2 seconds
+        }, 2500); // Show splash screen for 2.5 seconds
 
         return () => clearTimeout(timer);
     }, []);
