@@ -6,10 +6,10 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 // Default data to seed Firestore if it's empty
 const defaultAttributes: ProductAttributes = {
-    brands: ['Prestige Paints', 'GreenSheen', 'ProTect', 'Pure Hues', 'MetroPaints', 'GoldenRay'],
-    finishes: ['Matte', 'Satin', 'Semi-Gloss', 'Gloss'],
-    colorFamilies: ['Reds', 'Blues', 'Greens', 'Yellows', 'Neutrals', 'Whites'],
-    categories: ['Interior', 'Exterior', 'Texture', 'Wood'],
+    brands: [],
+    finishes: [],
+    colorFamilies: [],
+    categories: [],
 };
 
 const defaultSiteSettings: SiteSettings = {
@@ -25,8 +25,6 @@ export const getProductAttributes = async (): Promise<ProductAttributes> => {
     if (docSnap.exists()) {
         return docSnap.data() as ProductAttributes;
     }
-    // If it doesn't exist in Firestore, create it from default data
-    console.log("No product attributes found in Firebase. Seeding with default data.");
     await setDoc(attributesDocRef, defaultAttributes);
     return defaultAttributes;
 };
@@ -42,7 +40,6 @@ export const getSiteSettings = async (): Promise<SiteSettings> => {
     if (docSnap.exists()) {
         return docSnap.data() as SiteSettings;
     }
-    console.log("No site settings found in Firebase. Seeding with default data.");
     await setDoc(siteSettingsDocRef, defaultSiteSettings);
     return defaultSiteSettings;
 };
