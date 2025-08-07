@@ -5,13 +5,12 @@ import { getFirestore, type Firestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyDY6i5yXzg8fvP7eoDtqYRVpSTaxaY5d4g",
+  authDomain: "color-palette-pro-pgw7a.firebaseapp.com",
+  projectId: "color-palette-pro-pgw7a",
+  storageBucket: "color-palette-pro-pgw7a.firebasestorage.app",
+  messagingSenderId: "91372138472",
+  appId: "1:91372138472:web:7d9e2ac0b520086fc4be5d",
 };
 
 // Initialize Firebase
@@ -20,17 +19,17 @@ let db: Firestore;
 // let storage: FirebaseStorage;
 
 function initializeFirebase() {
-    if (!getApps().length) {
-        app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        // storage = getStorage(app);
-        console.log('Firebase: Firestore and Storage initialized.');
-    } else {
-        app = getApp();
-        db = getFirestore(app);
-        // storage = getStorage(app);
-    }
-    return { app, db };
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    // storage = getStorage(app);
+    console.log("Firebase: Firestore and Storage initialized.");
+  } else {
+    app = getApp();
+    db = getFirestore(app);
+    // storage = getStorage(app);
+  }
+  return { app, db };
 }
 
 // Initialize and export
@@ -38,6 +37,5 @@ const firebaseServices = initializeFirebase();
 app = firebaseServices.app;
 db = firebaseServices.db;
 // storage = firebaseServices.storage;
-
 
 export { app, db };
