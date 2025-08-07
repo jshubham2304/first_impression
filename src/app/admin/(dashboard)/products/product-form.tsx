@@ -188,12 +188,16 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
           <CardHeader><CardTitle>Color Variants</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             {fields.map((field, index) => (
-              <div key={field.id} className="grid grid-cols-[1fr_auto_auto_auto] items-end gap-2 p-2 border rounded-md">
-                <FormField control={form.control} name={`variants.${index}.name`} render={({ field }) => (<FormItem className="flex-grow"><FormLabel>Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage/></FormItem>)}/>
-                <FormField control={form.control} name={`variants.${index}.hex`} render={({ field }) => (<FormItem><FormLabel>Hex</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage/></FormItem>)}/>
-                <FormField control={form.control} name={`variants.${index}.stock`} render={({ field }) => (<FormItem><FormLabel>Stock</FormLabel><FormControl><Input type="number" {...field} className="w-20" /></FormControl><FormMessage/></FormItem>)}/>
-                <div className="w-8 h-10 rounded" style={{ backgroundColor: form.watch(`variants.${index}.hex`) }} />
-                <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4"/></Button>
+              <div key={field.id} className="flex items-end gap-2 p-2 border rounded-md">
+                  <div className="grid grid-cols-[1fr_auto_auto] gap-2 flex-grow">
+                    <FormField control={form.control} name={`variants.${index}.name`} render={({ field }) => (<FormItem className="flex-grow"><FormLabel>Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage/></FormItem>)}/>
+                    <FormField control={form.control} name={`variants.${index}.hex`} render={({ field }) => (<FormItem><FormLabel>Hex</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage/></FormItem>)}/>
+                    <FormField control={form.control} name={`variants.${index}.stock`} render={({ field }) => (<FormItem><FormLabel>Stock</FormLabel><FormControl><Input type="number" {...field} className="w-20" /></FormControl><FormMessage/></FormItem>)}/>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-10 rounded" style={{ backgroundColor: form.watch(`variants.${index}.hex`) }} />
+                    <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4"/></Button>
+                  </div>
               </div>
             ))}
             <Button type="button" variant="outline" size="sm" onClick={() => append({ name: '', hex: '#000000', stock: 0 })}>
@@ -218,3 +222,5 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
     </Form>
   );
 }
+
+    
