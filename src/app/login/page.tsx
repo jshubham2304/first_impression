@@ -57,7 +57,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
             <Link href="/" className="mb-4 flex items-center justify-center space-x-2">
-           <Image src="./assets/logo.jpeg" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={28} height={28} />
+           <Image src="https://placehold.co/28x28.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={28} height={28} />
                 <span className="text-2xl font-bold font-headline">First Impression</span>
             </Link>
           <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>

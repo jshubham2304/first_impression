@@ -2,11 +2,11 @@
 
 import type { Product, CartItem } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
-import { db, storage } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, runTransaction, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+// import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
-type ProductFormData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'imageUrl' | 'imageHint' | 'imagePath'>;
+type ProductFormData = Omit<Product, 'id' | 'popularity' | 'reviews' | 'imagePath' | 'imageHint'>;
 
 
 // --- Firebase Implementation ---
@@ -55,14 +55,8 @@ export const getProduct = async (id: string): Promise<Product | null> => {
     return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as Product : null;
 };
 
-export const addProduct = async (productData: ProductFormData, imageFile: File): Promise<string> => {
+export const addProduct = async (productData: ProductFormData): Promise<string> => {
     const newProductId = uuidv4();
-    const imagePath = `products/${newProductId}/${imageFile.name}`;
-    const storageRef = ref(storage, imagePath);
-    
-    await uploadBytes(storageRef, imageFile);
-    const imageUrl = await getDownloadURL(storageRef);
-
     const docRef = doc(db, 'products', newProductId);
 
     const newProduct: Product = {
@@ -70,8 +64,6 @@ export const addProduct = async (productData: ProductFormData, imageFile: File):
         ...productData,
         popularity: Math.floor(Math.random() * 50) / 10 + 1,
         reviews: [],
-        imageUrl,
-        imagePath,
         imageHint: 'paint can',
     };
     
@@ -81,41 +73,26 @@ export const addProduct = async (productData: ProductFormData, imageFile: File):
 };
 
 
-export const updateProduct = async (productId: string, productData: Partial<ProductFormData>, imageFile?: File): Promise<void> => {
+export const updateProduct = async (productId: string, productData: Partial<ProductFormData>): Promise<void> => {
     const docRef = doc(db, 'products', productId);
     const updateData: Partial<Product> = { ...productData };
-
-    if (imageFile) {
-        const productSnap = await getDoc(docRef);
-        const existingProduct = productSnap.data() as Product;
-        if (existingProduct.imagePath && storage) {
-            const oldImageRef = ref(storage, existingProduct.imagePath);
-            await deleteObject(oldImageRef).catch(e => console.error("Could not delete old image", e));
-        }
-
-        const imagePath = `products/${productId}/${imageFile.name}`;
-        const storageRef = ref(storage, imagePath);
-        await uploadBytes(storageRef, imageFile);
-        updateData.imageUrl = await getDownloadURL(storageRef);
-        updateData.imagePath = imagePath;
-    }
     
     await updateDoc(docRef, updateData);
 };
 
 export const deleteProduct = async (productId: string): Promise<void> => {
     const docRef = doc(db, 'products', productId);
-    const productSnap = await getDoc(docRef);
-    if (!productSnap.exists()) {
-        console.error(`Product with id ${productId} not found.`);
-        return;
-    }
-    const product = productSnap.data() as Product;
+    // const productSnap = await getDoc(docRef);
+    // if (!productSnap.exists()) {
+    //     console.error(`Product with id ${productId} not found.`);
+    //     return;
+    // }
+    // const product = productSnap.data() as Product;
     
-    if (product.imagePath && storage) {
-        const imageRef = ref(storage, product.imagePath);
-        await deleteObject(imageRef).catch(e => console.error("Failed to delete product image", e));
-    }
+    // if (product.imagePath && storage) {
+    //     const imageRef = ref(storage, product.imagePath);
+    //     await deleteObject(imageRef).catch(e => console.error("Failed to delete product image", e));
+    // }
     await deleteDoc(docRef);
 };
 

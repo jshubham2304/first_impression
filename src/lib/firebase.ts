@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getFirestore, type Firestore } from "firebase/firestore";
-import { getStorage, type FirebaseStorage } from "firebase/storage";
+// import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -16,17 +16,26 @@ const firebaseConfig = {
 // Initialize Firebase
 let app: FirebaseApp;
 let db: Firestore;
-let storage: FirebaseStorage;
+// let storage: FirebaseStorage;
 
-try {
-  console.log("Firebase: Initializing services...");
-  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-  db = getFirestore(app);
-  storage = getStorage(app);
-  console.log("Firebase: Firestore and Storage initialized.");
-} catch (error) {
-  console.error("Firebase initialization error", error);
-  // In a real app, you might want to handle this more gracefully
+function initializeFirebase() {
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    // storage = getStorage(app);
+    console.log("Firebase: Firestore and Storage initialized.");
+  } else {
+    app = getApp();
+    db = getFirestore(app);
+    // storage = getStorage(app);
+  }
+  return { app, db };
 }
 
-export { app, db, storage };
+// Initialize and export
+const firebaseServices = initializeFirebase();
+app = firebaseServices.app;
+db = firebaseServices.db;
+// storage = firebaseServices.storage;
+
+export { app, db };
