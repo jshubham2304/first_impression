@@ -141,11 +141,13 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-           <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754546915/favicon-32x32_gwtqvo.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={24} height={24} />
-            <span className="hidden font-bold sm:inline-block font-headline">
-              First Impression
-            </span>
+          <Link href="/">
+            <div className="mr-6 flex items-center space-x-2">
+                <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754546915/favicon-32x32_gwtqvo.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={24} height={24} />
+                <span className="hidden font-bold sm:inline-block font-headline">
+                  First Impression
+                </span>
+            </div>
           </Link>
           <NavLinks className="hidden md:flex"/>
         </div>
@@ -162,12 +164,14 @@ export function Header() {
                 <SheetTitle className="sr-only">Menu</SheetTitle>
                 <SheetDescription className="sr-only">Main navigation menu for the mobile site.</SheetDescription>
               </SheetHeader>
-               <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
-               <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754546915/favicon-32x32_gwtqvo.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={24} height={24} />
-                <span className="font-bold font-headline">
-                  First Impression
-                </span>
-              </Link>
+                <Link href="/">
+                    <div className="mr-6 flex items-center space-x-2 mb-6">
+                        <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754546915/favicon-32x32_gwtqvo.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={24} height={24} />
+                        <span className="font-bold font-headline">
+                          First Impression
+                        </span>
+                    </div>
+                </Link>
               <NavLinks className="flex flex-col space-y-4 space-x-0 items-start"/>
             </SheetContent>
           </Sheet>

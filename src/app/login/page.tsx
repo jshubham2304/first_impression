@@ -56,9 +56,11 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-            <Link href="/" className="mb-4 flex items-center justify-center space-x-2">
-           <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754546915/favicon-32x32_gwtqvo.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={28} height={28} />
-                <span className="text-2xl font-bold font-headline">First Impression</span>
+            <Link href="/">
+                <div className="mb-4 flex items-center justify-center space-x-2">
+                    <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754546915/favicon-32x32_gwtqvo.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={28} height={28} />
+                    <span className="text-2xl font-bold font-headline">First Impression</span>
+                </div>
             </Link>
           <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>
           <CardDescription>Enter your credentials to access your account.</CardDescription>
