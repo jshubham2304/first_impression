@@ -9,6 +9,7 @@ const allPossibleLinks = [
   { href: "/products", label: "Paints" },
   { href: "/services", label: "Services" },
   { href: "/visualizer", label: "Visualizer" },
+  { href: "/about", label: "About Us" },
   { href: "/request-estimation", label: "Get Estimate" },
 ];
 
@@ -29,6 +30,10 @@ export const SiteSettingsProvider = ({ children }: { children: ReactNode }) => {
     async function fetchSettings() {
       try {
         const siteSettings = await getSiteSettings();
+        // Ensure "About Us" is visible by default if not yet set
+        if (siteSettings && !siteSettings.visibleLinks.includes("About Us")) {
+            siteSettings.visibleLinks.push("About Us");
+        }
         setSettings(siteSettings);
       } catch (error) {
         console.error("Failed to fetch site settings", error);

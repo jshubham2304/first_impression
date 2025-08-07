@@ -13,7 +13,7 @@ const defaultAttributes: ProductAttributes = {
 };
 
 const defaultSiteSettings: SiteSettings = {
-    visibleLinks: ["Home", "Paints", "Services", "Visualizer", "Get Estimate"],
+    visibleLinks: ["Home", "Paints", "Services", "Visualizer", "About Us", "Get Estimate"],
 };
 
 
