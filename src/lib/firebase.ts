@@ -1,5 +1,3 @@
-'use server';
-
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getFirestore, type Firestore } from "firebase/firestore";
@@ -23,14 +21,13 @@ let db: Firestore;
 function initializeFirebase() {
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
-    // storage = getStorage(app);
-    console.log("Firebase: Firestore and Storage initialized.");
+    console.log("Firebase App initialized.");
   } else {
     app = getApp();
-    db = getFirestore(app);
-    // storage = getStorage(app);
   }
+  db = getFirestore(app);
+  // storage = getStorage(app);
+  console.log("Firebase: Firestore and Storage initialized.");
   return { app, db };
 }
 
