@@ -73,27 +73,23 @@ export default function RequestEstimationPage() {
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <FormField control={form.control} name="name" render={({ field }) => ( <FormItem> <FormLabel>Full Name</FormLabel> <FormControl> <Input placeholder="John Doe" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                                <FormField control={form.control} name="email" render={({ field }) => ( <FormItem> <FormLabel>Email Address</FormLabel> <FormControl> <Input placeholder="you@example.com" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                            </div>
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <FormField control={form.control} name="phone" render={({ field }) => ( <FormItem> <FormLabel>Phone Number (Optional)</FormLabel> <FormControl> <Input placeholder="(123) 456-7890" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                                <FormField control={form.control} name="address" render={({ field }) => ( <FormItem> <FormLabel>Project Address</FormLabel> <FormControl> <Input placeholder="123 Paint St, Colorville" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                            </div>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            <FormField control={form.control} name="name" render={({ field }) => ( <FormItem> <FormLabel>Full Name</FormLabel> <FormControl> <Input placeholder="John Doe" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
+                            <FormField control={form.control} name="email" render={({ field }) => ( <FormItem> <FormLabel>Email Address</FormLabel> <FormControl> <Input placeholder="you@example.com" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
+                            <FormField control={form.control} name="phone" render={({ field }) => ( <FormItem> <FormLabel>Phone Number (Optional)</FormLabel> <FormControl> <Input placeholder="(123) 456-7890" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
+                            <FormField control={form.control} name="address" render={({ field }) => ( <FormItem> <FormLabel>Project Address</FormLabel> <FormControl> <Input placeholder="123 Paint St, Colorville" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
                             <FormField control={form.control} name="description" render={({ field }) => ( <FormItem> <FormLabel>Project Description</FormLabel> <FormControl> <Textarea placeholder="e.g., I want to paint my living room (approx. 200 sq ft) and ceiling..." className="min-h-[120px]" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                             <FormField control={form.control} name="photoUrl" render={({ field }) => (
+                            <FormField control={form.control} name="photoUrl" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Photo URL</FormLabel>
+                                    <FormLabel>Photo URL (Optional)</FormLabel>
                                     <div className="relative">
                                         <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none"/>
                                         <FormControl>
-                                            <Input placeholder="https://..." className="pl-10" {...field} />
+                                            <Input placeholder="https://example.com/image.png" className="pl-10" {...field} />
                                         </FormControl>
                                     </div>
                                     <FormDescription>
-                                        Attach a URL to a photo of the area you intend to paint.
+                                        You can upload a photo to a site like imgur.com and paste the link here.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
