@@ -57,11 +57,9 @@ export default function AdminPinPage() {
         <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
             <Card className="w-full max-w-sm">
                 <CardHeader className="text-center">
-                    <Link href="/">
-                        <div className="mb-4 flex items-center justify-center space-x-2">
-                            <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754546915/favicon-32x32_gwtqvo.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={28} height={28} />
-                            <span className="text-2xl font-bold font-headline">First Impression</span>
-                        </div>
+                    <Link href="/" className="mb-4 flex items-center justify-center space-x-2">
+                        <Image src="https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png" alt="First Impression Brand Logo" data-ai-hint="brand logo" width={32} height={32} />
+                        <span className="text-2xl font-bold font-headline">First Impression</span>
                     </Link>
                     <CardTitle className="text-2xl font-headline">Admin Access</CardTitle>
                     <CardDescription>Enter the 6-digit PIN to continue.</CardDescription>
