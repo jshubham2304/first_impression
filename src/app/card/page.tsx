@@ -21,9 +21,6 @@ const BusinessCardPage = () => {
     ],
   };
 
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent('https://your-app-url/card')}`;
-
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4 font-body">
       <Card className="w-full max-w-sm overflow-hidden rounded-2xl shadow-2xl">
@@ -65,17 +62,6 @@ const BusinessCardPage = () => {
                     </div>
                 ))}
             </div>
-          </div>
-          
-          <div className="flex flex-col items-center pt-4 border-t">
-             <Image
-                src={qrCodeUrl}
-                alt="QR Code"
-                width={120}
-                height={120}
-                className="rounded-lg"
-              />
-              <p className="mt-2 text-xs text-muted-foreground">Scan to save contact</p>
           </div>
         
         </CardContent>
