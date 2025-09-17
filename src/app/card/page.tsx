@@ -4,6 +4,7 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin, Globe, Paintbrush, Palette, Droplet } from 'lucide-react';
+import Link from 'next/link';
 
 const BusinessCardPage = () => {
   const business = {
@@ -12,6 +13,7 @@ const BusinessCardPage = () => {
     phone: '8560077888',
     email: 'info@firstimpression.com',
     address: 'Udaipur City, Udaipur - 313001, Rajasthan',
+    addressLink: 'https://maps.app.goo.gl/dPcij76yfpb4J6op8',
     website: 'https://firstimpression.com',
     logo: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png',
   };
@@ -29,7 +31,7 @@ const BusinessCardPage = () => {
             {/* Top section with background image */}
             <div className="relative h-48 w-full">
                 <Image
-                    src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?q=80&w=1920&auto=format&fit=crop"
+                    src="https://images.unsplash.com/photo-1599691408742-82dd50131495?q=80&w=1920&auto=format&fit=crop"
                     alt="Abstract paint texture"
                     data-ai-hint="abstract paint texture"
                     fill
@@ -65,7 +67,7 @@ const BusinessCardPage = () => {
                         <Mail className="h-5 w-5 flex-shrink-0 text-primary" />
                         <span className="text-muted-foreground">{business.email}</span>
                     </a>
-                     <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address)}`} target="_blank" rel="noopener noreferrer" className="flex items-start space-x-4 p-2 rounded-lg hover:bg-muted transition-colors">
+                     <a href={business.addressLink} target="_blank" rel="noopener noreferrer" className="flex items-start space-x-4 p-2 rounded-lg hover:bg-muted transition-colors">
                         <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0 text-primary" />
                         <span className="text-muted-foreground">{business.address}</span>
                     </a>
@@ -79,10 +81,12 @@ const BusinessCardPage = () => {
                     <h3 className="mb-3 text-center font-headline text-lg">Our Services</h3>
                     <div className="grid grid-cols-3 gap-2 text-center">
                         {services.map(service => (
-                            <div key={service.name} className="flex flex-col items-center p-2 rounded-lg bg-muted/50">
-                                {service.icon}
-                                <span className="mt-1 text-xs font-semibold">{service.name}</span>
-                            </div>
+                             <Link href="/services" key={service.name}>
+                                <div className="flex flex-col items-center p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors h-full">
+                                    {service.icon}
+                                    <span className="mt-1 text-xs font-semibold">{service.name}</span>
+                                </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
