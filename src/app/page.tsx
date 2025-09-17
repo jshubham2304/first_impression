@@ -20,15 +20,18 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col">
-      <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center text-center text-white">
-        <Image
-          src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?q=80&w=1920&auto=format&fit=crop"
-          alt="Beautifully painted modern house exterior"
-          data-ai-hint="house exterior paint"
-          fill
-          className="object-cover -z-10"
-          priority
-        />
+      <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center text-center text-white overflow-hidden">
+        <video
+          src="https://res.cloudinary.com/dfydjfauz/video/upload/v1758109969/file00001_qfxbkg.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover -z-10"
+          data-ai-hint="living room painting video"
+        >
+          Your browser does not support the video tag.
+        </video>
         <div className="absolute inset-0 bg-primary/70 -z-10" />
         <div className="container px-4 md:px-6">
           <div className="max-w-3xl mx-auto">
