@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Phone, Mail, MapPin, Globe, Brush, Building, Droplets } from 'lucide-react';
+import { Phone, Mail, MapPin, Globe } from 'lucide-react';
 
 const BusinessCardPage = () => {
   const business = {
