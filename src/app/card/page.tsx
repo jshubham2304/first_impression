@@ -34,7 +34,7 @@ const BusinessCardPage = () => {
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4 font-body">
         <div className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-background shadow-2xl">
 
-            {/* Top section with background image */}
+            {/* Top section with background video */}
             <div className="relative h-48 w-full">
                  <video
                   src="https://res.cloudinary.com/dfydjfauz/video/upload/v1758109969/file00001_qfxbkg.mp4"
@@ -139,3 +139,5 @@ const BusinessCardPage = () => {
 };
 
 export default BusinessCardPage;
+
+    
