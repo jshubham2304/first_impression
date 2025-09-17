@@ -78,7 +78,7 @@ export default function AboutUsPage() {
             </div>
             <div className="aspect-square w-full overflow-hidden rounded-xl">
                  <Image
-                    src="https://images.unsplash.com/photo-1556742059-4f74465a4143?q=80&w=1200&auto=format&fit=crop"
+                    src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?q=80&w=1920&auto=format&fit=crop"
                     alt="A team of painters discussing a project"
                     data-ai-hint="painters team meeting"
                     width={800}
