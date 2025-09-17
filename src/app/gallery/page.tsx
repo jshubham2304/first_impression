@@ -38,7 +38,7 @@ const galleryItems = [
     hint: 'detailed wood finishing',
   },
   {
-      type: 'image',
+      type: 'video',
       src: 'https://res.cloudinary.com/dfydjfauz/video/upload/v1758115133/file_001_qnvj9g.mp4',
       hint: 'exterior house painting',
     },
