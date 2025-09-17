@@ -6,6 +6,7 @@ const galleryItems = [
     type: 'video',
     src: 'https://res.cloudinary.com/dfydjfauz/video/upload/v1758109969/file00001_qfxbkg.mp4',
     hint: 'living room painting',
+    className: 'row-span-2'
   },
   {
     type: 'image',
@@ -21,6 +22,7 @@ const galleryItems = [
     type: 'image',
     src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00004_i9x97j.jpg',
     hint: 'modern interior design',
+    className: 'col-span-1 md:col-span-2 row-span-2'
   },
   {
     type: 'image',
@@ -41,7 +43,7 @@ const galleryItems = [
       type: 'video',
       src: 'https://res.cloudinary.com/dfydjfauz/video/upload/v1758115133/file_001_qnvj9g.mp4',
       hint: 'exterior house painting',
-    },
+  },
   {
     type: 'image',
     src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109962/file00011_ytuhuv.jpg',
@@ -57,16 +59,13 @@ const galleryItems = [
       src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109966/file00013_gcnyfw.jpg',
       hint: 'exterior house painting',
     },
-    
     {
       type: 'image',
       src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758115129/file_002_c3rs35.jpg',
       hint: 'exterior house painting',
+      className: 'row-span-2'
     },
-    
 ];
-
-
 
 export default function GalleryPage() {
   return (
@@ -78,9 +77,9 @@ export default function GalleryPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-fr gap-4">
         {galleryItems.map((item, index) => (
-          <div key={index} className="group relative w-full aspect-square overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+          <div key={index} className={`group relative w-full h-full min-h-48 overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 ${item.className || ''}`}>
             {item.type === 'image' ? (
               <Image
                 src={item.src}
