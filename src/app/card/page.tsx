@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Phone, Mail, MapPin, Globe, Paintbrush, Palette, Droplet } from 'lucide-react';
+import { Phone, Mail, MapPin, Globe, Paintbrush, Palette, Droplet, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 const BusinessCardPage = () => {
@@ -22,6 +22,12 @@ const BusinessCardPage = () => {
       { name: 'Painting', icon: <Paintbrush className="h-5 w-5 text-primary" /> },
       { name: 'Interior Design', icon: <Palette className="h-5 w-5 text-primary" /> },
       { name: 'Waterproofing', icon: <Droplet className="h-5 w-5 text-primary" /> },
+  ]
+
+  const gallerySamples = [
+      { src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109963/file00002_fmjajv.jpg', hint: 'exterior wall painting' },
+      { src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00004_i9x97j.jpg', hint: 'modern interior design' },
+      { src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00007_t5j3to.jpg', hint: 'kitchen cabinet painting' },
   ]
 
   return (
@@ -77,8 +83,8 @@ const BusinessCardPage = () => {
                     </a>
                 </div>
 
-                <div>
-                    <h3 className="mb-3 text-center font-headline text-lg">Our Services</h3>
+                <div className="space-y-3 pt-4 border-t">
+                    <h3 className="text-center font-headline text-lg">Our Services</h3>
                     <div className="grid grid-cols-3 gap-2 text-center">
                         {services.map(service => (
                              <Link href="/services" key={service.name}>
@@ -91,7 +97,28 @@ const BusinessCardPage = () => {
                     </div>
                 </div>
 
-                <div className="flex gap-3 pt-4 border-t">
+                 <div className="space-y-4 pt-4 border-t">
+                    <h3 className="text-center font-headline text-lg">Recent Work</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                        {gallerySamples.map((sample, index) => (
+                             <Link href="/gallery" key={index} className="aspect-square block relative overflow-hidden rounded-lg">
+                                <Image
+                                    src={sample.src}
+                                    alt={`Work sample ${index + 1}`}
+                                    data-ai-hint={sample.hint}
+                                    fill
+                                    className="object-cover transition-transform duration-300 hover:scale-110"
+                                />
+                            </Link>
+                        ))}
+                    </div>
+                     <Button asChild variant="outline" className="w-full">
+                        <Link href="/gallery">View All Work <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                    </Button>
+                </div>
+
+
+                <div className="flex gap-3 pt-6 border-t">
                     <Button asChild className="flex-1">
                       <a href={`tel:${business.phone}`}><Phone className="mr-2 h-4 w-4"/> Call</a>
                     </Button>
