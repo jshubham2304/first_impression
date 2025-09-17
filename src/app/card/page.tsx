@@ -35,7 +35,7 @@ const BusinessCardPage = () => {
                     fill
                     className="object-cover"
                 />
-                <div className="absolute inset-0 bg-primary/80 mix-blend-multiply" />
+                <div className="absolute inset-0 bg-primary/70 mix-blend-multiply" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-primary-foreground">
                     <Image
                         src={business.logo}

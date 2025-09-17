@@ -29,7 +29,7 @@ export default async function HomePage() {
           className="object-cover -z-10"
           priority
         />
-        <div className="absolute inset-0 bg-primary/60 -z-10" />
+        <div className="absolute inset-0 bg-primary/70 -z-10" />
         <div className="container px-4 md:px-6">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-headline font-bold mb-4 tracking-wider">
