@@ -29,7 +29,7 @@ const BusinessCardPage = () => {
             {/* Top section with background image */}
             <div className="relative h-48 w-full">
                 <Image
-                    src="https://images.unsplash.com/photo-1502691879809-7e41c684a2a3?q=80&w=1470&auto=format&fit=crop"
+                    src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?q=80&w=1920&auto=format&fit=crop"
                     alt="Abstract paint texture"
                     data-ai-hint="abstract paint texture"
                     fill

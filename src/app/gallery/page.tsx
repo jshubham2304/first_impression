@@ -38,6 +38,11 @@ const galleryItems = [
     hint: 'detailed wood finishing',
   },
   {
+      type: 'video',
+      src: 'https://res.cloudinary.com/dfydjfauz/video/upload/v1758115133/file_001_qnvj9g.mp4',
+      hint: 'exterior house painting',
+    },
+  {
     type: 'image',
     src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109962/file00011_ytuhuv.jpg',
     hint: 'textured wall finish',
@@ -47,12 +52,20 @@ const galleryItems = [
     src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109963/file00012_bdlg1f.jpg',
     hint: 'living room accent wall',
   },
-  {
-    type: 'image',
-    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109966/file00013_gcnyfw.jpg',
-    hint: 'exterior house painting',
-  },
+    {
+      type: 'image',
+      src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109966/file00013_gcnyfw.jpg',
+      hint: 'exterior house painting',
+    },
+    
+    {
+      type: 'image',
+      src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758115129/file_002_c3rs35.jpg',
+      hint: 'exterior house painting',
+    },
+    
 ];
+
 
 
 export default function GalleryPage() {
