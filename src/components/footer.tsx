@@ -40,7 +40,6 @@ export function Footer() {
             <h3 className="font-headline font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li><Link href="/products" className="text-muted-foreground hover:text-primary">Paints</Link></li>
-              <li><Link href="/gallery" className="text-muted-foreground hover:text-primary">Gallery</Link></li>
               <li><Link href="/visualizer" className="text-muted-foreground hover:text-primary">Visualizer</Link></li>
               <li><Link href="/request-estimation" className="text-muted-foreground hover:text-primary">Get an Estimate</Link></li>
               <li><Link href="/about" className="text-muted-foreground hover:text-primary">About Us</Link></li>
@@ -51,9 +50,9 @@ export function Footer() {
             <h3 className="font-headline font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-sm">
               <li><Link href="#" className="text-muted-foreground hover:text-primary">Contact Us</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary">FAQ</Link></li>
+              {/* <li><Link href="#" className="text-muted-foreground hover:text-primary">FAQ</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-primary">Shipping & Returns</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
+              <li><Link href="#" className="text-muted-foreground hover:text-primary">Privacy Policy</Link></li> */}
             </ul>
           </div>
           <div>

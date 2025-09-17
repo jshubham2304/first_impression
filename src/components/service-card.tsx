@@ -36,7 +36,7 @@ export function ServiceCard({ service }: { service: Service }) {
                 <a href="/request-estimation">Enquire Now</a>
             </Button>
             <Button variant="outline" asChild>
-                <a href="https://wa.me/910000000000" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/+918560077888" target="_blank" rel="noopener noreferrer">
                     <WhatsAppIcon className="mr-2 h-4 w-4"/>
                     WhatsApp
                 </a>

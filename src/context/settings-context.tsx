@@ -6,7 +6,7 @@ import type { SiteSettings } from '@/lib/types';
 
 const allPossibleLinks = [
   { href: "/", label: "Home" },
-  { href: "/products", label: "Paints" },
+  { href: "/products", label: "Products" },
   { href: "/services", label: "Services" },
   { href: "/gallery", label: "Gallery" },
   { href: "/visualizer", label: "Visualizer" },
