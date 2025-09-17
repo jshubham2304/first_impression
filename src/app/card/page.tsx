@@ -36,13 +36,16 @@ const BusinessCardPage = () => {
 
             {/* Top section with background image */}
             <div className="relative h-48 w-full">
-                <Image
-                    src="https://images.unsplash.com/photo-1599691408742-82dd50131495?q=80&w=1920&auto=format&fit=crop"
-                    alt="Abstract paint texture"
-                    data-ai-hint="abstract paint texture"
-                    fill
-                    className="object-cover"
-                />
+                 <video
+                  src="https://res.cloudinary.com/dfydjfauz/video/upload/v1758109969/file00001_qfxbkg.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="absolute top-0 left-0 w-full h-full object-cover -z-10"
+                >
+                  Your browser does not support the video tag.
+                </video>
                 <div className="absolute inset-0 bg-primary/70 mix-blend-multiply" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-primary-foreground">
                     <Image
