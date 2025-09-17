@@ -8,6 +8,7 @@ const allPossibleLinks = [
   { href: "/", label: "Home" },
   { href: "/products", label: "Paints" },
   { href: "/services", label: "Services" },
+  { href: "/gallery", label: "Gallery" },
   { href: "/visualizer", label: "Visualizer" },
   { href: "/about", label: "About Us" },
   { href: "/request-estimation", label: "Get Estimate" },
@@ -31,14 +32,14 @@ export const SiteSettingsProvider = ({ children }: { children: ReactNode }) => {
     async function fetchSettings() {
       try {
         const siteSettings = await getSiteSettings();
-        // Ensure "About Us" and "Business Card" are visible by default if not yet set
+        // Ensure default links are visible if not yet set
         if (siteSettings) {
-            if(!siteSettings.visibleLinks.includes("About Us")) {
-                siteSettings.visibleLinks.push("About Us");
-            }
-            if(!siteSettings.visibleLinks.includes("Business Card")) {
-                siteSettings.visibleLinks.push("Business Card");
-            }
+            const requiredLinks = ["About Us", "Business Card", "Gallery"];
+            requiredLinks.forEach(link => {
+                if(!siteSettings.visibleLinks.includes(link)) {
+                    siteSettings.visibleLinks.push(link);
+                }
+            })
         }
         setSettings(siteSettings);
       } catch (error) {
