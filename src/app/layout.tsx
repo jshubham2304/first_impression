@@ -27,6 +27,15 @@ export default function RootLayout({
           "min-h-screen bg-background font-body antialiased"
         )}
       >
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="fixed top-0 left-0 w-full h-full object-cover -z-20"
+          src="https://res.cloudinary.com/dfydjfauz/video/upload/v1758109969/file00001_qfxbkg.mp4"
+        />
+        <div className="fixed top-0 left-0 w-full h-full bg-black/50 -z-10" />
         <Providers>
           <AppContent>{children}</AppContent>
           <Toaster />
