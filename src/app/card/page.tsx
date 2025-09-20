@@ -68,7 +68,7 @@ const BusinessCardPage = () => {
                         alt="Background work sample"
                         fill
                         className={cn(
-                            "absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out -z-10",
+                            "absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out",
                             index === currentImageIndex ? "opacity-100" : "opacity-0"
                         )}
                         priority={index === 0}
