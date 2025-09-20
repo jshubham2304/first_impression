@@ -28,7 +28,6 @@ export default function RootLayout({
           "min-h-screen bg-background font-body antialiased"
         )}
       >
-        <ParticlesBackground />
         <Providers>
           <AppContent>{children}</AppContent>
           <Toaster />
