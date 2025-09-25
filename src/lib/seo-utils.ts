@@ -12,13 +12,21 @@ export const DEFAULT_SEO = {
   location: "Udaipur, Rajasthan",
   tagline: "Creating Lasting First Impressions",
   brandKeywords: [
+    // Singular and plural variations
     "First Impression",
+    "First Impressions",
     "First Impression Painting Services",
+    "First Impressions Painting Services",
     "First Impression Paint Store",
+    "First Impressions Paint Store",
     "First Impression Asian Paints Dealer",
+    "First Impressions Asian Paints Dealer",
     "First Impression Color Studio",
+    "First Impressions Color Studio",
     "First Impression Udaipur",
+    "First Impressions Udaipur",
     "First Impression Rajasthan",
+    "First Impressions Rajasthan",
   ],
 };
 
@@ -52,14 +60,34 @@ export function generateMetadata({
     keywords: [
       ...DEFAULT_SEO.brandKeywords,
       ...keywords,
+      // Core services - both "painting" and "painter" variations
       "painting services Udaipur",
+      "painter services Udaipur",
+      "best painter service Udaipur",
+      "best painting service Udaipur",
+      "professional painters Udaipur",
+      "professional painting Udaipur",
       "Asian Paints Udaipur",
-      "professional painters",
       "interior painting",
       "exterior painting",
+      "interior painter",
+      "exterior painter",
       "best paint shop Udaipur",
       "authorized Asian Paints dealer",
       "color consultation Udaipur",
+      // Competitor keywords
+      "Badala Paints",
+      "Badala Paints Udaipur",
+      "alternative to Badala Paints",
+      "better than Badala Paints",
+      "Badala Paints competitor",
+      // Hardware store keywords
+      "hardware shop Udaipur",
+      "paint hardware store Udaipur",
+      "hardware store Udaipur",
+      "paint and hardware Udaipur",
+      "hardware shop near me",
+      "paint hardware near me",
     ],
     alternates: {
       canonical: alternates?.canonical || url,
@@ -108,28 +136,43 @@ export function generateMetadata({
 
 // Generate page-specific keywords for better SEO
 export function generateKeywords(baseKeywords: string[], location = "Udaipur"): string[] {
-  // First Impression brand keywords
+  // First Impression brand keywords - both singular and plural
   const firstImpressionKeywords = [
     "First Impression",
+    "First Impressions",
     `First Impression ${location}`,
+    `First Impressions ${location}`,
     "First Impression Painting Services",
+    "First Impressions Painting Services",
     "First Impression Paint Store",
+    "First Impressions Paint Store",
     "First Impression Asian Paints Dealer",
+    "First Impressions Asian Paints Dealer",
     "First Impression Color Studio",
+    "First Impressions Color Studio",
     `First Impression ${location} painting services`,
+    `First Impressions ${location} painting services`,
     `First Impression ${location} paint store`,
+    `First Impressions ${location} paint store`,
     `First Impression ${location} Asian Paints dealer`,
+    `First Impressions ${location} Asian Paints dealer`,
   ];
 
   const locationKeywords = [
     `${location}`,
     `painting services ${location}`,
+    `painter services ${location}`,
     `professional painters ${location}`,
+    `professional painting ${location}`,
     `Asian Paints ${location}`,
     `interior painting ${location}`,
     `exterior painting ${location}`,
+    `interior painter ${location}`,
+    `exterior painter ${location}`,
     `paint store ${location}`,
     `color consultation ${location}`,
+    `hardware shop ${location}`,
+    `paint hardware ${location}`,
   ];
 
   // Best shop and dealer keywords
@@ -157,6 +200,18 @@ export function generateKeywords(baseKeywords: string[], location = "Udaipur"): 
     `paint dealer near me`,
     `best paint shop near me`,
     `Asian Paints dealer near me`,
+    // Competitor keywords
+    `Badala Paints ${location}`,
+    `alternative to Badala Paints ${location}`,
+    `better than Badala Paints ${location}`,
+    `Badala Paints competitor ${location}`,
+    // Hardware store keywords
+    `hardware shop ${location}`,
+    `paint hardware store ${location}`,
+    `hardware store ${location}`,
+    `paint and hardware ${location}`,
+    `hardware shop near me`,
+    `paint hardware near me`,
   ];
 
   // Quality and reputation keywords

@@ -303,8 +303,13 @@ export function generateBrandSchema() {
     "name": "First Impression",
     "alternateName": [
       "First Impression Painting Services",
+      "First Impressions Painting Services",
       "First Impression Paint Store",
-      "First Impression Color Studio"
+      "First Impressions Paint Store",
+      "First Impression Asian Paints Dealer",
+      "First Impressions Asian Paints Dealer",
+      "First Impression Color Studio",
+      "First Impressions Color Studio"
     ],
     "description": "First Impression is the premier Asian Paints dealer and professional painting services provider in Udaipur, Rajasthan. We specialize in color consultation, digital visualization, and expert painting services for residential and commercial projects.",
     "url": "https://first-impression.com",

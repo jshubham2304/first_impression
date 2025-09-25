@@ -9,27 +9,40 @@ import { generateBrandSchema, generateFirstImpressionBusinessSchema } from "@/co
 
 export const metadata: Metadata = {
   title: {
-    default: "First Impression - Best Asian Paints Dealer in Udaipur | #1 Paint Store",
-    template: "%s | First Impression - Best Asian Paints Dealer Udaipur"
+    default: "First Impression / First Impressions - Best Asian Paints Dealer in Udaipur | #1 Paint Store",
+    template: "%s | First Impression / First Impressions - Best Asian Paints Dealer Udaipur"
   },
-  description: "Transform your space with First Impression - the premier Asian Paints dealer and professional painting services provider in Udaipur. 10+ years experience, advanced digital color visualizer, expert consultation, premium paint products, and certified professionals. First Impression creates lasting impressions with modern technology and guaranteed quality. Get free estimates today!",
+  description: "Transform your space with First Impression (First Impressions) - the premier Asian Paints dealer and professional painting services provider in Udaipur. 10+ years experience, advanced digital color visualizer, expert consultation, premium paint products, and certified professionals. Better than Badala Paints with modern technology and guaranteed quality. Get free estimates today!",
   keywords: [
-    // First Impression brand keywords
+    // First Impression brand keywords - both singular and plural
     "First Impression",
+    "First Impressions",
     "First Impression Udaipur",
+    "First Impressions Udaipur",
     "First Impression Painting Services",
+    "First Impressions Painting Services",
     "First Impression Paint Store",
+    "First Impressions Paint Store",
     "First Impression Asian Paints Dealer",
+    "First Impressions Asian Paints Dealer",
     "First Impression Color Studio",
+    "First Impressions Color Studio",
     "First Impression Rajasthan",
+    "First Impressions Rajasthan",
     
-    // Core services
+    // Core services - both "painting" and "painter" variations
     "painting services Udaipur",
+    "painter services Udaipur",
+    "best painter service Udaipur",
+    "best painting service Udaipur",
     "professional painters Udaipur",
+    "professional painting Udaipur",
     "paint store Udaipur",
     "color consultation Udaipur",
     "interior painting Udaipur", 
     "exterior painting Udaipur",
+    "interior painter Udaipur",
+    "exterior painter Udaipur",
     "house painting Udaipur",
     "wall painting Udaipur",
     "paint contractor Udaipur",
@@ -52,6 +65,21 @@ export const metadata: Metadata = {
     "paint dealer near me",
     "best paint shop near me",
     "Asian Paints dealer near me",
+    
+    // Competitor keywords
+    "Badala Paints",
+    "Badala Paints Udaipur",
+    "alternative to Badala Paints",
+    "better than Badala Paints",
+    "Badala Paints competitor",
+    
+    // Hardware store keywords
+    "hardware shop Udaipur",
+    "paint hardware store Udaipur",
+    "hardware store Udaipur",
+    "paint and hardware Udaipur",
+    "hardware shop near me",
+    "paint hardware near me",
     
     // Paint brands & products
     "Asian Paints Udaipur",
@@ -138,8 +166,8 @@ export const metadata: Metadata = {
     yahoo: "your-yahoo-site-verification-code",
   },
   openGraph: {
-    title: "First Impression - Professional Painting & Design Services in Udaipur",
-    description: "Transform your space with First Impression - the premier Asian Paints dealer and professional painting services provider in Udaipur. Expert color consultation, digital visualization, and premium paint products with certified professionals who create lasting impressions.",
+    title: "First Impression / First Impressions - Professional Painting & Design Services in Udaipur",
+    description: "Transform your space with First Impression (First Impressions) - the premier Asian Paints dealer and professional painting services provider in Udaipur. Expert color consultation, digital visualization, and premium paint products. Better than Badala Paints with certified professionals who create lasting impressions.",
     url: "https://first-impression.com",
     siteName: "First Impression",
     images: [
@@ -169,8 +197,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@FirstImpressionPaint",
     creator: "@FirstImpressionPaint", 
-    title: "First Impression - Professional Painting Services Udaipur",
-    description: "🎨 Transform your space with First Impression - premier Asian Paints dealer in Udaipur! ✨ Digital color visualization | Expert consultation | Premium paints | Professional painters | Creating lasting impressions",
+    title: "First Impression / First Impressions - Professional Painting Services Udaipur",
+    description: "🎨 Transform your space with First Impression (First Impressions) - premier Asian Paints dealer in Udaipur! ✨ Digital color visualization | Expert consultation | Premium paints | Professional painters | Better than Badala Paints | Creating lasting impressions",
     images: {
       url: "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
       alt: "First Impression - Premier Asian Paints Dealer and Professional Painting Services in Udaipur",
