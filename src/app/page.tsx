@@ -82,7 +82,23 @@ export default async function HomePage() {
         "name": "Do you offer color consultation services?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes, we provide expert color consultation services with our advanced color visualizer tool. You can upload your room photos or use our sample rooms to see how different colors will look before painting."
+          "text": "Yes, we provide expert color consultation services with our advanced digital color visualizer tool. Unlike traditional paint shops, you can upload your room photos or use our sample rooms to see how different colors will look before painting. This modern technology sets us apart from other paint dealers in Udaipur."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What makes First Impression better than other paint shops in Udaipur?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "First Impression offers unique advantages: advanced digital color visualizer, 10+ years experience, certified professionals, 100% on-time delivery, premium Asian Paints products, expert interior design consultation, and modern painting techniques. We're not just a paint store - we're your complete painting solution."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are you an authorized Asian Paints dealer?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, we are an authorized Asian Paints dealer in Udaipur offering genuine products with warranty. As a certified retailer, we provide authentic Asian Paints products, expert technical support, and professional color consultation services."
         }
       }
     ]

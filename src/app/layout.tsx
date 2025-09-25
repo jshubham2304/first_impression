@@ -8,10 +8,10 @@ import { ParticlesBackground } from "@/components/particles-background";
 
 export const metadata: Metadata = {
   title: {
-    default: "First Impression - Professional Painting & Design Services in Udaipur",
-    template: "%s | First Impression - Expert Painting Services"
+    default: "First Impression - Best Asian Paints Dealer in Udaipur | #1 Paint Store",
+    template: "%s | First Impression - Best Asian Paints Dealer Udaipur"
   },
-  description: "Transform your space with First Impression's professional painting and design services in Udaipur. Expert color consultation, visualization tools, premium Asian Paints products, and exceptional craftsmanship for residential and commercial projects. Get free estimates today!",
+  description: "Transform your space with First Impression - the best Asian Paints dealer in Udaipur. 10+ years experience, advanced digital color visualizer, expert consultation, premium paint products, and certified professionals. Unlike traditional paint shops, we offer modern technology and guaranteed quality. Get free estimates today!",
   keywords: [
     // Core services
     "painting services Udaipur",
@@ -25,6 +25,24 @@ export const metadata: Metadata = {
     "paint contractor Udaipur",
     "painting company Udaipur",
     
+    // Best shop and dealer keywords
+    "best paint shop Udaipur",
+    "best paint store Udaipur",
+    "top paint shop Udaipur",
+    "best Asian Paints dealer Udaipur",
+    "authorized Asian Paints dealer Udaipur",
+    "official Asian Paints dealer Udaipur",
+    "trusted Asian Paints dealer Udaipur",
+    "certified Asian Paints dealer Udaipur",
+    "Asian Paints authorized retailer Udaipur",
+    "Asian Paints showroom Udaipur",
+    "best paint dealer Udaipur",
+    "top paint dealer Udaipur",
+    "premium paint dealer Udaipur",
+    "paint dealer near me",
+    "best paint shop near me",
+    "Asian Paints dealer near me",
+    
     // Paint brands & products
     "Asian Paints Udaipur",
     "premium paint products",
@@ -33,6 +51,25 @@ export const metadata: Metadata = {
     "color matching services",
     "paint calculator",
     "color schemes",
+    "genuine Asian Paints",
+    "original paint products",
+    "emulsion paints",
+    "enamel paints",
+    "weather shield paints",
+    "apex paints",
+    "royale paints",
+    "tractor emulsion",
+    
+    // Quality and reputation
+    "best quality paints",
+    "premium paint brands",
+    "trusted paint shop",
+    "reliable paint dealer",
+    "experienced paint store",
+    "authentic paint dealer",
+    "certified paint dealer",
+    "established paint shop",
+    "reputed paint dealer",
     
     // Home improvement
     "home improvement Udaipur",
@@ -41,13 +78,19 @@ export const metadata: Metadata = {
     "office painting",
     "apartment painting",
     "villa painting",
+    "bungalow painting",
+    "farmhouse painting",
     
-    // Local SEO
+    // Local SEO & Competition
     "painters near me",
     "painting services near me",
     "Rajasthan painting services",
     "Udaipur home renovation",
     "Udaipur interior design",
+    "top 10 paint shops Udaipur",
+    "best paint stores Udaipur",
+    "most trusted paint shop Udaipur",
+    "5 star paint shop Udaipur",
     
     // Service types
     "design services",
@@ -55,7 +98,11 @@ export const metadata: Metadata = {
     "free painting quote",
     "professional painting consultation",
     "texture painting",
-    "decorative painting"
+    "decorative painting",
+    "expert color consultation",
+    "custom color mixing",
+    "paint technical support",
+    "interior design consultation"
   ],
   authors: [{ name: "First Impression Team" }],
   creator: "First Impression - Professional Painting Services",
@@ -196,7 +243,7 @@ export default function RootLayout({
                   "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
                   "https://res.cloudinary.com/dfydjfauz/video/upload/v1758109969/file00001_qfxbkg.mp4"
                 ],
-                "description": "Professional painting and design services in Udaipur, Rajasthan. Expert color consultation, visualization tools, premium Asian Paints products, and exceptional craftsmanship for residential and commercial projects.",
+                "description": "Best Asian Paints dealer and professional painting services in Udaipur, Rajasthan. Authorized retailer offering expert color consultation, visualization tools, premium paint products, and exceptional craftsmanship for residential and commercial projects.",
                 "address": {
                   "@type": "PostalAddress",
                   "streetAddress": "Udaipur",
@@ -325,8 +372,24 @@ export default function RootLayout({
                   "bestRating": "5",
                   "worstRating": "1"
                 },
+                "award": [
+                  "Best Asian Paints Dealer Udaipur",
+                  "Top Paint Store Rajasthan",
+                  "Certified Painting Professionals",
+                  "Digital Color Technology Leader"
+                ],
+                "knowsAbout": [
+                  "Digital Color Visualization",
+                  "Professional Painting Techniques", 
+                  "Asian Paints Product Expertise",
+                  "Interior Design Consultation",
+                  "Color Psychology",
+                  "Modern Painting Technology",
+                  "Quality Paint Application",
+                  "Project Management"
+                ],
                 "slogan": "Creating Lasting First Impressions",
-                "keywords": "painting services, interior painting, exterior painting, color consultation, Asian Paints, Udaipur painters, home painting, commercial painting"
+                "keywords": "best paint shop Udaipur, Asian Paints dealer, authorized Asian Paints retailer, painting services, interior painting, exterior painting, color consultation, premium paint store, trusted paint dealer, professional painters Udaipur, home painting, commercial painting, paint showroom"
               },
               {
                 "@context": "https://schema.org",

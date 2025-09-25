@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { type VisualizerColor } from '@/lib/types';
@@ -97,8 +97,9 @@ const ColorSwatch = ({
   <div 
     className={cn(
       "group cursor-pointer relative transition-all duration-300 ease-out transform",
-      "border rounded-lg overflow-hidden backdrop-blur-sm",
+      "border rounded-lg overflow-hidden backdrop-blur-sm aspect-square",
       "hover:scale-105 hover:-translate-y-1",
+      "m-1 sm:m-1.5 md:m-2",
       isSelected 
         ? 'border-primary/50 ring-2 ring-primary/20 ring-offset-1 shadow-lg shadow-primary/20 scale-105' 
         : 'border-gray-200/60 hover:border-gray-300/80 shadow-sm hover:shadow-md'
@@ -124,7 +125,7 @@ const ColorSwatch = ({
     )}
     <div
               className={cn(
-                "w-full h-20 sm:h-24 md:h-28 lg:h-32 relative transition-all duration-300",
+                "w-full h-full relative transition-all duration-300",
                 "before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/5 before:to-transparent",
                 "group-hover:before:from-black/10"
               )}
@@ -313,8 +314,8 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                           activeFilters.tonality !== 'all' || 
                           activeFilters.room !== 'all';
 
-  // Get unique colors by combining all sources and removing duplicates
-  const getUniqueColors = () => {
+  // Get unique colors by combining all sources and removing duplicates (memoized)
+  const getUniqueColors = useMemo(() => {
     if (allShades.length > 0) {
       return allShades;
     }
@@ -326,7 +327,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
     );
     
     return uniqueColors;
-  };
+  }, [allShades, popularShades, recommendedShades, colorOfYearShades]);
 
   // Load data from API
   useEffect(() => {
@@ -364,36 +365,51 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
         setColorOfYearShades(colorOfYear);
         setAllShades(allColors);
 
-        // If no data was loaded, provide fallback colors from assets/shades.json
-        if (allColors.length === 0 && popular.length === 0 && recommended.length === 0 && colorOfYear.length === 0) {
-          console.warn('No data loaded, using fallback colors from assets/shades.json');
+        // Always ensure we have fallback colors available
+        if (allColors.length === 0) {
+          console.warn('API colors not available, using comprehensive fallback from assets/shades.json');
           
           // Load ALL fallback colors from the assets file
           if (shadesData?.shade && Array.isArray(shadesData.shade)) {
             const allFallbackColors = shadesData.shade;
             console.log('Loading ALL fallback colors:', allFallbackColors.length);
             
-            // Set all colors
+            // Set all colors as primary source
             setAllShades(allFallbackColors);
             
-            // Also set specific category colors for any remaining functionality
-            const popularFallback = allFallbackColors.filter(shade => shade.featureTag === 'Popular' || shade.popularity === '1').slice(0, 50);
-            const recommendedFallback = allFallbackColors.filter(shade => shade.featureTag === 'Recommended').slice(0, 30);
-            const cotyFallback = allFallbackColors.filter(shade => shade.featureTag === 'Colour of the year').slice(0, 20);
+            // Also populate category-specific arrays if they're empty
+            if (popular.length === 0) {
+              const popularFallback = allFallbackColors.filter(shade => 
+                shade.featureTag === 'Popular' || shade.popularity === '1'
+              ).slice(0, 100);
+              setPopularShades(popularFallback);
+            }
             
-            setPopularShades(popularFallback);
-            setRecommendedShades(recommendedFallback);
-            setColorOfYearShades(cotyFallback);
+            if (recommended.length === 0) {
+              const recommendedFallback = allFallbackColors.filter(shade => 
+                shade.featureTag === 'Recommended'
+              ).slice(0, 50);
+              setRecommendedShades(recommendedFallback);
+            }
             
-            console.log('Loaded comprehensive fallback colors:', {
+            if (colorOfYear.length === 0) {
+              const cotyFallback = allFallbackColors.filter(shade => 
+                shade.featureTag === 'Colour of the year'
+              ).slice(0, 30);
+              setColorOfYearShades(cotyFallback);
+            }
+            
+            console.log('Comprehensive color system loaded:', {
               total: allFallbackColors.length,
-              popular: popularFallback.length,
-              recommended: recommendedFallback.length,
-              coty: cotyFallback.length
+              popular: popularShades.length || 'using API data',
+              recommended: recommendedShades.length || 'using API data',
+              coty: colorOfYearShades.length || 'using API data'
             });
           } else {
-            console.error('No fallback colors available in assets/shades.json');
+            console.error('Critical: No fallback colors available in assets/shades.json');
           }
+        } else {
+          console.log('API colors loaded successfully:', allColors.length);
         }
       } catch (err) {
         console.error('Error loading color data:', err);
@@ -437,33 +453,33 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
 
 
 
-  // Handle fullscreen color preview
-  const openFullscreen = (color: string) => {
+  // Handle fullscreen color preview (optimized with useCallback)
+  const openFullscreen = useCallback((color: string) => {
     setFullscreenColor(color);
     setSelectedColor(color);
     setShowFullscreen(true);
     // Prevent body scrolling when overlay is open
     document.body.style.overflow = 'hidden';
-  };
+  }, []);
 
-  const closeFullscreen = () => {
+  const closeFullscreen = useCallback(() => {
     setShowFullscreen(false);
     // Restore body scrolling
     document.body.style.overflow = 'unset';
-  };
+  }, []);
 
-  // Handle image fullscreen
-  const openImageFullscreen = () => {
+  // Handle image fullscreen (optimized with useCallback)
+  const openImageFullscreen = useCallback(() => {
     setShowImageFullscreen(true);
     // Prevent body scrolling when overlay is open
     document.body.style.overflow = 'hidden';
-  };
+  }, []);
 
-  const closeImageFullscreen = () => {
+  const closeImageFullscreen = useCallback(() => {
     setShowImageFullscreen(false);
     // Restore body scrolling
     document.body.style.overflow = 'unset';
-  };
+  }, []);
 
   // Handle escape key to close overlays
   useEffect(() => {
@@ -558,10 +574,10 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
             {/* Single unified color grid - no tabs */}
             <div className="w-full">
               {loading ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-0 sm:gap-1 min-h-[200px]">
                   {[...Array(24)].map((_, i) => (
-                    <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                        <Skeleton className="w-full h-20 sm:h-24 md:h-28 lg:h-32 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
+                    <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse m-1 sm:m-1.5 md:m-2 aspect-square">
+                        <Skeleton className="w-full h-full bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                     </div>
                   ))}
                 </div>
@@ -569,16 +585,16 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                 <div className="space-y-4">
                   <div className="text-center p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/10">
                     <p className="text-sm font-semibold text-primary">
-                      {filterColors(getUniqueColors()).length} beautiful colors available
+                      {filterColors(getUniqueColors).length} beautiful colors available
                       {hasActiveFilters && (
                         <span className="text-xs text-primary/70 ml-1">
-                          (filtered from {getUniqueColors().length} total)
+                          (filtered from {getUniqueColors.length} total)
                         </span>
                       )}
                     </p>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 min-h-[200px] max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                    {filterColors(getUniqueColors()).map((shade) => (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-0 sm:gap-1 min-h-[200px] max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                    {filterColors(getUniqueColors).map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
                         color={shade.shadeHexCode}

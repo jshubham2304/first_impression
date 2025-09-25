@@ -105,6 +105,53 @@ export function generateKeywords(baseKeywords: string[], location = "Udaipur"): 
     `color consultation ${location}`,
   ];
 
+  // Best shop and dealer keywords
+  const bestShopKeywords = [
+    `best paint shop ${location}`,
+    `best paint store ${location}`,
+    `top paint shop ${location}`,
+    `leading paint store ${location}`,
+    `premium paint shop ${location}`,
+    `best Asian Paints dealer ${location}`,
+    `authorized Asian Paints dealer ${location}`,
+    `top Asian Paints dealer ${location}`,
+    `best Asian Paints store ${location}`,
+    `official Asian Paints dealer ${location}`,
+    `trusted Asian Paints dealer ${location}`,
+    `certified Asian Paints dealer ${location}`,
+    `Asian Paints authorized retailer ${location}`,
+    `Asian Paints exclusive dealer ${location}`,
+    `Asian Paints showroom ${location}`,
+    `Asian Paints gallery ${location}`,
+    `best paint dealer ${location}`,
+    `top paint dealer ${location}`,
+    `leading paint dealer ${location}`,
+    `premium paint dealer ${location}`,
+    `paint dealer near me`,
+    `best paint shop near me`,
+    `Asian Paints dealer near me`,
+  ];
+
+  // Quality and reputation keywords
+  const qualityKeywords = [
+    "best quality paints",
+    "premium paint brands",
+    "high quality paint store",
+    "trusted paint shop",
+    "reliable paint dealer",
+    "experienced paint store",
+    "professional paint supplier",
+    "quality paint products",
+    "authentic paint dealer",
+    "genuine Asian Paints",
+    "original paint products",
+    "certified paint dealer",
+    "licensed paint store",
+    "established paint shop",
+    "reputed paint dealer",
+  ];
+
+  // Service excellence keywords (USPs vs competitors)
   const serviceKeywords = [
     "house painting",
     "wall painting",
@@ -115,12 +162,138 @@ export function generateKeywords(baseKeywords: string[], location = "Udaipur"): 
     "paint contractor",
     "painting company",
     "premium paint products",
+
+    // Digital advantage over competitors
     "color visualization",
+    "digital color picker",
+    "virtual room painting",
+    "color visualizer tool",
+    "online color selection",
+    "3D color preview",
+    "augmented reality painting",
+    "digital paint consultation",
+    "virtual paint advisor",
+    "AI color matching",
+    "smart paint technology",
+    "advanced color tools",
+
+    // Professional services advantage
     "paint estimation",
     "free painting quote",
+    "expert color consultation",
+    "professional painting advice",
+    "paint color matching",
+    "custom color mixing",
+    "paint technical support",
+    "painting project consultation",
+    "interior design consultation",
+    "home makeover services",
+    "office painting services",
+    "villa painting services",
+    "apartment painting services",
+    "bungalow painting services",
+    "farmhouse painting services",
+
+    // Quality and experience advantage
+    "10 years painting experience",
+    "certified painting professionals",
+    "skilled paint technicians",
+    "expert paint applicators",
+    "trained color consultants",
+    "professional paint crew",
+    "experienced paint contractors",
+    "licensed painting company",
+    "insured painting services",
+    "guaranteed paint quality",
+    "warranty painting work",
+    "quality assured painting",
+    "premium painting standards",
+    "professional painting equipment",
+    "modern painting techniques",
   ];
 
-  return [...baseKeywords, ...locationKeywords, ...serviceKeywords];
+  // Product-specific keywords
+  const productKeywords = [
+    "emulsion paints",
+    "enamel paints",
+    "distemper paints",
+    "primer paints",
+    "wood finish paints",
+    "metal paints",
+    "waterproofing paints",
+    "exterior wall paints",
+    "interior wall paints",
+    "ceiling paints",
+    "bathroom paints",
+    "kitchen paints",
+    "living room paints",
+    "bedroom paints",
+    "office paints",
+    "industrial paints",
+    "weather shield paints",
+    "apex paints",
+    "royale paints",
+    "tractor emulsion",
+    "ace exterior",
+    "apcolite premium",
+  ];
+
+  // Local competition keywords
+  const competitiveKeywords = [
+    `top 10 paint shops ${location}`,
+    `best paint stores ${location}`,
+    `paint shop ratings ${location}`,
+    `paint dealer reviews ${location}`,
+    `most trusted paint shop ${location}`,
+    `popular paint store ${location}`,
+    `recommended paint dealer ${location}`,
+    `5 star paint shop ${location}`,
+    `award winning paint store ${location}`,
+    `customer favorite paint shop ${location}`,
+    `better than Badala Paints ${location}`,
+    `alternative to Badala Paints ${location}`,
+    `paint shop vs Badala Paints`,
+    `best paint dealer compared to Badala`,
+    `professional paint service ${location}`,
+    `premium paint dealer ${location}`,
+    `expert color consultation ${location}`,
+    `digital color visualizer ${location}`,
+    `modern paint technology ${location}`,
+    `advanced paint solutions ${location}`,
+  ];
+
+  // Business type keywords
+  const businessKeywords = [
+    "paint retail store",
+    "paint wholesale dealer",
+    "paint distribution center",
+    "paint supply chain",
+    "paint stockist",
+    "paint merchant",
+    "paint vendor",
+    "paint supplier",
+    "paint outlet",
+    "paint emporium",
+    "paint bazaar",
+    "paint mart",
+    "paint center",
+    "paint hub",
+    "paint world",
+    "paint palace",
+    "paint kingdom",
+    "paint empire",
+  ];
+
+  return [
+    ...baseKeywords,
+    ...locationKeywords,
+    ...bestShopKeywords,
+    ...qualityKeywords,
+    ...serviceKeywords,
+    ...productKeywords,
+    ...competitiveKeywords,
+    ...businessKeywords,
+  ];
 }
 
 // Generate service-specific metadata
