@@ -12,6 +12,71 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { categorizeShades, getPopularShades, getRecommendedShades, getColorOfTheYearShades, type Shade, type ColorCategory } from '@/lib/color-categories';
 import { fetchAllColorsForFamily, type ShadeFamily } from '@/services/asian-paints-api';
+import shadesData from '../../../assets/shades.json';
+
+// Helper function to get fallback colors from assets/shades.json
+const getFallbackColors = (): Shade[] => {
+  if (!shadesData?.shade) return [];
+  
+  // Get a mix of popular, recommended, and various color families
+  const popularColors = shadesData.shade
+    .filter((shade: any) => shade.featureTag === 'Popular' || shade.popularity === '1')
+    .slice(0, 8);
+  
+  const recommendedColors = shadesData.shade
+    .filter((shade: any) => shade.featureTag === 'Recommended')
+    .slice(0, 6);
+  
+  const diverseColors = shadesData.shade
+    .filter((shade: any, index: number) => index % 500 === 0) // Get every 500th color for diversity
+    .slice(0, 4);
+  
+  // Combine and return up to 24 colors
+  const combined = [...popularColors, ...recommendedColors, ...diverseColors];
+  return combined.slice(0, 24);
+};
+
+// Helper function to get fallback colors by family from assets/shades.json
+const getFallbackColorsByFamily = (family: ShadeFamily): Shade[] => {
+  if (!shadesData?.shade) return [];
+  
+  // Map family to the shadeFamily values in the JSON
+  const familyMap: Record<ShadeFamily, string[]> = {
+    'all': [], // Return diverse colors for 'all'
+    'off-whites': ['off whites', 'off-whites', 'off white'],
+    'whites': ['whites', 'white'],
+    'reds': ['reds', 'red'],
+    'pinks': ['pinks', 'pink'],
+    'oranges': ['oranges', 'orange'],
+    'yellows': ['yellows', 'yellow'],
+    'greens': ['greens', 'green'],
+    'blues': ['blues', 'blue'],
+    'purples': ['purples', 'purple'],
+    'violets': ['violets', 'violet'],
+    'browns': ['browns', 'brown'],
+    'greys': ['greys', 'grey'],
+    'blacks': ['blacks', 'black'],
+    'beiges': ['beiges', 'beige']
+  };
+  
+  if (family === 'all') {
+    // Return a diverse selection for 'all'
+    return shadesData.shade
+      .filter((shade: any, index: number) => index % 200 === 0) // Every 200th for diversity
+      .slice(0, 50);
+  }
+  
+  const familyNames = familyMap[family] || [];
+  const familyColors = shadesData.shade
+    .filter((shade: any) => 
+      familyNames.some(name => 
+        shade.shadeFamily?.toLowerCase().includes(name.toLowerCase())
+      )
+    )
+    .slice(0, 50); // Limit to 50 colors per family
+  
+  return familyColors;
+};
 
 const ColorSwatch = ({
   color,
@@ -60,7 +125,7 @@ const ColorSwatch = ({
     )}
     <div
       className={cn(
-        "w-full aspect-square relative transition-all duration-300",
+        "w-full h-20 sm:h-24 md:h-28 relative transition-all duration-300",
         "before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/5 before:to-transparent",
         "group-hover:before:from-black/10"
       )}
@@ -182,20 +247,81 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
           getColorOfTheYearShades()
         ]);
 
+        // Add logging for debugging mobile issues
+        console.log('Loaded data:', {
+          categories: categories.length,
+          popular: popular.length,
+          recommended: recommended.length,
+          colorOfYear: colorOfYear.length
+        });
+
         setColorCategories(categories);
         setPopularShades(popular);
         setRecommendedShades(recommended);
         setColorOfYearShades(colorOfYear);
+
+        // If no data was loaded, provide fallback colors from assets/shades.json
+        if (popular.length === 0 && recommended.length === 0 && colorOfYear.length === 0) {
+          console.warn('No data loaded, using fallback colors from assets/shades.json');
+          const fallbackColors = getFallbackColors();
+          
+          if (fallbackColors.length > 0) {
+            // Split fallback colors between different tabs
+            const popularFallback = fallbackColors.filter(shade => shade.featureTag === 'Popular' || shade.popularity === '1').slice(0, 12);
+            const recommendedFallback = fallbackColors.filter(shade => shade.featureTag === 'Recommended').slice(0, 8);
+            const cotyFallback = fallbackColors.filter(shade => shade.featureTag === 'Colour of the year').slice(0, 6);
+            
+            // If we don't have enough in specific categories, fill with remaining colors
+            if (popularFallback.length < 12) {
+              const remaining = fallbackColors.filter(shade => !popularFallback.includes(shade)).slice(0, 12 - popularFallback.length);
+              popularFallback.push(...remaining);
+            }
+            
+            setPopularShades(popularFallback);
+            setRecommendedShades(recommendedFallback.length > 0 ? recommendedFallback : popularFallback.slice(0, 8));
+            setColorOfYearShades(cotyFallback.length > 0 ? cotyFallback : popularFallback.slice(0, 6));
+            
+            console.log('Loaded fallback colors:', {
+              popular: popularFallback.length,
+              recommended: recommendedFallback.length,
+              coty: cotyFallback.length
+            });
+          } else {
+            console.error('No fallback colors available in assets/shades.json');
+          }
+        }
       } catch (err) {
         console.error('Error loading color data:', err);
         
-        // Provide more specific error messages
-        if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
-          setError('Network error: Please check your internet connection and try again.');
-        } else if (err instanceof TypeError && err.message.includes('NetworkError')) {
-          setError('Connection blocked: The color API may be temporarily unavailable.');
+        // Try to load fallback colors even on error
+        console.log('Attempting to load fallback colors due to error...');
+        const fallbackColors = getFallbackColors();
+        
+        if (fallbackColors.length > 0) {
+          const popularFallback = fallbackColors.filter(shade => shade.featureTag === 'Popular' || shade.popularity === '1').slice(0, 12);
+          const recommendedFallback = fallbackColors.filter(shade => shade.featureTag === 'Recommended').slice(0, 8);
+          const cotyFallback = fallbackColors.filter(shade => shade.featureTag === 'Colour of the year').slice(0, 6);
+          
+          if (popularFallback.length < 12) {
+            const remaining = fallbackColors.filter(shade => !popularFallback.includes(shade)).slice(0, 12 - popularFallback.length);
+            popularFallback.push(...remaining);
+          }
+          
+          setPopularShades(popularFallback);
+          setRecommendedShades(recommendedFallback.length > 0 ? recommendedFallback : popularFallback.slice(0, 8));
+          setColorOfYearShades(cotyFallback.length > 0 ? cotyFallback : popularFallback.slice(0, 6));
+          
+          console.log('Successfully loaded fallback colors after error');
+          setError('Using offline colors. Some features may be limited.');
         } else {
-          setError('Failed to load colors. Please refresh the page and try again.');
+          // Provide more specific error messages if fallback also fails
+          if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
+            setError('Network error: Please check your internet connection and try again.');
+          } else if (err instanceof TypeError && err.message.includes('NetworkError')) {
+            setError('Connection blocked: The color API may be temporarily unavailable.');
+          } else {
+            setError('Failed to load colors. Please refresh the page and try again.');
+          }
         }
       } finally {
         setLoading(false);
@@ -212,13 +338,26 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
       setError(null);
       setFamilyColors([]);
       
+      console.log('Loading colors for family:', family);
       // Get all colors for the selected family
       const allColors = await fetchAllColorsForFamily(family);
+      console.log('Loaded family colors:', allColors.length);
       setFamilyColors(allColors);
     } catch (err) {
       console.error('Error loading colors by family:', err);
-      setError('Failed to load colors for this category. Please try again.');
-      setFamilyColors([]);
+      
+      // Try to load fallback colors for this family
+      console.log('Attempting to load fallback colors for family:', family);
+      const fallbackFamilyColors = getFallbackColorsByFamily(family);
+      
+      if (fallbackFamilyColors.length > 0) {
+        setFamilyColors(fallbackFamilyColors);
+        console.log('Loaded fallback family colors:', fallbackFamilyColors.length);
+        setError('Using offline colors for this category. Some features may be limited.');
+      } else {
+        setError('Failed to load colors for this category. Please try again.');
+        setFamilyColors([]);
+      }
     } finally {
       setFamilyLoading(false);
     }
@@ -302,7 +441,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
 
 
   return (
-    <div className="grid lg:grid-cols-2 gap-4 lg:gap-8 items-start min-h-screen bg-gradient-to-br from-gray-50/30 via-white to-blue-50/20 p-4 lg:p-6">
+    <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:gap-8 min-h-screen bg-gradient-to-br from-gray-50/30 via-white to-blue-50/20 p-3 sm:p-4 lg:p-6">
       <div className="lg:col-span-1">
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
           <CardContent className="p-4 lg:p-6">
@@ -337,7 +476,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
         </Card>
       </div>
 
-      <div className="lg:col-span-1 lg:sticky lg:top-24">
+      <div className="lg:col-span-1">
         <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-md overflow-hidden">
           <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-gray-100/50">
             <CardTitle className="font-headline text-xl sm:text-2xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
@@ -352,39 +491,39 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
             )}
             
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 mb-4 sm:mb-6 p-1 bg-gradient-to-r from-gray-100/80 to-gray-50/80 backdrop-blur-sm border border-gray-200/50 shadow-sm gap-1">
+              <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 mb-4 p-1 bg-gradient-to-r from-gray-100/80 to-gray-50/80 backdrop-blur-sm border border-gray-200/50 shadow-sm gap-1">
                 <TabsTrigger 
                   value="popular" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs px-1 sm:px-3"
                 >
                   Popular
                 </TabsTrigger>
                 <TabsTrigger 
                   value="recommended" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs px-1 sm:px-3"
                 >
                   ⭐ Featured
                 </TabsTrigger>
                 <TabsTrigger 
                   value="families" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 col-span-2 sm:col-span-1"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs px-1 sm:px-3"
                 >
                   Families
                 </TabsTrigger>
                 <TabsTrigger 
                   value="categories" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs px-1 sm:px-3"
                 >
                   Categories
                 </TabsTrigger>
                 <TabsTrigger 
                   value="coty" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs px-1 sm:px-3"
                 >
                   🏆 COTY
                 </TabsTrigger>
@@ -392,15 +531,22 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               
               <TabsContent value="popular" className="space-y-4">
                 {loading ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
                     {[...Array(24)].map((_, i) => (
                       <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                        <Skeleton className="w-full aspect-square bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
+                        <Skeleton className="w-full h-20 sm:h-24 md:h-28 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                       </div>
                     ))}
                   </div>
+                ) : popularShades.length === 0 ? (
+                  <div className="text-center p-8">
+                    <p className="text-gray-500 mb-4">No colors found</p>
+                    <p className="text-sm text-gray-400">
+                      There may be a connection issue. Please try refreshing the page.
+                    </p>
+                  </div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
                     {popularShades.map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
@@ -419,15 +565,22 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               
               <TabsContent value="recommended" className="space-y-4">
                 {loading ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
                     {[...Array(20)].map((_, i) => (
                       <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                        <Skeleton className="w-full aspect-square bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
+                        <Skeleton className="w-full h-20 sm:h-24 md:h-28 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                       </div>
                     ))}
                   </div>
+                ) : recommendedShades.length === 0 ? (
+                  <div className="text-center p-8">
+                    <p className="text-gray-500 mb-4">No colors found</p>
+                    <p className="text-sm text-gray-400">
+                      There may be a connection issue. Please try refreshing the page.
+                    </p>
+                  </div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
                     {recommendedShades.map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
@@ -447,14 +600,14 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               <TabsContent value="families" className="space-y-4">
                 {/* Horizontal Category Filter Buttons */}
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs">
+                  <div className="grid grid-cols-2 gap-2 text-xs">
                     {colorFamilyCategories.map((category) => (
                       <button
                         key={category.id}
                         onClick={() => setSelectedFamily(category.apiFamily)}
                         className={cn(
-                          "px-3 sm:px-4 py-2 sm:py-3 text-center font-semibold rounded-lg sm:rounded-xl transition-all duration-300 ease-out transform",
-                          "border backdrop-blur-sm relative overflow-hidden text-xs sm:text-sm",
+                          "px-2 py-2 text-center font-semibold rounded-lg transition-all duration-300 ease-out transform",
+                          "border backdrop-blur-sm relative overflow-hidden text-xs",
                           "hover:scale-105 hover:-translate-y-0.5",
                           selectedFamily === category.apiFamily
                             ? "bg-gradient-to-r from-primary to-primary/80 text-white border-primary/50 shadow-lg shadow-primary/25 scale-105"
@@ -471,10 +624,10 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                   
                   {/* Colors Grid */}
                   {familyLoading ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
                       {[...Array(12)].map((_, i) => (
                         <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                          <Skeleton className="w-full aspect-square bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
+                          <Skeleton className="w-full h-20 sm:h-24 md:h-28 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                         </div>
                       ))}
                     </div>
@@ -485,7 +638,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                           {familyColors.length} beautiful colors available
                         </p>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px] max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                         {familyColors.map((shade) => (
                           <ColorSwatch
                             key={shade.entityCode}
@@ -517,7 +670,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                           <Skeleton className="w-24 h-4" />
                           <Skeleton className="w-8 h-5" />
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
                           {[...Array(12)].map((_, j) => (
                             <div key={j} className="flex flex-col items-center p-2">
                               <Skeleton className="w-16 h-16 rounded-lg" />
@@ -542,7 +695,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                             {category.shades.length}
                           </Badge>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
                           {category.shades.slice(0, 12).map((shade) => (
                             <ColorSwatch
                               key={shade.entityCode}
@@ -563,15 +716,15 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               
               <TabsContent value="coty" className="space-y-4">
                 {loading ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
                     {[...Array(8)].map((_, i) => (
                       <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                        <Skeleton className="w-full aspect-square bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
+                        <Skeleton className="w-full h-20 sm:h-24 md:h-28 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                       </div>
                     ))}
                   </div>
                 ) : colorOfYearShades.length > 0 ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
                     {colorOfYearShades.map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
