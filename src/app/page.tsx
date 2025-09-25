@@ -2,21 +2,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Bed, Home, Paintbrush, Quote } from "lucide-react";
-import { serviceCategories } from "@/lib/services";
+import { ArrowRight, Quote } from "lucide-react";
 import { getTestimonials } from "@/services/testimonial-service";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-const serviceIcons = [
-  <Paintbrush key="living-room" className="h-8 w-8" />,
-  <Bed key="bed-room" className="h-8 w-8" />,
-  <Home key="exterior" className="h-8 w-8" />,
-];
+import { InteractiveServices } from "@/components/interactive-services";
 
 
 export default async function HomePage() {
   const testimonials = await getTestimonials();
-  const featuredServices = serviceCategories.find(c => c.id === 'painting')?.services.slice(0, 3) || [];
 
   return (
     <div className="flex flex-col">
@@ -50,43 +43,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container px-4 md:px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-headline font-semibold">Our Core Services</h2>
-            <p className="text-muted-foreground mt-2 font-body">
-              Professional solutions for every surface and space.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredServices.map((service, index) => (
-              <Card key={service.title} className="flex flex-col text-center items-center hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="p-6 pt-6 flex flex-col items-center flex-grow">
-                    <div className="mb-6 bg-primary/10 text-primary p-4 rounded-full">
-                        {serviceIcons[index]}
-                    </div>
-                    <h3 className="font-headline text-xl font-semibold mb-2">{service.title}</h3>
-                    <p className="text-muted-foreground font-body text-sm mb-6 flex-grow">
-                        {service.description.substring(0, 120)}...
-                    </p>
-                    <Button asChild variant="outline" className="mt-auto">
-                        <Link href="/services">
-                          Learn More
-                        </Link>
-                    </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-           <div className="text-center mt-12">
-              <Button asChild size="lg">
-                <Link href="/services">
-                  View All Services
-                </Link>
-              </Button>
-            </div>
-        </div>
-      </section>
+      <InteractiveServices />
 
        <section className="py-16 md:py-24 bg-card">
         <div className="container px-4 md:px-6">

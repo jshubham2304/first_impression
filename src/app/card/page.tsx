@@ -5,8 +5,33 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin, Globe, Paintbrush, Palette, Droplet, ArrowRight, Star, ThumbsUp } from 'lucide-react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
+
+const allWorkImages = [
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109963/file00002_fmjajv.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109963/file00003_eq81kf.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00004_i9x97j.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00006_bqfqkq.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00007_t5j3to.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109965/file00009_extpor.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109962/file00011_ytuhuv.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109963/file00012_bdlg1f.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109966/file00013_gcnyfw.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758115129/file_002_c3rs35.jpg',
+];
 
 const BusinessCardPage = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % allWorkImages.length);
+    }, 3000); // Change image every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   const business = {
     name: 'First Impression',
     contactPerson: 'Hitesh Badala',
@@ -52,18 +77,21 @@ const BusinessCardPage = () => {
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4 font-body">
         <div className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-background shadow-2xl">
 
-            {/* Top section with background video */}
+            {/* Top section with background slideshow */}
             <div className="relative h-48 w-full">
-                 <video
-                  src="https://res.cloudinary.com/dfydjfauz/video/upload/v1758109969/file00001_qfxbkg.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="absolute top-0 left-0 w-full h-full object-cover -z-10"
-                >
-                  Your browser does not support the video tag.
-                </video>
+                {allWorkImages.map((src, index) => (
+                    <Image
+                        key={src}
+                        src={src}
+                        alt="Background work sample"
+                        fill
+                        className={cn(
+                            "absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out",
+                            index === currentImageIndex ? "opacity-100" : "opacity-0"
+                        )}
+                        priority={index === 0}
+                    />
+                ))}
                 <div className="absolute inset-0 bg-primary/70 mix-blend-multiply" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-primary-foreground">
                     <Image
@@ -226,5 +254,3 @@ const BusinessCardPage = () => {
 };
 
 export default BusinessCardPage;
-
-    

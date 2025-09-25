@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { Providers } from "./providers";
 import { AppContent } from "./app-content";
+import { ParticlesBackground } from "@/components/particles-background";
 
 export const metadata: Metadata = {
   title: "First Impression",
