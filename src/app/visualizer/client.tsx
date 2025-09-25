@@ -124,11 +124,11 @@ const ColorSwatch = ({
       </Badge>
     )}
     <div
-      className={cn(
-        "w-full h-20 sm:h-24 md:h-28 relative transition-all duration-300",
-        "before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/5 before:to-transparent",
-        "group-hover:before:from-black/10"
-      )}
+              className={cn(
+                "w-full h-16 sm:h-20 md:h-24 relative transition-all duration-300",
+                "before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/5 before:to-transparent",
+                "group-hover:before:from-black/10"
+              )}
       style={{ 
         backgroundColor: color,
         background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`
@@ -342,17 +342,34 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
       // Get all colors for the selected family
       const allColors = await fetchAllColorsForFamily(family);
       console.log('Loaded family colors:', allColors.length);
-      setFamilyColors(allColors);
+      
+      // Check if we got valid colors
+      if (allColors && allColors.length > 0) {
+        setFamilyColors(allColors);
+      } else {
+        // If API returns empty or no colors, try fallback
+        console.log('No colors from API, attempting fallback for family:', family);
+        const fallbackFamilyColors = getFallbackColorsByFamily(family);
+        
+        if (fallbackFamilyColors.length > 0) {
+          setFamilyColors(fallbackFamilyColors);
+          console.log('Loaded fallback family colors:', fallbackFamilyColors.length);
+          setError('Using offline colors for this category. Some features may be limited.');
+        } else {
+          setError('No colors available for this category.');
+          setFamilyColors([]);
+        }
+      }
     } catch (err) {
       console.error('Error loading colors by family:', err);
       
       // Try to load fallback colors for this family
-      console.log('Attempting to load fallback colors for family:', family);
+      console.log('Attempting to load fallback colors due to error for family:', family);
       const fallbackFamilyColors = getFallbackColorsByFamily(family);
       
       if (fallbackFamilyColors.length > 0) {
         setFamilyColors(fallbackFamilyColors);
-        console.log('Loaded fallback family colors:', fallbackFamilyColors.length);
+        console.log('Loaded fallback family colors after error:', fallbackFamilyColors.length);
         setError('Using offline colors for this category. Some features may be limited.');
       } else {
         setError('Failed to load colors for this category. Please try again.');
@@ -441,12 +458,12 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
 
 
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:gap-8 min-h-screen bg-gradient-to-br from-gray-50/30 via-white to-blue-50/20 p-3 sm:p-4 lg:p-6">
-      <div className="lg:col-span-1">
-        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
-          <CardContent className="p-4 lg:p-6">
+    <div className="flex flex-col xl:grid xl:grid-cols-2 gap-2 sm:gap-3 sm:gap-4 lg:gap-6 xl:gap-8 min-h-screen bg-gradient-to-br from-gray-50/30 via-white to-blue-50/20 p-2 sm:p-3 lg:p-4 xl:p-6">
+      <div className="xl:col-span-1">
+        <Card className="shadow-lg sm:shadow-xl border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
+          <CardContent className="p-3 sm:p-4 lg:p-6">
             <div 
-              className="relative w-full aspect-[3/2] bg-gradient-to-br from-gray-100/50 to-gray-200/30 rounded-xl overflow-hidden shadow-inner cursor-pointer group transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
+              className="relative w-full aspect-[4/3] sm:aspect-[3/2] bg-gradient-to-br from-gray-100/50 to-gray-200/30 rounded-lg sm:rounded-xl overflow-hidden shadow-inner cursor-pointer group transition-all duration-300 hover:shadow-2xl hover:scale-[1.01] sm:hover:scale-[1.02]"
               onClick={openImageFullscreen}
               title="Click to view fullscreen"
             >
@@ -463,9 +480,9 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               />
               
               {/* Fullscreen Indicator */}
-              <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
-                <div className="p-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg">
-                  <Maximize2 className="h-5 w-5 text-gray-600" />
+              <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
+                <div className="p-2 sm:p-3 bg-white/90 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-lg">
+                  <Maximize2 className="h-3 w-3 sm:h-5 sm:w-5 text-gray-600" />
                 </div>
               </div>
               
@@ -476,14 +493,14 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
         </Card>
       </div>
 
-      <div className="lg:col-span-1">
-        <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-md overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-gray-100/50">
-            <CardTitle className="font-headline text-xl sm:text-2xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+      <div className="xl:col-span-1">
+        <Card className="shadow-lg sm:shadow-xl border-0 bg-white/90 backdrop-blur-md overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-gray-100/50 p-3 sm:p-4 lg:p-6">
+            <CardTitle className="font-headline text-lg sm:text-xl lg:text-2xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
               Choose a Color
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 lg:p-6">
+          <CardContent className="p-3 sm:p-4 lg:p-6">
             {error && (
               <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-4">
                 <p className="text-destructive text-sm">{error}</p>
@@ -491,50 +508,53 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
             )}
             
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 mb-4 p-1 bg-gradient-to-r from-gray-100/80 to-gray-50/80 backdrop-blur-sm border border-gray-200/50 shadow-sm gap-1">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 mb-3 sm:mb-4 p-1 bg-gradient-to-r from-gray-100/80 to-gray-50/80 backdrop-blur-sm border border-gray-200/50 shadow-sm gap-0.5 sm:gap-1">
                 <TabsTrigger 
                   value="popular" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs px-1 sm:px-3"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-1 py-1.5 sm:px-3 sm:py-2"
                 >
                   Popular
                 </TabsTrigger>
                 <TabsTrigger 
                   value="recommended" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs px-1 sm:px-3"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-1 py-1.5 sm:px-3 sm:py-2"
                 >
-                  ⭐ Featured
+                  <span className="hidden sm:inline">⭐ Featured</span>
+                  <span className="sm:hidden">⭐</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="families" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs px-1 sm:px-3"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-1 py-1.5 sm:px-3 sm:py-2 col-span-2 sm:col-span-1"
                 >
                   Families
                 </TabsTrigger>
                 <TabsTrigger 
                   value="categories" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs px-1 sm:px-3"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-1 py-1.5 sm:px-3 sm:py-2"
                 >
-                  Categories
+                  <span className="hidden sm:inline">Categories</span>
+                  <span className="sm:hidden">Cat.</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="coty" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs px-1 sm:px-3"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-1 py-1.5 sm:px-3 sm:py-2"
                 >
-                  🏆 COTY
+                  <span className="hidden sm:inline">🏆 COTY</span>
+                  <span className="sm:hidden">🏆</span>
                 </TabsTrigger>
               </TabsList>
               
               <TabsContent value="popular" className="space-y-4">
                 {loading ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
                     {[...Array(24)].map((_, i) => (
                       <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                        <Skeleton className="w-full h-20 sm:h-24 md:h-28 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
+                        <Skeleton className="w-full h-16 sm:h-20 md:h-24 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                       </div>
                     ))}
                   </div>
@@ -546,7 +566,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                     </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
                     {popularShades.map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
@@ -565,10 +585,10 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               
               <TabsContent value="recommended" className="space-y-4">
                 {loading ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
                     {[...Array(20)].map((_, i) => (
                       <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                        <Skeleton className="w-full h-20 sm:h-24 md:h-28 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
+                        <Skeleton className="w-full h-16 sm:h-20 md:h-24 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                       </div>
                     ))}
                   </div>
@@ -580,7 +600,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                     </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
                     {recommendedShades.map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
@@ -600,13 +620,13 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               <TabsContent value="families" className="space-y-4">
                 {/* Horizontal Category Filter Buttons */}
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 text-xs">
                     {colorFamilyCategories.map((category) => (
                       <button
                         key={category.id}
                         onClick={() => setSelectedFamily(category.apiFamily)}
                         className={cn(
-                          "px-2 py-2 text-center font-semibold rounded-lg transition-all duration-300 ease-out transform",
+                          "px-1.5 py-1.5 sm:px-2 sm:py-2 text-center font-semibold rounded-md sm:rounded-lg transition-all duration-300 ease-out transform",
                           "border backdrop-blur-sm relative overflow-hidden text-xs",
                           "hover:scale-105 hover:-translate-y-0.5",
                           selectedFamily === category.apiFamily
@@ -614,7 +634,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                             : "bg-gradient-to-r from-gray-50/80 to-white/90 hover:from-gray-100/80 hover:to-white text-gray-700 border-gray-200/60 shadow-sm hover:shadow-md"
                         )}
                       >
-                        <span className="relative z-10 whitespace-nowrap overflow-hidden text-ellipsis">{category.name}</span>
+                        <span className="relative z-10 whitespace-nowrap overflow-hidden text-ellipsis text-xs sm:text-sm">{category.name}</span>
                         {selectedFamily === category.apiFamily && (
                           <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-50" />
                         )}
@@ -624,10 +644,10 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                   
                   {/* Colors Grid */}
                   {familyLoading ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
                       {[...Array(12)].map((_, i) => (
                         <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                          <Skeleton className="w-full h-20 sm:h-24 md:h-28 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
+                          <Skeleton className="w-full h-16 sm:h-20 md:h-24 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                         </div>
                       ))}
                     </div>
@@ -638,7 +658,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                           {familyColors.length} beautiful colors available
                         </p>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px] max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px] max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                         {familyColors.map((shade) => (
                           <ColorSwatch
                             key={shade.entityCode}
@@ -670,7 +690,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                           <Skeleton className="w-24 h-4" />
                           <Skeleton className="w-8 h-5" />
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
                           {[...Array(12)].map((_, j) => (
                             <div key={j} className="flex flex-col items-center p-2">
                               <Skeleton className="w-16 h-16 rounded-lg" />
@@ -695,7 +715,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                             {category.shades.length}
                           </Badge>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
                           {category.shades.slice(0, 12).map((shade) => (
                             <ColorSwatch
                               key={shade.entityCode}
@@ -716,15 +736,15 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               
               <TabsContent value="coty" className="space-y-4">
                 {loading ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
                     {[...Array(8)].map((_, i) => (
                       <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                        <Skeleton className="w-full h-20 sm:h-24 md:h-28 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
+                        <Skeleton className="w-full h-16 sm:h-20 md:h-24 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                       </div>
                     ))}
                   </div>
                 ) : colorOfYearShades.length > 0 ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[200px]">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
                     {colorOfYearShades.map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
@@ -778,7 +798,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
           onClick={closeFullscreen}
         >
           <div 
-            className="relative w-full max-w-4xl aspect-[3/2] rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-500"
+            className="relative w-full max-w-4xl aspect-[4/3] sm:aspect-[3/2] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-500 mx-2 sm:mx-0"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Background Image */}
@@ -800,35 +820,40 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
             />
 
             {/* Controls */}
-            <div className="absolute top-4 right-4 flex gap-2">
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg">
-                <p className="text-sm font-semibold text-gray-800">
-                  Selected Color: {fullscreenColor}
+            <div className="absolute top-2 sm:top-4 right-2 sm:right-4 flex gap-1 sm:gap-2">
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg sm:rounded-xl px-2 py-1 sm:px-4 sm:py-2 shadow-lg">
+                <p className="text-xs sm:text-sm font-semibold text-gray-800">
+                  <span className="hidden sm:inline">Selected Color: </span>{fullscreenColor}
                 </p>
               </div>
               <button
                 onClick={closeFullscreen}
-                className="p-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg hover:bg-white transition-all duration-200 hover:scale-110"
+                className="p-2 sm:p-3 bg-white/90 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-lg hover:bg-white transition-all duration-200 hover:scale-110"
                 title="Close fullscreen"
               >
-                <X className="h-5 w-5 text-gray-600" />
+                <X className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
               </button>
             </div>
 
             {/* Bottom Info Panel */}
-            <div className="absolute bottom-4 left-4 right-4">
-              <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-800">Full Preview</h3>
-                    <p className="text-sm text-gray-600">Click outside to close • Press ESC to exit</p>
+            <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4">
+              <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-4 shadow-lg">
+                <div className="flex items-center justify-between flex-col sm:flex-row gap-2 sm:gap-0">
+                  <div className="text-center sm:text-left">
+                    <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Full Preview</h3>
+                    <p className="text-xs sm:text-sm text-gray-600">
+                      <span className="hidden sm:inline">Click outside to close • Press ESC to exit</span>
+                      <span className="sm:hidden">Tap outside to close</span>
+                    </p>
                   </div>
                   <Button 
                     onClick={closeFullscreen}
-                    className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                    className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2"
+                    size="sm"
                   >
-                    <Download className="mr-2 h-4 w-4"/>
-                    Download
+                    <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4"/>
+                    <span className="hidden sm:inline">Download</span>
+                    <span className="sm:hidden">Save</span>
                   </Button>
                 </div>
               </div>
@@ -844,7 +869,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
           onClick={closeImageFullscreen}
         >
           <div 
-            className="relative w-full max-w-6xl aspect-[3/2] rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-500"
+            className="relative w-full max-w-6xl aspect-[4/3] sm:aspect-[3/2] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-500 mx-2 sm:mx-0"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Background Image */}
