@@ -4,7 +4,7 @@ import React, { useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
 import type { Container, ISourceOptions } from '@tsparticles/engine';
-import { loadFull } from 'tsparticles'; 
+import { loadSlim } from '@tsparticles/slim'; 
 import { useTheme } from 'next-themes';
 import { serviceCategories } from '@/lib/services';
 import { Card, CardContent } from '@/components/ui/card';
@@ -25,7 +25,7 @@ export function InteractiveServices() {
 
   React.useEffect(() => {
     initParticlesEngine(async (engine) => {
-      await loadFull(engine);
+      await loadSlim(engine);
     }).then(() => {
       setIsInitialized(true);
     });

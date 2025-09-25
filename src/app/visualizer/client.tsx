@@ -128,6 +128,9 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
   // Full-screen overlay state
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [fullscreenColor, setFullscreenColor] = useState(selectedColor);
+  
+  // Image fullscreen overlay state
+  const [showImageFullscreen, setShowImageFullscreen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // State for API data
@@ -217,11 +220,28 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
     document.body.style.overflow = 'unset';
   };
 
-  // Handle escape key to close overlay
+  // Handle image fullscreen
+  const openImageFullscreen = () => {
+    setShowImageFullscreen(true);
+    // Prevent body scrolling when overlay is open
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeImageFullscreen = () => {
+    setShowImageFullscreen(false);
+    // Restore body scrolling
+    document.body.style.overflow = 'unset';
+  };
+
+  // Handle escape key to close overlays
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showFullscreen) {
-        closeFullscreen();
+      if (e.key === 'Escape') {
+        if (showFullscreen) {
+          closeFullscreen();
+        } else if (showImageFullscreen) {
+          closeImageFullscreen();
+        }
       }
     };
 
@@ -231,7 +251,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
       // Cleanup body scroll on unmount
       document.body.style.overflow = 'unset';
     };
-  }, [showFullscreen]);
+  }, [showFullscreen, showImageFullscreen]);
 
   // Load initial family colors
   useEffect(() => {
@@ -266,7 +286,11 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
       <div className="lg:col-span-1">
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
           <CardContent className="p-6">
-            <div className="relative w-full aspect-[3/2] bg-gradient-to-br from-gray-100/50 to-gray-200/30 rounded-xl overflow-hidden shadow-inner">
+            <div 
+              className="relative w-full aspect-[3/2] bg-gradient-to-br from-gray-100/50 to-gray-200/30 rounded-xl overflow-hidden shadow-inner cursor-pointer group transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
+              onClick={openImageFullscreen}
+              title="Click to view fullscreen"
+            >
               <Image
                 src={baseImage}
                 alt="Living room with sofa and window"
@@ -278,6 +302,16 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                 className="absolute inset-0 z-10"
                 style={{ mixBlendMode: 'multiply', backgroundColor: selectedColor }}
               />
+              
+              {/* Fullscreen Indicator */}
+              <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
+                <div className="p-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg">
+                  <Maximize2 className="h-5 w-5 text-gray-600" />
+                </div>
+              </div>
+              
+              {/* Hover Overlay */}
+              <div className="absolute inset-0 z-15 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
           </CardContent>
         </Card>
@@ -637,6 +671,79 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                     <Download className="mr-2 h-4 w-4"/>
                     Download
                   </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Full-screen Image Overlay */}
+      {showImageFullscreen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-300"
+          onClick={closeImageFullscreen}
+        >
+          <div 
+            className="relative w-full max-w-6xl aspect-[3/2] rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-500"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Background Image */}
+            <Image
+              src={baseImage}
+              alt="Room visualization fullscreen"
+              fill
+              className="object-cover"
+            />
+            
+            {/* Color Overlay */}
+            <div
+              className="absolute inset-0"
+              style={{ 
+                mixBlendMode: 'multiply', 
+                backgroundColor: selectedColor,
+                background: `linear-gradient(135deg, ${selectedColor}dd 0%, ${selectedColor} 60%, ${selectedColor}dd 100%)`
+              }}
+            />
+
+            {/* Top Controls */}
+            <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg">
+                <h3 className="font-semibold text-lg text-gray-800">Room Visualization</h3>
+                <p className="text-sm text-gray-600">Current Color: {selectedColor}</p>
+              </div>
+              <button
+                onClick={closeImageFullscreen}
+                className="p-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg hover:bg-white transition-all duration-200 hover:scale-110"
+                title="Close fullscreen"
+              >
+                <X className="h-6 w-6 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Bottom Controls */}
+            <div className="absolute bottom-4 left-4 right-4">
+              <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Full Room Preview</p>
+                    <p className="text-xs text-gray-500">Click outside to close • Press ESC to exit</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline"
+                      onClick={closeImageFullscreen}
+                      className="border-2 border-gray-200/80"
+                    >
+                      Close
+                    </Button>
+                    <Button 
+                      className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                    >
+                      <Download className="mr-2 h-4 w-4"/>
+                      Download
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
