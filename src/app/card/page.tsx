@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Phone, Mail, MapPin, Globe, Paintbrush, Palette, Droplet, ArrowRight } from 'lucide-react';
+import { Phone, Mail, MapPin, Globe, Paintbrush, Palette, Droplet, ArrowRight, Star, ThumbsUp } from 'lucide-react';
 import Link from 'next/link';
 
 const BusinessCardPage = () => {
@@ -16,6 +16,12 @@ const BusinessCardPage = () => {
     addressLink: 'https://maps.app.goo.gl/dPcij76yfpb4J6op8',
     website: 'https://firstimpression.com',
     logo: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png',
+    // Google presence
+    googleBusinessUrl: 'https://www.google.com/search?sca_esv=2e3a0442facbf014&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E9MxlKNpWAwqeUC5Q--FH3LGMJqjIMl-aCDjj07mR1ELdX257qIcv7mQLieZkWDwkQWfGy0lUlU1VjclOz09mhjTnKrYjcboOh2TyKhibJk3ShbPbQ%3D%3D&q=Badala+Paints+And+Hardware+Reviews',
+    googleShareUrl: 'https://share.google/TGhVGIQXnSx6A53Wt',
+    googleBusinessName: 'Badala Paints And Hardware',
+    googleRating: 4.8,
+    googleReviewCount: 127,
   };
 
   const services = [
@@ -25,9 +31,21 @@ const BusinessCardPage = () => {
   ]
 
   const gallerySamples = [
-      { src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109963/file00002_fmjajv.jpg', hint: 'exterior wall painting' },
-      { src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00004_i9x97j.jpg', hint: 'modern interior design' },
-      { src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00007_t5j3to.jpg', hint: 'kitchen cabinet painting' },
+      { 
+        src: 'https://res.cloudinary.com/dfydjfauz/image/upload/c_fill,w_400,h_400,q_auto,f_auto/v1758109963/file00002_fmjajv.jpg', 
+        hint: 'exterior wall painting',
+        fallback: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=400&h=400&fit=crop&crop=center'
+      },
+      { 
+        src: 'https://res.cloudinary.com/dfydjfauz/image/upload/c_fill,w_400,h_400,q_auto,f_auto/v1758109964/file00004_i9x97j.jpg', 
+        hint: 'modern interior design',
+        fallback: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop&crop=center'
+      },
+      { 
+        src: 'https://res.cloudinary.com/dfydjfauz/image/upload/c_fill,w_400,h_400,q_auto,f_auto/v1758109964/file00007_t5j3to.jpg', 
+        hint: 'kitchen cabinet painting',
+        fallback: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop&crop=center'
+      },
   ]
 
   return (
@@ -86,6 +104,71 @@ const BusinessCardPage = () => {
                     </a>
                 </div>
 
+                {/* Google Presence & Reviews Section */}
+                <div className="space-y-3 pt-4 border-t">
+                    <h3 className="text-center font-headline text-lg">Google Reviews</h3>
+                    
+                    {/* Google Rating Display */}
+                    <div className="flex items-center justify-center space-x-2 p-3 bg-muted/30 rounded-lg">
+                        <div className="flex items-center space-x-1">
+                            {[...Array(5)].map((_, i) => (
+                                <Star 
+                                    key={i} 
+                                    className={`h-4 w-4 ${i < Math.floor(business.googleRating) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`} 
+                                />
+                            ))}
+                        </div>
+                        <span className="font-semibold text-lg">{business.googleRating}</span>
+                        <span className="text-sm text-muted-foreground">({business.googleReviewCount} reviews)</span>
+                    </div>
+
+                    {/* Google Business Link */}
+                    <div className="space-y-2">
+                        <a 
+                            href={business.googleBusinessUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="flex items-center space-x-4 p-2 rounded-lg hover:bg-muted transition-colors"
+                        >
+                            <div className="h-5 w-5 flex-shrink-0">
+                                <svg viewBox="0 0 24 24" className="h-5 w-5 text-primary">
+                                    <path fill="currentColor" d="M12.02 10.18c-.59 0-1.07-.48-1.07-1.07s.48-1.07 1.07-1.07 1.07.48 1.07 1.07-.48 1.07-1.07 1.07zM12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
+                            </div>
+                            <div className="flex-1">
+                                <span className="text-sm font-medium">{business.googleBusinessName}</span>
+                                <p className="text-xs text-muted-foreground">View on Google</p>
+                            </div>
+                        </a>
+
+                        <a 
+                            href={business.googleShareUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="flex items-center space-x-4 p-2 rounded-lg hover:bg-muted transition-colors"
+                        >
+                            <ThumbsUp className="h-5 w-5 flex-shrink-0 text-primary" />
+                            <div className="flex-1">
+                                <span className="text-sm font-medium">Share Our Business</span>
+                                <p className="text-xs text-muted-foreground">Google Business Profile</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    {/* Write Review Button */}
+                    <Button asChild variant="outline" className="w-full">
+                        <a 
+                            href={business.googleBusinessUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center"
+                        >
+                            <Star className="mr-2 h-4 w-4" />
+                            Write a Review
+                        </a>
+                    </Button>
+                </div>
+
                 <div className="space-y-3 pt-4 border-t">
                     <h3 className="text-center font-headline text-lg">Our Services</h3>
                     <div className="grid grid-cols-3 gap-2 text-center">
@@ -104,14 +187,18 @@ const BusinessCardPage = () => {
                     <h3 className="text-center font-headline text-lg">Recent Work</h3>
                     <div className="grid grid-cols-3 gap-2">
                         {gallerySamples.map((sample, index) => (
-                             <Link href="/gallery" key={index} className="aspect-square block relative overflow-hidden rounded-lg">
+                             <Link href="/gallery" key={index} className="aspect-square block relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 shadow-sm">
                                 <Image
-                                    src={sample.src}
-                                    alt={`Work sample ${index + 1}`}
+                                    src={sample.fallback}
+                                    alt={`${sample.hint} - Work sample ${index + 1}`}
                                     data-ai-hint={sample.hint}
                                     fill
                                     className="object-cover transition-transform duration-300 hover:scale-110"
+                                    placeholder="blur"
+                                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                                    priority={index === 0}
                                 />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
                             </Link>
                         ))}
                     </div>
