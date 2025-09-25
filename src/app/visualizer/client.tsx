@@ -359,6 +359,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                         code={shade.entityCode}
                         isSelected={selectedColor === shade.shadeHexCode}
                         onSelect={() => setSelectedColor(shade.shadeHexCode)}
+                        onFullscreen={() => openFullscreen(shade.shadeHexCode)}
                         featureTag={shade.featureTag}
                       />
                     ))}
@@ -389,6 +390,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                         code={shade.entityCode}
                         isSelected={selectedColor === shade.shadeHexCode}
                         onSelect={() => setSelectedColor(shade.shadeHexCode)}
+                        onFullscreen={() => openFullscreen(shade.shadeHexCode)}
                         featureTag={shade.featureTag}
                       />
                     ))}
@@ -538,6 +540,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                         code={shade.entityCode}
                         isSelected={selectedColor === shade.shadeHexCode}
                         onSelect={() => setSelectedColor(shade.shadeHexCode)}
+                        onFullscreen={() => openFullscreen(shade.shadeHexCode)}
                         featureTag={shade.featureTag}
                       />
                     ))}
