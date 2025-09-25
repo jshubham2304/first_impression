@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { categorizeShades, getPopularShades, getRecommendedShades, getColorOfTheYearShades, type Shade, type ColorCategory } from '@/lib/color-categories';
-import { fetchAllColorsForFamily, type ShadeFamily } from '@/services/asian-paints-api';
+import { fetchAllColorsForFamily, getApiStatus, recheckApiAvailability, type ShadeFamily } from '@/services/asian-paints-api';
 import shadesData from '../../../assets/shades.json';
 
 // Helper function to get fallback colors from assets/shades.json
@@ -196,6 +196,9 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [baseImage, setBaseImage] = useState('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1200&auto=format&fit=crop');
   const [activeTab, setActiveTab] = useState('families');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [apiStatus, setApiStatus] = useState<string>('');
   
   // Color family filtering state
   const [selectedFamily, setSelectedFamily] = useState<ShadeFamily>('all');
@@ -215,8 +218,6 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
   const [popularShades, setPopularShades] = useState<Shade[]>([]);
   const [recommendedShades, setRecommendedShades] = useState<Shade[]>([]);
   const [colorOfYearShades, setColorOfYearShades] = useState<Shade[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Color family categories matching Asian Paints structure
   const colorFamilyCategories = [
@@ -238,6 +239,11 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
       try {
         setLoading(true);
         setError(null);
+
+        // Check API status first
+        const status = getApiStatus();
+        setApiStatus(status.message);
+        console.log('API Status:', status);
 
         // Load all data in parallel for better performance
         const [categories, popular, recommended, colorOfYear] = await Promise.all([
@@ -354,7 +360,21 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
         if (fallbackFamilyColors.length > 0) {
           setFamilyColors(fallbackFamilyColors);
           console.log('Loaded fallback family colors:', fallbackFamilyColors.length);
-          setError('Using offline colors for this category. Some features may be limited.');
+          
+          // Update API status to reflect current situation
+          const status = getApiStatus();
+          setApiStatus(status.message);
+          
+          // Set appropriate error message based on platform
+          const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            typeof navigator !== 'undefined' ? navigator.userAgent : ''
+          );
+          
+          if (status.available === false && isMobileDevice) {
+            setError('Asian Paints API blocked on mobile - using offline colors with full functionality');
+          } else {
+            setError('Using offline colors for this category. Some features may be limited.');
+          }
         } else {
           setError('No colors available for this category.');
           setFamilyColors([]);
@@ -370,7 +390,21 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
       if (fallbackFamilyColors.length > 0) {
         setFamilyColors(fallbackFamilyColors);
         console.log('Loaded fallback family colors after error:', fallbackFamilyColors.length);
-        setError('Using offline colors for this category. Some features may be limited.');
+        
+        // Update API status
+        const status = getApiStatus();
+        setApiStatus(status.message);
+        
+        // Set appropriate error message
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          typeof navigator !== 'undefined' ? navigator.userAgent : ''
+        );
+        
+        if (status.available === false && isMobileDevice) {
+          setError('📱 Mobile DNS blocking detected - using offline Asian Paints catalog');
+        } else {
+          setError('Connection issue detected - using offline colors');
+        }
       } else {
         setError('Failed to load colors for this category. Please try again.');
         setFamilyColors([]);
@@ -502,8 +536,21 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
           </CardHeader>
           <CardContent className="p-3 sm:p-4 lg:p-6">
             {error && (
-              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-4">
-                <p className="text-destructive text-sm">{error}</p>
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                <p className="text-red-700 text-sm font-medium">{error}</p>
+                {apiStatus && (
+                  <p className="text-red-600 text-xs mt-1">{apiStatus}</p>
+                )}
+              </div>
+            )}
+            
+            {/* API Status Information (when no error) */}
+            {apiStatus && !error && apiStatus.includes('blocked') && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                <p className="text-yellow-700 text-sm">
+                  📱 Mobile Network Notice: Using offline color catalog
+                </p>
+                <p className="text-yellow-600 text-xs mt-1">{apiStatus}</p>
               </div>
             )}
             

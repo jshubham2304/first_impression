@@ -8,6 +8,65 @@ export interface AsianPaintsApiResponse {
 const API_BASE_URL =
   "https://www.asianpaints.com/content/ap/en/home/catalogue/colour-catalogue/jcr:content/root/responsivegrid_602603264/shadelisting.shade.json";
 
+// Track API availability to avoid repeated failed requests
+let apiAvailable: boolean | null = null;
+let lastApiCheck = 0;
+const API_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
+
+// Check if we're on mobile (basic detection)
+const isMobile = () => {
+  if (typeof window === "undefined") return false;
+  return (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    window.innerWidth <= 768
+  );
+};
+
+// Quick API availability check
+const checkApiAvailability = async (): Promise<boolean> => {
+  const now = Date.now();
+
+  // Use cached result if recent
+  if (apiAvailable !== null && now - lastApiCheck < API_CHECK_INTERVAL) {
+    return apiAvailable;
+  }
+
+  try {
+    // Quick test with minimal params on mobile
+    const testUrl = isMobile()
+      ? `${API_BASE_URL}?selectedShadeFamily=reds&language=en`
+      : `${API_BASE_URL}?selectedShadeFamily=all&language=en`;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+
+    const response = await fetch(testUrl, {
+      method: "HEAD", // Use HEAD to minimize data transfer
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "Mozilla/5.0 (compatible; ColorVisualizer/1.0)",
+      },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    apiAvailable = response.ok;
+    lastApiCheck = now;
+
+    console.log(
+      `Asian Paints API ${apiAvailable ? "available" : "unavailable"} on ${isMobile() ? "mobile" : "desktop"}`
+    );
+
+    return apiAvailable;
+  } catch (error) {
+    console.warn("Asian Paints API check failed:", error instanceof Error ? error.message : "Unknown error");
+    apiAvailable = false;
+    lastApiCheck = now;
+    return false;
+  }
+};
+
 // Available shade families from Asian Paints
 export const SHADE_FAMILIES = [
   "all",
@@ -39,7 +98,7 @@ export async function fetchColorsByFamily(
   try {
     // Get all colors for the family (this will use cache if available)
     const allColors = await fetchAllColorsForFamily(selectedShadeFamily);
-    
+
     // Apply pagination on the cached data
     return allColors.slice(offset, offset + limit);
   } catch (error) {
@@ -141,16 +200,16 @@ export async function loadMoreColors(
     }
   } catch (error) {
     console.error("Error loading more colors:", error);
-    
+
     // Provide more specific error information
-    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-      console.error('Network connectivity issue - check internet connection');
-    } else if (error instanceof TypeError && error.message.includes('NetworkError')) {
-      console.error('CORS or network policy error');
+    if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
+      console.error("Network connectivity issue - check internet connection");
+    } else if (error instanceof TypeError && error.message.includes("NetworkError")) {
+      console.error("CORS or network policy error");
     } else if (error instanceof Error) {
-      console.error('API Error:', error.message);
+      console.error("API Error:", error.message);
     }
-    
+
     return [];
   }
 }
@@ -165,6 +224,18 @@ export async function fetchAllColorsForFamily(selectedShadeFamily: ShadeFamily =
     return colorCache.get(selectedShadeFamily)!;
   }
 
+  // Quick API availability check - especially important for mobile
+  const isApiAvailable = await checkApiAvailability();
+
+  if (!isApiAvailable) {
+    console.warn(
+      `Asian Paints API unavailable (${
+        isMobile() ? "mobile" : "desktop"
+      }), skipping API call for family: ${selectedShadeFamily}`
+    );
+    return []; // Return empty array to trigger fallback in client
+  }
+
   try {
     const params = new URLSearchParams({
       selectedShadeFamily,
@@ -172,20 +243,28 @@ export async function fetchAllColorsForFamily(selectedShadeFamily: ShadeFamily =
       shadeMapper: "false",
     });
 
+    // Add shorter timeout for mobile devices
+    const controller = new AbortController();
+    const timeoutMs = isMobile() ? 5000 : 10000; // 5s mobile, 10s desktop
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     const response = await fetch(`${API_BASE_URL}?${params}`, {
       headers: {
         Accept: "application/json",
         "User-Agent": "Mozilla/5.0 (compatible; ColorVisualizer/1.0)",
       },
+      signal: controller.signal,
       next: { revalidate: 3600 },
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`API request failed: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    
+
     let allColors: Shade[] = [];
     if (data.shade && Array.isArray(data.shade)) {
       allColors = data.shade;
@@ -193,22 +272,29 @@ export async function fetchAllColorsForFamily(selectedShadeFamily: ShadeFamily =
       allColors = data;
     }
 
-    // Cache the results
-    colorCache.set(selectedShadeFamily, allColors);
+    // Cache the results only if we got valid data
+    if (allColors.length > 0) {
+      colorCache.set(selectedShadeFamily, allColors);
+      console.log(`Successfully fetched ${allColors.length} colors for family "${selectedShadeFamily}" from API`);
+    }
+
     return allColors;
   } catch (error) {
     console.error(`Error fetching all colors for family "${selectedShadeFamily}":`, error);
-    
-    // Check if it's a network error
-    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-      console.error('Network error - check internet connection and CORS settings');
+
+    // Mark API as unavailable on specific errors
+    if (error instanceof Error) {
+      if (error.name === "AbortError") {
+        console.error(`API request timeout (${isMobile() ? "mobile" : "desktop"}) for family "${selectedShadeFamily}"`);
+        apiAvailable = false;
+        lastApiCheck = Date.now();
+      } else if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+        console.error(`Network/DNS blocking detected for Asian Paints API on ${isMobile() ? "mobile" : "desktop"}`);
+        apiAvailable = false;
+        lastApiCheck = Date.now();
+      }
     }
-    
-    // Check if it's a CORS error
-    if (error instanceof TypeError && error.message.includes('NetworkError')) {
-      console.error('CORS error - API may be blocking cross-origin requests');
-    }
-    
+
     return [];
   }
 }
@@ -223,3 +309,23 @@ export async function getTotalColorsCount(selectedShadeFamily: ShadeFamily = "al
     return 0;
   }
 }
+
+// Export API availability status
+export const getApiStatus = () => ({
+  available: apiAvailable,
+  lastChecked: lastApiCheck,
+  isMobile: isMobile(),
+  message:
+    apiAvailable === false
+      ? `Asian Paints API blocked on ${isMobile() ? "mobile" : "desktop"} - using offline colors`
+      : apiAvailable === true
+      ? `Asian Paints API available on ${isMobile() ? "mobile" : "desktop"}`
+      : "Asian Paints API status unknown",
+});
+
+// Force re-check API availability
+export const recheckApiAvailability = async (): Promise<boolean> => {
+  apiAvailable = null;
+  lastApiCheck = 0;
+  return await checkApiAvailability();
+};
