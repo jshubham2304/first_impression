@@ -1,12 +1,15 @@
 {
-  "name": "First Impression - Professional Painting Services",
+  "name": "First Impression - Professional Painting Services in Udaipur",
   "short_name": "First Impression",
-  "description": "Transform your space with First Impression's professional painting and design services. Expert color consultation, visualization tools, and premium paint products.",
+  "description": "Transform your space with First Impression's professional painting and design services in Udaipur. Expert color consultation, Asian Paints visualization tools, and premium paint products.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "theme_color": "#8B5CF6",
   "orientation": "portrait-primary",
+  "lang": "en-US",
+  "dir": "ltr",
   "icons": [
     {
       "src": "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",

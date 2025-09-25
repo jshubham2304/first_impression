@@ -6,13 +6,103 @@ import { ArrowRight, Quote } from "lucide-react";
 import { getTestimonials } from "@/services/testimonial-service";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { InteractiveServices } from "@/components/interactive-services";
+import Script from "next/script";
 
 
 export default async function HomePage() {
   const testimonials = await getTestimonials();
 
+  // Generate structured data for reviews
+  const reviewsStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://first-impression.com/#organization",
+    "name": "First Impression",
+    "review": testimonials.slice(0, 3).map((testimonial, index) => ({
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      "author": {
+        "@type": "Person",
+        "name": testimonial.author
+      },
+      "reviewBody": testimonial.comment,
+      "datePublished": new Date().toISOString().split('T')[0]
+    })),
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "150",
+      "bestRating": "5"
+    }
+  };
+
+  // FAQ structured data
+  const faqStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What painting services do you offer in Udaipur?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We offer comprehensive painting services including interior painting, exterior painting, texture painting, color consultation, and decorative finishes using premium Asian Paints products."
+        }
+      },
+      {
+        "@type": "Question", 
+        "name": "Do you provide free painting estimates?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, we provide free, detailed painting estimates for all projects in Udaipur. Our professional assessment includes transparent pricing and custom quotes based on your specific requirements."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does a typical painting project take?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Project duration depends on the scope and size. Interior room painting typically takes 2-3 days, while complete home painting can take 1-2 weeks. We guarantee 100% on-time delivery."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What brands of paint do you use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We primarily use premium Asian Paints products, known for their quality, durability, and extensive color range. We also stock other premium paint brands based on project requirements."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you offer color consultation services?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, we provide expert color consultation services with our advanced color visualizer tool. You can upload your room photos or use our sample rooms to see how different colors will look before painting."
+        }
+      }
+    ]
+  };
+
   return (
-    <div className="flex flex-col">
+    <>
+      {/* Structured Data for Reviews and FAQ */}
+      <Script
+        id="reviews-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewsStructuredData) }}
+      />
+      <Script
+        id="faq-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+      />
+      
+      <div className="flex flex-col">
       <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center text-center text-white overflow-hidden">
         <video
           src="https://res.cloudinary.com/dfydjfauz/video/upload/v1758109969/file00001_qfxbkg.mp4"
@@ -91,5 +181,6 @@ export default async function HomePage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

@@ -6,9 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { type VisualizerColor } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Download, Upload, X, Maximize2 } from 'lucide-react';
+import { Download, Upload, X, Maximize2, Filter, Thermometer, Palette, Home, RotateCcw, Layers } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { categorizeShades, getPopularShades, getRecommendedShades, getColorOfTheYearShades, type Shade, type ColorCategory } from '@/lib/color-categories';
 import { fetchAllColorsForFamily, getApiStatus, recheckApiAvailability, type ShadeFamily } from '@/services/asian-paints-api';
@@ -125,7 +124,7 @@ const ColorSwatch = ({
     )}
     <div
               className={cn(
-                "w-full h-16 sm:h-20 md:h-24 relative transition-all duration-300",
+                "w-full h-20 sm:h-24 md:h-28 lg:h-32 relative transition-all duration-300",
                 "before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/5 before:to-transparent",
                 "group-hover:before:from-black/10"
               )}
@@ -195,15 +194,13 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
   const [selectedColor, setSelectedColor] = useState('#F3EDE8'); // Default to air breeze
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [baseImage, setBaseImage] = useState('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1200&auto=format&fit=crop');
-  const [activeTab, setActiveTab] = useState('families');
+  // Removed tab state - using single unified view
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [apiStatus, setApiStatus] = useState<string>('');
   
-  // Color family filtering state
+  // Color family filtering state (now managed only through filters)
   const [selectedFamily, setSelectedFamily] = useState<ShadeFamily>('all');
-  const [familyColors, setFamilyColors] = useState<Shade[]>([]);
-  const [familyLoading, setFamilyLoading] = useState(false);
   
   // Full-screen overlay state
   const [showFullscreen, setShowFullscreen] = useState(false);
@@ -212,6 +209,15 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
   // Image fullscreen overlay state
   const [showImageFullscreen, setShowImageFullscreen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Filter state
+  const [showFilters, setShowFilters] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({
+    family: 'all' as ShadeFamily,
+    colorTemperature: 'all' as 'all' | 'warm' | 'cool',
+    tonality: 'all' as 'all' | 'light' | 'medium' | 'dark',
+    room: 'all' as 'all' | 'living room' | 'bedroom' | 'kitchen' | 'bathroom' | 'office',
+  });
 
   // State for API data
   const [colorCategories, setColorCategories] = useState<ColorCategory[]>([]);
@@ -232,6 +238,79 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
     { id: 'pinks', name: 'PINKS', apiFamily: 'pinks' as ShadeFamily },
     { id: 'whites', name: 'WHITES & OFF WHITES', apiFamily: 'whites' as ShadeFamily },
   ];
+
+  // Filter colors based on active filters
+  const filterColors = (colors: Shade[]): Shade[] => {
+    // If all filters are set to 'all', return all colors without filtering
+    if (activeFilters.family === 'all' &&
+        activeFilters.colorTemperature === 'all' && 
+        activeFilters.tonality === 'all' && 
+        activeFilters.room === 'all') {
+      return colors;
+    }
+
+    return colors.filter(shade => {
+      // Family filter
+      if (activeFilters.family !== 'all') {
+        const shadeFamily = shade.shadeFamily?.toLowerCase();
+        const filterFamily = activeFilters.family.toLowerCase();
+        
+        // Handle special cases for family matching
+        if (filterFamily === 'whites' && (!shadeFamily || (!shadeFamily.includes('white') && !shadeFamily.includes('off white')))) {
+          return false;
+        } else if (filterFamily === 'reds' && (!shadeFamily || (!shadeFamily.includes('red') && !shadeFamily.includes('orange')))) {
+          return false;
+        } else if (filterFamily !== 'whites' && filterFamily !== 'reds') {
+          if (!shadeFamily || !shadeFamily.includes(filterFamily.replace('-', ' '))) {
+            return false;
+          }
+        }
+      }
+
+      // Color temperature filter
+      if (activeFilters.colorTemperature !== 'all') {
+        const shadeTemp = shade.filterTitle?.['color temperature'];
+        if (!shadeTemp || !shadeTemp.includes(activeFilters.colorTemperature)) {
+          return false;
+        }
+      }
+
+      // Tonality filter
+      if (activeFilters.tonality !== 'all') {
+        const shadeTonality = shade.filterTitle?.tonality;
+        if (!shadeTonality || !shadeTonality.includes(activeFilters.tonality)) {
+          return false;
+        }
+      }
+
+      // Room filter
+      if (activeFilters.room !== 'all') {
+        const shadeRoom = shade.filterTitle?.room;
+        if (!shadeRoom || (!shadeRoom.includes(activeFilters.room) && !shadeRoom.includes('all rooms'))) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  };
+
+  // Reset filters
+  const resetFilters = () => {
+    setActiveFilters({
+      family: 'all',
+      colorTemperature: 'all',
+      tonality: 'all',
+      room: 'all',
+    });
+    setSelectedFamily('all');
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters = activeFilters.family !== 'all' ||
+                          activeFilters.colorTemperature !== 'all' || 
+                          activeFilters.tonality !== 'all' || 
+                          activeFilters.room !== 'all';
 
   // Load data from API
   useEffect(() => {
@@ -336,86 +415,6 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
     loadColorData();
   }, []);
 
-  // Load all colors by family
-  const loadColorsByFamily = async (family: ShadeFamily) => {
-    try {
-      setFamilyLoading(true);
-      setError(null);
-      setFamilyColors([]);
-      
-      console.log('Loading colors for family:', family);
-      // Get all colors for the selected family
-      const allColors = await fetchAllColorsForFamily(family);
-      console.log('Loaded family colors:', allColors.length);
-      
-      // Check if we got valid colors
-      if (allColors && allColors.length > 0) {
-        setFamilyColors(allColors);
-      } else {
-        // If API returns empty or no colors, try fallback
-        console.log('No colors from API, attempting fallback for family:', family);
-        const fallbackFamilyColors = getFallbackColorsByFamily(family);
-        
-        if (fallbackFamilyColors.length > 0) {
-          setFamilyColors(fallbackFamilyColors);
-          console.log('Loaded fallback family colors:', fallbackFamilyColors.length);
-          
-          // Update API status to reflect current situation
-          const status = getApiStatus();
-          setApiStatus(status.message);
-          
-          // Enhanced mobile detection for better error messaging
-          const isMobileDevice = typeof navigator !== 'undefined' && (
-            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(navigator.userAgent) ||
-            ('ontouchstart' in window && window.innerWidth <= 768) ||
-            navigator.maxTouchPoints > 0
-          );
-          
-          if (status.available === false && isMobileDevice) {
-            console.log('Asian Paints API blocked on mobile - using offline colors with full functionality');
-          } else {
-            console.log('Using offline colors for this category. Some features may be limited.');
-          }
-        } else {
-          console.warn('No colors available for this category.');
-          setFamilyColors([]);
-        }
-      }
-    } catch (err) {
-      console.error('Error loading colors by family:', err);
-      
-      // Try to load fallback colors for this family
-      console.log('Attempting to load fallback colors due to error for family:', family);
-      const fallbackFamilyColors = getFallbackColorsByFamily(family);
-      
-      if (fallbackFamilyColors.length > 0) {
-        setFamilyColors(fallbackFamilyColors);
-        console.log('Loaded fallback family colors after error:', fallbackFamilyColors.length);
-        
-        // Update API status
-        const status = getApiStatus();
-        setApiStatus(status.message);
-        
-        // Enhanced mobile detection for error messaging
-        const isMobileDevice = typeof navigator !== 'undefined' && (
-          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(navigator.userAgent) ||
-          ('ontouchstart' in window && window.innerWidth <= 768) ||
-          navigator.maxTouchPoints > 0
-        );
-        
-        if (status.available === false && isMobileDevice) {
-          console.log('📱 Mobile DNS blocking detected - using offline Asian Paints catalog');
-        } else {
-          console.log('Connection issue detected - using offline colors');
-        }
-      } else {
-        console.error('Failed to load colors for this category. Please try again.');
-        setFamilyColors([]);
-      }
-    } finally {
-      setFamilyLoading(false);
-    }
-  };
 
 
   // Handle fullscreen color preview
@@ -454,6 +453,8 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
           closeFullscreen();
         } else if (showImageFullscreen) {
           closeImageFullscreen();
+        } else if (showFilters) {
+          setShowFilters(false);
         }
       }
     };
@@ -464,12 +465,8 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
       // Cleanup body scroll on unmount
       document.body.style.overflow = 'unset';
     };
-  }, [showFullscreen, showImageFullscreen]);
+  }, [showFullscreen, showImageFullscreen, showFilters]);
 
-  // Load initial family colors
-  useEffect(() => {
-    loadColorsByFamily(selectedFamily);
-  }, [selectedFamily]);
 
   useEffect(() => {
       if (initialColors && initialColors.length > 0 && !selectedColor) {
@@ -495,7 +492,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
 
 
   return (
-    <div className="flex flex-col xl:grid xl:grid-cols-2 gap-2 sm:gap-3 sm:gap-4 lg:gap-6 xl:gap-8 min-h-screen bg-gradient-to-br from-gray-50/30 via-white to-blue-50/20 p-2 sm:p-3 lg:p-4 xl:p-6">
+    <div className="flex flex-col xl:grid xl:grid-cols-2 gap-2 sm:gap-3 sm:gap-4 lg:gap-6 xl:gap-8 min-h-screen bg-gradient-to-br from-gray-50/30 via-white to-blue-50/20 p-2 sm:p-3 lg:p-4 xl:p-6 relative">
       <div className="xl:col-span-1">
         <Card className="shadow-lg sm:shadow-xl border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
           <CardContent className="p-3 sm:p-4 lg:p-6">
@@ -538,246 +535,30 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-3 sm:p-4 lg:p-6">
-            
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 mb-3 sm:mb-4 p-1 bg-gradient-to-r from-gray-100/80 to-gray-50/80 backdrop-blur-sm border border-gray-200/50 shadow-sm gap-0.5 sm:gap-1">
-                <TabsTrigger 
-                  value="popular" 
-                  disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-1 py-1.5 sm:px-3 sm:py-2"
-                >
-                  Popular
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="recommended" 
-                  disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-1 py-1.5 sm:px-3 sm:py-2"
-                >
-                  <span className="hidden sm:inline">⭐ Featured</span>
-                  <span className="sm:hidden">⭐</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="families" 
-                  disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-1 py-1.5 sm:px-3 sm:py-2 col-span-2 sm:col-span-1"
-                >
-                  Families
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="categories" 
-                  disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-1 py-1.5 sm:px-3 sm:py-2"
-                >
-                  <span className="hidden sm:inline">Categories</span>
-                  <span className="sm:hidden">Cat.</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="coty" 
-                  disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-1 py-1.5 sm:px-3 sm:py-2"
-                >
-                  <span className="hidden sm:inline">🏆 COTY</span>
-                  <span className="sm:hidden">🏆</span>
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="popular" className="space-y-4">
-                {loading ? (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
-                    {[...Array(24)].map((_, i) => (
-                      <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                        <Skeleton className="w-full h-16 sm:h-20 md:h-24 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
-                      </div>
-                    ))}
-                  </div>
-                ) : popularShades.length === 0 ? (
-                  <div className="text-center p-8">
-                    <p className="text-gray-500 mb-4">Loading colors...</p>
-                    <p className="text-sm text-gray-400">
-                      Please wait while we prepare your color palette.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
-                    {popularShades.map((shade) => (
-                      <ColorSwatch
-                        key={shade.entityCode}
-                        color={shade.shadeHexCode}
-                        name={shade.entityName}
-                        code={shade.entityCode}
-                        isSelected={selectedColor === shade.shadeHexCode}
-                        onSelect={() => setSelectedColor(shade.shadeHexCode)}
-                        onFullscreen={() => openFullscreen(shade.shadeHexCode)}
-                        featureTag={shade.featureTag}
-                      />
-                    ))}
-                  </div>
-                )}
-              </TabsContent>
-              
-              <TabsContent value="recommended" className="space-y-4">
-                {loading ? (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
-                    {[...Array(20)].map((_, i) => (
-                      <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                        <Skeleton className="w-full h-16 sm:h-20 md:h-24 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
-                      </div>
-                    ))}
-                  </div>
-                ) : recommendedShades.length === 0 ? (
-                  <div className="text-center p-8">
-                    <p className="text-gray-500 mb-4">Loading recommended colors...</p>
-                    <p className="text-sm text-gray-400">
-                      Please wait while we prepare your curated selection.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
-                    {recommendedShades.map((shade) => (
-                      <ColorSwatch
-                        key={shade.entityCode}
-                        color={shade.shadeHexCode}
-                        name={shade.entityName}
-                        code={shade.entityCode}
-                        isSelected={selectedColor === shade.shadeHexCode}
-                        onSelect={() => setSelectedColor(shade.shadeHexCode)}
-                        onFullscreen={() => openFullscreen(shade.shadeHexCode)}
-                        featureTag={shade.featureTag}
-                      />
-                    ))}
-                  </div>
-                )}
-              </TabsContent>
-              
-              <TabsContent value="families" className="space-y-4">
-                {/* Horizontal Category Filter Buttons */}
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 text-xs">
-                    {colorFamilyCategories.map((category) => (
-                      <button
-                        key={category.id}
-                        onClick={() => setSelectedFamily(category.apiFamily)}
-                        className={cn(
-                          "px-1.5 py-1.5 sm:px-2 sm:py-2 text-center font-semibold rounded-md sm:rounded-lg transition-all duration-300 ease-out transform",
-                          "border backdrop-blur-sm relative overflow-hidden text-xs",
-                          "hover:scale-105 hover:-translate-y-0.5",
-                          selectedFamily === category.apiFamily
-                            ? "bg-gradient-to-r from-primary to-primary/80 text-white border-primary/50 shadow-lg shadow-primary/25 scale-105"
-                            : "bg-gradient-to-r from-gray-50/80 to-white/90 hover:from-gray-100/80 hover:to-white text-gray-700 border-gray-200/60 shadow-sm hover:shadow-md"
-                        )}
-                      >
-                        <span className="relative z-10 whitespace-nowrap overflow-hidden text-ellipsis text-xs sm:text-sm">{category.name}</span>
-                        {selectedFamily === category.apiFamily && (
-                          <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-50" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  {/* Colors Grid */}
-                  {familyLoading ? (
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
-                      {[...Array(12)].map((_, i) => (
-                        <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                          <Skeleton className="w-full h-16 sm:h-20 md:h-24 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
-                        </div>
-                      ))}
+            {/* Single unified color grid - no tabs */}
+            <div className="w-full">
+              {loading ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
+                  {[...Array(24)].map((_, i) => (
+                    <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
+                      <Skeleton className="w-full h-16 sm:h-20 md:h-24 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                     </div>
-                  ) : familyColors.length > 0 ? (
-                    <div className="space-y-4">
-                      <div className="text-center p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/10">
-                        <p className="text-sm font-semibold text-primary">
-                          {familyColors.length} beautiful colors available
-                        </p>
-                      </div>
-                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px] max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                        {familyColors.map((shade) => (
-                          <ColorSwatch
-                            key={shade.entityCode}
-                            color={shade.shadeHexCode}
-                            name={shade.entityName}
-                            code={shade.entityCode}
-                            isSelected={selectedColor === shade.shadeHexCode}
-                            onSelect={() => setSelectedColor(shade.shadeHexCode)}
-                            onFullscreen={() => openFullscreen(shade.shadeHexCode)}
-                            featureTag={shade.featureTag}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-muted-foreground text-center text-sm py-4">
-                      Loading colors for this family...
-                    </p>
-                  )}
+                  ))}
                 </div>
-              </TabsContent>
-              
-              <TabsContent value="categories" className="space-y-4">
-                {loading ? (
-                  <div className="space-y-4 max-h-96 overflow-y-auto">
-                    {[...Array(8)].map((_, i) => (
-                      <div key={i} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Skeleton className="w-24 h-4" />
-                          <Skeleton className="w-8 h-5" />
-                        </div>
-                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
-                          {[...Array(12)].map((_, j) => (
-                            <div key={j} className="flex flex-col items-center p-2">
-                              <Skeleton className="w-16 h-16 rounded-lg" />
-                              <Skeleton className="w-20 h-3 mt-2" />
-                              <Skeleton className="w-12 h-4 mt-1" />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+              ) : (
+                <div className="space-y-4">
+                  <div className="text-center p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/10">
+                    <p className="text-sm font-semibold text-primary">
+                      {filterColors([...popularShades, ...recommendedShades, ...colorOfYearShades]).length} beautiful colors available
+                      {hasActiveFilters && (
+                        <span className="text-xs text-primary/70 ml-1">
+                          (filtered from all collections)
+                        </span>
+                      )}
+                    </p>
                   </div>
-                ) : (
-                  <div className="space-y-4 max-h-96 overflow-y-auto">
-                    {colorCategories.map((category) => (
-                      <div key={category.id} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-sm flex items-center gap-2">
-                            <span>{category.icon}</span>
-                            {category.name}
-                          </h4>
-                          <Badge variant="outline" className="text-xs">
-                            {category.shades.length}
-                          </Badge>
-                        </div>
-                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
-                          {category.shades.slice(0, 12).map((shade) => (
-                            <ColorSwatch
-                              key={shade.entityCode}
-                              color={shade.shadeHexCode}
-                              name={shade.entityName}
-                              code={shade.entityCode}
-                              isSelected={selectedColor === shade.shadeHexCode}
-                              onSelect={() => setSelectedColor(shade.shadeHexCode)}
-                              featureTag={shade.featureTag}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </TabsContent>
-              
-              <TabsContent value="coty" className="space-y-4">
-                {loading ? (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
-                    {[...Array(8)].map((_, i) => (
-                      <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                        <Skeleton className="w-full h-16 sm:h-20 md:h-24 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
-                      </div>
-                    ))}
-                  </div>
-                ) : colorOfYearShades.length > 0 ? (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
-                    {colorOfYearShades.map((shade) => (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 min-h-[200px] max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                    {filterColors([...popularShades, ...recommendedShades, ...colorOfYearShades]).map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
                         color={shade.shadeHexCode}
@@ -790,13 +571,9 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                       />
                     ))}
                   </div>
-                ) : (
-                  <p className="text-muted-foreground text-center text-sm py-4">
-                    Loading Color of the Year collection...
-                  </p>
-                )}
-              </TabsContent>
-            </Tabs>
+                </div>
+              )}
+            </div>
             
             <div className="mt-6 sm:mt-8 flex flex-col space-y-3 sm:space-y-4 pt-4 sm:pt-6 border-t border-gray-100/80">
                 <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 text-sm sm:text-base py-2 sm:py-3">
@@ -966,6 +743,180 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
           </div>
         </div>
       )}
+
+      {/* Floating Filter Panel */}
+      <div className="fixed bottom-4 right-4 z-40">
+        {/* Filter Toggle Button */}
+        <Button
+          onClick={() => setShowFilters(!showFilters)}
+          className={cn(
+            "rounded-full w-14 h-14 shadow-lg transition-all duration-300",
+            showFilters 
+              ? "bg-primary hover:bg-primary/90" 
+              : hasActiveFilters 
+                ? "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600" 
+                : "bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+          )}
+          size="icon"
+        >
+          <Filter className="h-6 w-6 text-white" />
+          {hasActiveFilters && (
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full border-2 border-white animate-pulse" />
+          )}
+        </Button>
+
+        {/* Filter Panel */}
+        {showFilters && (
+          <div className="absolute bottom-16 right-0 w-80 bg-white/95 backdrop-blur-md border border-gray-200/50 rounded-xl shadow-2xl p-4 animate-in slide-in-from-bottom-2 duration-300">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                Color Filters
+              </h3>
+              {hasActiveFilters && (
+                <Button
+                  onClick={resetFilters}
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-gray-600 hover:text-gray-800"
+                >
+                  <RotateCcw className="h-3 w-3 mr-1" />
+                  Reset
+                </Button>
+              )}
+            </div>
+
+            {/* Color Family Filter */}
+            <div className="mb-4">
+              <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                <Layers className="h-3 w-3" />
+                Color Family
+              </label>
+              <div className="grid grid-cols-2 gap-1 max-h-32 overflow-y-auto">
+                {colorFamilyCategories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => {
+                      setActiveFilters(prev => ({ ...prev, family: category.apiFamily }));
+                      setSelectedFamily(category.apiFamily);
+                    }}
+                    className={cn(
+                      "px-2 py-1.5 text-xs rounded-md transition-all duration-200 text-left",
+                      activeFilters.family === category.apiFamily
+                        ? "bg-primary text-white shadow-md"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    )}
+                  >
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Color Temperature Filter */}
+            <div className="mb-4">
+              <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                <Thermometer className="h-3 w-3" />
+                Temperature
+              </label>
+              <div className="grid grid-cols-3 gap-1">
+                {['all', 'warm', 'cool'].map((temp) => (
+                  <button
+                    key={temp}
+                    onClick={() => setActiveFilters(prev => ({ ...prev, colorTemperature: temp as any }))}
+                    className={cn(
+                      "px-2 py-1.5 text-xs rounded-md transition-all duration-200 capitalize",
+                      activeFilters.colorTemperature === temp
+                        ? "bg-primary text-white shadow-md"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    )}
+                  >
+                    {temp}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Tonality Filter */}
+            <div className="mb-4">
+              <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                <Palette className="h-3 w-3" />
+                Tonality
+              </label>
+              <div className="grid grid-cols-4 gap-1">
+                {['all', 'light', 'medium', 'dark'].map((tonality) => (
+                  <button
+                    key={tonality}
+                    onClick={() => setActiveFilters(prev => ({ ...prev, tonality: tonality as any }))}
+                    className={cn(
+                      "px-2 py-1.5 text-xs rounded-md transition-all duration-200 capitalize",
+                      activeFilters.tonality === tonality
+                        ? "bg-primary text-white shadow-md"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    )}
+                  >
+                    {tonality}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Room Filter */}
+            <div className="mb-2">
+              <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                <Home className="h-3 w-3" />
+                Room Type
+              </label>
+              <div className="grid grid-cols-2 gap-1">
+                {['all', 'living room', 'bedroom', 'kitchen', 'bathroom', 'office'].map((room) => (
+                  <button
+                    key={room}
+                    onClick={() => setActiveFilters(prev => ({ ...prev, room: room as any }))}
+                    className={cn(
+                      "px-2 py-1.5 text-xs rounded-md transition-all duration-200 capitalize",
+                      activeFilters.room === room
+                        ? "bg-primary text-white shadow-md"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    )}
+                  >
+                    {room}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Active Filters Summary */}
+            {hasActiveFilters && (
+              <div className="mt-4 pt-3 border-t border-gray-200">
+                <p className="text-xs text-gray-600 mb-1">Active filters:</p>
+                <div className="flex flex-wrap gap-1">
+                  {activeFilters.family !== 'all' && (
+                    <Badge variant="secondary" className="text-xs">
+                      {colorFamilyCategories.find(cat => cat.apiFamily === activeFilters.family)?.name || activeFilters.family}
+                    </Badge>
+                  )}
+                  {activeFilters.colorTemperature !== 'all' && (
+                    <Badge variant="secondary" className="text-xs">
+                      {activeFilters.colorTemperature}
+                    </Badge>
+                  )}
+                  {activeFilters.tonality !== 'all' && (
+                    <Badge variant="secondary" className="text-xs">
+                      {activeFilters.tonality}
+                    </Badge>
+                  )}
+                  {activeFilters.room !== 'all' && (
+                    <Badge variant="secondary" className="text-xs">
+                      {activeFilters.room}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

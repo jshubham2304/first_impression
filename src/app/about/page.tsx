@@ -2,6 +2,59 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Award, Briefcase, Clock, Users } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "About First Impression - Professional Painting Company in Udaipur | 10+ Years Experience",
+  description: "Learn about First Impression, Udaipur's trusted painting company with 10+ years of experience. 500+ projects completed, 99% client satisfaction, and 100% on-time delivery. Quality craftsmanship with Asian Paints.",
+  keywords: [
+    "about First Impression",
+    "painting company Udaipur",
+    "professional painters Udaipur",
+    "experienced painters Udaipur",
+    "painting contractor history",
+    "Udaipur painting services",
+    "trusted painters Udaipur",
+    "painting company history",
+    "Asian Paints dealer Udaipur",
+    "painting business Udaipur",
+    "10 years painting experience",
+    "reliable painters Udaipur",
+    "painting company mission",
+    "quality painting services",
+    "painting craftsmanship Udaipur",
+    "home improvement Udaipur",
+    "interior design Udaipur",
+    "paint professionals Rajasthan",
+    "painting team Udaipur",
+    "decorative painting experts",
+    "residential painting experts",
+    "commercial painting specialists"
+  ],
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About First Impression - Professional Painting Company in Udaipur",
+    description: "Discover First Impression's 10+ years of painting excellence in Udaipur. 500+ projects completed with 99% client satisfaction and commitment to quality craftsmanship.",
+    url: "https://first-impression.com/about",
+    type: "website",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?q=80&w=1200&auto=format&fit=crop",
+        width: 1200,
+        height: 630,
+        alt: "First Impression Professional Painting Team in Udaipur",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About First Impression - Professional Painting Company Udaipur",
+    description: "🏆 10+ years experience | 🎨 500+ projects completed | ⭐ 99% client satisfaction | 🕐 100% on-time delivery",
+    images: ["https://images.unsplash.com/photo-1600585152220-90363fe7e115?q=80&w=1200&auto=format&fit=crop"],
+  },
+};
 
 const stats = [
   {
