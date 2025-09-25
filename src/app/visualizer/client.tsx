@@ -541,7 +541,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 min-h-[200px]">
                   {[...Array(24)].map((_, i) => (
                     <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
-                      <Skeleton className="w-full h-16 sm:h-20 md:h-24 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
+                        <Skeleton className="w-full h-20 sm:h-24 md:h-28 lg:h-32 bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                     </div>
                   ))}
                 </div>
