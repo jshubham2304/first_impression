@@ -141,6 +141,16 @@ export async function loadMoreColors(
     }
   } catch (error) {
     console.error("Error loading more colors:", error);
+    
+    // Provide more specific error information
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      console.error('Network connectivity issue - check internet connection');
+    } else if (error instanceof TypeError && error.message.includes('NetworkError')) {
+      console.error('CORS or network policy error');
+    } else if (error instanceof Error) {
+      console.error('API Error:', error.message);
+    }
+    
     return [];
   }
 }
@@ -188,6 +198,17 @@ export async function fetchAllColorsForFamily(selectedShadeFamily: ShadeFamily =
     return allColors;
   } catch (error) {
     console.error(`Error fetching all colors for family "${selectedShadeFamily}":`, error);
+    
+    // Check if it's a network error
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      console.error('Network error - check internet connection and CORS settings');
+    }
+    
+    // Check if it's a CORS error
+    if (error instanceof TypeError && error.message.includes('NetworkError')) {
+      console.error('CORS error - API may be blocking cross-origin requests');
+    }
+    
     return [];
   }
 }

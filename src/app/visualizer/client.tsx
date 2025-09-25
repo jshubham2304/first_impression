@@ -33,11 +33,11 @@ const ColorSwatch = ({
   <div 
     className={cn(
       "group cursor-pointer relative transition-all duration-300 ease-out transform",
-      "border rounded-xl overflow-hidden backdrop-blur-sm",
+      "border rounded-lg overflow-hidden backdrop-blur-sm",
       "hover:scale-105 hover:-translate-y-1",
       isSelected 
-        ? 'border-primary/50 ring-2 ring-primary/20 ring-offset-2 shadow-xl shadow-primary/20 scale-105' 
-        : 'border-gray-200/60 hover:border-gray-300/80 shadow-md hover:shadow-xl'
+        ? 'border-primary/50 ring-2 ring-primary/20 ring-offset-1 shadow-lg shadow-primary/20 scale-105' 
+        : 'border-gray-200/60 hover:border-gray-300/80 shadow-sm hover:shadow-md'
     )}
     onClick={onSelect}
     style={{
@@ -60,7 +60,7 @@ const ColorSwatch = ({
     )}
     <div
       className={cn(
-        "w-full h-28 relative transition-all duration-300",
+        "w-full aspect-square relative transition-all duration-300",
         "before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/5 before:to-transparent",
         "group-hover:before:from-black/10"
       )}
@@ -82,30 +82,42 @@ const ColorSwatch = ({
             onFullscreen();
           }}
           className={cn(
-            "absolute top-2 left-2 p-1.5 rounded-lg bg-white/90 backdrop-blur-sm",
+            "absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-md border border-white/20",
             "opacity-0 group-hover:opacity-100 transition-all duration-200",
-            "hover:bg-white hover:scale-110 shadow-sm hover:shadow-md z-10"
+            "hover:bg-white/90 hover:scale-110 shadow-lg z-10"
           )}
           title="View fullscreen"
         >
-          <Maximize2 className="h-3 w-3 text-gray-600" />
+          <Maximize2 className="h-2.5 w-2.5 text-gray-600" />
         </button>
       )}
-    </div>
-    <div className="p-4 space-y-2 bg-white/90 backdrop-blur-sm">
-      <p className={cn(
-        "text-sm font-semibold leading-tight transition-colors duration-200",
-        isSelected ? 'text-primary' : 'text-gray-800 group-hover:text-gray-900'
-      )}>{name}</p>
-      {code && (
-        <p className={cn(
-          "text-xs font-mono px-2 py-1 rounded-full inline-block transition-all duration-200",
-          "border backdrop-blur-sm",
+      
+      {/* Translucent tag overlay */}
+      <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center gap-2 z-10">
+        {/* Code tag on the left */}
+        {code && (
+          <span className={cn(
+            "text-xs font-mono px-2 py-1 rounded-full backdrop-blur-md border border-white/20 flex-shrink-0",
+            "shadow-lg transition-all duration-200",
+            isSelected 
+              ? 'bg-black/70 text-white shadow-primary/20' 
+              : 'bg-black/50 text-white/90 hover:bg-black/60'
+          )}>
+            {code}
+          </span>
+        )}
+        
+        {/* Name tag on the right */}
+        <span className={cn(
+          "text-xs font-bold px-2 py-1 rounded-full backdrop-blur-md border border-white/20",
+          "flex-1 text-right truncate ml-1 shadow-lg transition-all duration-200",
           isSelected 
-            ? 'bg-primary/10 text-primary border-primary/20 shadow-sm' 
-            : 'bg-gray-50/80 text-gray-600 border-gray-200/60 group-hover:bg-gray-100/80'
-        )}>{code}</p>
-      )}
+            ? 'bg-white/80 text-gray-900 shadow-primary/20' 
+            : 'bg-white/60 text-gray-800 hover:bg-white/70'
+        )}>
+          {name}
+        </span>
+      </div>
     </div>
   </div>
 );
@@ -176,7 +188,15 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
         setColorOfYearShades(colorOfYear);
       } catch (err) {
         console.error('Error loading color data:', err);
-        setError('Failed to load colors. Please try again.');
+        
+        // Provide more specific error messages
+        if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
+          setError('Network error: Please check your internet connection and try again.');
+        } else if (err instanceof TypeError && err.message.includes('NetworkError')) {
+          setError('Connection blocked: The color API may be temporarily unavailable.');
+        } else {
+          setError('Failed to load colors. Please refresh the page and try again.');
+        }
       } finally {
         setLoading(false);
       }
@@ -282,10 +302,10 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
 
 
   return (
-    <div className="grid lg:grid-cols-2 gap-8 items-start min-h-screen bg-gradient-to-br from-gray-50/30 via-white to-blue-50/20 p-6">
+    <div className="grid lg:grid-cols-2 gap-4 lg:gap-8 items-start min-h-screen bg-gradient-to-br from-gray-50/30 via-white to-blue-50/20 p-4 lg:p-6">
       <div className="lg:col-span-1">
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
-          <CardContent className="p-6">
+          <CardContent className="p-4 lg:p-6">
             <div 
               className="relative w-full aspect-[3/2] bg-gradient-to-br from-gray-100/50 to-gray-200/30 rounded-xl overflow-hidden shadow-inner cursor-pointer group transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
               onClick={openImageFullscreen}
@@ -317,14 +337,14 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
         </Card>
       </div>
 
-      <div className="lg:col-span-1 sticky top-24">
+      <div className="lg:col-span-1 lg:sticky lg:top-24">
         <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-md overflow-hidden">
           <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-gray-100/50">
-            <CardTitle className="font-headline text-2xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+            <CardTitle className="font-headline text-xl sm:text-2xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
               Choose a Color
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent className="p-4 lg:p-6">
             {error && (
               <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-4">
                 <p className="text-destructive text-sm">{error}</p>
@@ -332,39 +352,39 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
             )}
             
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-5 mb-6 p-1 bg-gradient-to-r from-gray-100/80 to-gray-50/80 backdrop-blur-sm border border-gray-200/50 shadow-sm">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 mb-4 sm:mb-6 p-1 bg-gradient-to-r from-gray-100/80 to-gray-50/80 backdrop-blur-sm border border-gray-200/50 shadow-sm gap-1">
                 <TabsTrigger 
                   value="popular" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
                 >
                   Popular
                 </TabsTrigger>
                 <TabsTrigger 
                   value="recommended" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
                 >
                   ⭐ Featured
                 </TabsTrigger>
                 <TabsTrigger 
                   value="families" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 col-span-2 sm:col-span-1"
                 >
                   Families
                 </TabsTrigger>
                 <TabsTrigger 
                   value="categories" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
                 >
                   Categories
                 </TabsTrigger>
                 <TabsTrigger 
                   value="coty" 
                   disabled={loading}
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200"
+                  className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:border-gray-200/50 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
                 >
                   🏆 COTY
                 </TabsTrigger>
@@ -372,19 +392,15 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               
               <TabsContent value="popular" className="space-y-4">
                 {loading ? (
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
                     {[...Array(24)].map((_, i) => (
-                      <div key={i} className="border-2 border-gray-200 rounded-lg overflow-hidden">
-                        <Skeleton className="w-full h-24" />
-                        <div className="p-3 space-y-1">
-                          <Skeleton className="w-full h-4" />
-                          <Skeleton className="w-16 h-3" />
-                        </div>
+                      <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
+                        <Skeleton className="w-full aspect-square bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
                     {popularShades.map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
@@ -403,19 +419,15 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               
               <TabsContent value="recommended" className="space-y-4">
                 {loading ? (
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
                     {[...Array(20)].map((_, i) => (
-                      <div key={i} className="border-2 border-gray-200 rounded-lg overflow-hidden">
-                        <Skeleton className="w-full h-24" />
-                        <div className="p-3 space-y-1">
-                          <Skeleton className="w-full h-4" />
-                          <Skeleton className="w-16 h-3" />
-                        </div>
+                      <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
+                        <Skeleton className="w-full aspect-square bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
                     {recommendedShades.map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
@@ -435,21 +447,21 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               <TabsContent value="families" className="space-y-4">
                 {/* Horizontal Category Filter Buttons */}
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs">
                     {colorFamilyCategories.map((category) => (
                       <button
                         key={category.id}
                         onClick={() => setSelectedFamily(category.apiFamily)}
                         className={cn(
-                          "px-4 py-3 text-center font-semibold rounded-xl transition-all duration-300 ease-out transform",
-                          "border backdrop-blur-sm relative overflow-hidden",
+                          "px-3 sm:px-4 py-2 sm:py-3 text-center font-semibold rounded-lg sm:rounded-xl transition-all duration-300 ease-out transform",
+                          "border backdrop-blur-sm relative overflow-hidden text-xs sm:text-sm",
                           "hover:scale-105 hover:-translate-y-0.5",
                           selectedFamily === category.apiFamily
                             ? "bg-gradient-to-r from-primary to-primary/80 text-white border-primary/50 shadow-lg shadow-primary/25 scale-105"
                             : "bg-gradient-to-r from-gray-50/80 to-white/90 hover:from-gray-100/80 hover:to-white text-gray-700 border-gray-200/60 shadow-sm hover:shadow-md"
                         )}
                       >
-                        <span className="relative z-10">{category.name}</span>
+                        <span className="relative z-10 whitespace-nowrap overflow-hidden text-ellipsis">{category.name}</span>
                         {selectedFamily === category.apiFamily && (
                           <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-50" />
                         )}
@@ -459,12 +471,10 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                   
                   {/* Colors Grid */}
                   {familyLoading ? (
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
                       {[...Array(12)].map((_, i) => (
-                        <div key={i} className="flex flex-col items-center p-2">
-                          <Skeleton className="w-16 h-16 rounded-lg" />
-                          <Skeleton className="w-20 h-3 mt-2" />
-                          <Skeleton className="w-12 h-4 mt-1" />
+                        <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
+                          <Skeleton className="w-full aspect-square bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                         </div>
                       ))}
                     </div>
@@ -475,7 +485,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                           {familyColors.length} beautiful colors available
                         </p>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                         {familyColors.map((shade) => (
                           <ColorSwatch
                             key={shade.entityCode}
@@ -553,19 +563,15 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               
               <TabsContent value="coty" className="space-y-4">
                 {loading ? (
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
                     {[...Array(8)].map((_, i) => (
-                      <div key={i} className="border-2 border-gray-200 rounded-lg overflow-hidden">
-                        <Skeleton className="w-full h-24" />
-                        <div className="p-3 space-y-1">
-                          <Skeleton className="w-full h-4" />
-                          <Skeleton className="w-16 h-3" />
-                        </div>
+                      <div key={i} className="border border-gray-200/60 rounded-lg overflow-hidden bg-gradient-to-br from-gray-50/50 to-white shadow-sm animate-pulse">
+                        <Skeleton className="w-full aspect-square bg-gradient-to-r from-gray-200/60 via-gray-100/80 to-gray-200/60" />
                       </div>
                     ))}
                   </div>
                 ) : colorOfYearShades.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4">
                     {colorOfYearShades.map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
@@ -587,8 +593,8 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
               </TabsContent>
             </Tabs>
             
-            <div className="mt-8 flex flex-col space-y-4 pt-6 border-t border-gray-100/80">
-                <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+            <div className="mt-6 sm:mt-8 flex flex-col space-y-3 sm:space-y-4 pt-4 sm:pt-6 border-t border-gray-100/80">
+                <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 text-sm sm:text-base py-2 sm:py-3">
                     <Download className="mr-2 h-4 w-4"/>
                     Download Visualization
                 </Button>
@@ -602,7 +608,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                 <Button 
                   variant="outline" 
                   onClick={handleUploadClick}
-                  className="border-2 border-gray-200/80 hover:border-primary/50 bg-gradient-to-r from-white to-gray-50/50 hover:from-primary/5 hover:to-primary/10 shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
+                  className="border-2 border-gray-200/80 hover:border-primary/50 bg-gradient-to-r from-white to-gray-50/50 hover:from-primary/5 hover:to-primary/10 shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base py-2 sm:py-3"
                 >
                     <Upload className="mr-2 h-4 w-4"/>
                     Upload Your Own Room
