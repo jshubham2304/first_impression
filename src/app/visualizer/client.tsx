@@ -224,6 +224,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
   const [popularShades, setPopularShades] = useState<Shade[]>([]);
   const [recommendedShades, setRecommendedShades] = useState<Shade[]>([]);
   const [colorOfYearShades, setColorOfYearShades] = useState<Shade[]>([]);
+  const [allShades, setAllShades] = useState<Shade[]>([]);
 
   // Color family categories matching Asian Paints structure
   const colorFamilyCategories = [
@@ -312,6 +313,21 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                           activeFilters.tonality !== 'all' || 
                           activeFilters.room !== 'all';
 
+  // Get unique colors by combining all sources and removing duplicates
+  const getUniqueColors = () => {
+    if (allShades.length > 0) {
+      return allShades;
+    }
+    
+    // Combine all color sources and remove duplicates by entityCode
+    const combinedColors = [...popularShades, ...recommendedShades, ...colorOfYearShades];
+    const uniqueColors = combinedColors.filter((shade, index, array) => 
+      array.findIndex(s => s.entityCode === shade.entityCode) === index
+    );
+    
+    return uniqueColors;
+  };
+
   // Load data from API
   useEffect(() => {
     const loadColorData = async () => {
@@ -325,11 +341,12 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
         console.log('API Status:', status);
 
         // Load all data in parallel for better performance
-        const [categories, popular, recommended, colorOfYear] = await Promise.all([
+        const [categories, popular, recommended, colorOfYear, allColors] = await Promise.all([
           categorizeShades(),
-          getPopularShades(24),
+          getPopularShades(50),
           getRecommendedShades(),
-          getColorOfTheYearShades()
+          getColorOfTheYearShades(),
+          fetchAllColorsForFamily('all') // Get ALL colors
         ]);
 
         // Add logging for debugging mobile issues
@@ -337,36 +354,39 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
           categories: categories.length,
           popular: popular.length,
           recommended: recommended.length,
-          colorOfYear: colorOfYear.length
+          colorOfYear: colorOfYear.length,
+          allColors: allColors.length
         });
 
         setColorCategories(categories);
         setPopularShades(popular);
         setRecommendedShades(recommended);
         setColorOfYearShades(colorOfYear);
+        setAllShades(allColors);
 
         // If no data was loaded, provide fallback colors from assets/shades.json
-        if (popular.length === 0 && recommended.length === 0 && colorOfYear.length === 0) {
+        if (allColors.length === 0 && popular.length === 0 && recommended.length === 0 && colorOfYear.length === 0) {
           console.warn('No data loaded, using fallback colors from assets/shades.json');
-          const fallbackColors = getFallbackColors();
           
-          if (fallbackColors.length > 0) {
-            // Split fallback colors between different tabs
-            const popularFallback = fallbackColors.filter(shade => shade.featureTag === 'Popular' || shade.popularity === '1').slice(0, 12);
-            const recommendedFallback = fallbackColors.filter(shade => shade.featureTag === 'Recommended').slice(0, 8);
-            const cotyFallback = fallbackColors.filter(shade => shade.featureTag === 'Colour of the year').slice(0, 6);
+          // Load ALL fallback colors from the assets file
+          if (shadesData?.shade && Array.isArray(shadesData.shade)) {
+            const allFallbackColors = shadesData.shade;
+            console.log('Loading ALL fallback colors:', allFallbackColors.length);
             
-            // If we don't have enough in specific categories, fill with remaining colors
-            if (popularFallback.length < 12) {
-              const remaining = fallbackColors.filter(shade => !popularFallback.includes(shade)).slice(0, 12 - popularFallback.length);
-              popularFallback.push(...remaining);
-            }
+            // Set all colors
+            setAllShades(allFallbackColors);
+            
+            // Also set specific category colors for any remaining functionality
+            const popularFallback = allFallbackColors.filter(shade => shade.featureTag === 'Popular' || shade.popularity === '1').slice(0, 50);
+            const recommendedFallback = allFallbackColors.filter(shade => shade.featureTag === 'Recommended').slice(0, 30);
+            const cotyFallback = allFallbackColors.filter(shade => shade.featureTag === 'Colour of the year').slice(0, 20);
             
             setPopularShades(popularFallback);
-            setRecommendedShades(recommendedFallback.length > 0 ? recommendedFallback : popularFallback.slice(0, 8));
-            setColorOfYearShades(cotyFallback.length > 0 ? cotyFallback : popularFallback.slice(0, 6));
+            setRecommendedShades(recommendedFallback);
+            setColorOfYearShades(cotyFallback);
             
-            console.log('Loaded fallback colors:', {
+            console.log('Loaded comprehensive fallback colors:', {
+              total: allFallbackColors.length,
               popular: popularFallback.length,
               recommended: recommendedFallback.length,
               coty: cotyFallback.length
@@ -549,16 +569,16 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                 <div className="space-y-4">
                   <div className="text-center p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/10">
                     <p className="text-sm font-semibold text-primary">
-                      {filterColors([...popularShades, ...recommendedShades, ...colorOfYearShades]).length} beautiful colors available
+                      {filterColors(getUniqueColors()).length} beautiful colors available
                       {hasActiveFilters && (
                         <span className="text-xs text-primary/70 ml-1">
-                          (filtered from all collections)
+                          (filtered from {getUniqueColors().length} total)
                         </span>
                       )}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 min-h-[200px] max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                    {filterColors([...popularShades, ...recommendedShades, ...colorOfYearShades]).map((shade) => (
+                    {filterColors(getUniqueColors()).map((shade) => (
                       <ColorSwatch
                         key={shade.entityCode}
                         color={shade.shadeHexCode}
