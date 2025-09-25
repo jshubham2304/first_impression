@@ -135,10 +135,10 @@ export default async function HomePage() {
         <div className="container px-4 md:px-6">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-headline font-bold mb-4 tracking-wider">
-              Creating Lasting First Impressions
+              First Impression - Best Painter Service & Asian Paints Dealer in Udaipur
             </h1>
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto font-body">
-              Expert painting and design services that transform your space and leave a mark.
+              Premier Asian Paints dealer and professional painting services in Udaipur. Better than Badala Paints with digital color visualization, expert consultation, and guaranteed quality. Hardware shop solutions for all your painting needs.
             </p>
             <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
               <Link href="/services">

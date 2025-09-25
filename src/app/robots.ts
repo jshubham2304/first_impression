@@ -7,7 +7,17 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/services", "/products", "/visualizer", "/about", "/gallery", "/request-estimation"],
+        allow: [
+          "/",
+          "/services",
+          "/products",
+          "/visualizer",
+          "/about",
+          "/gallery",
+          "/request-estimation",
+          "/cart",
+          "/checkout",
+        ],
         disallow: [
           "/admin/",
           "/api/",
@@ -19,8 +29,6 @@ export default function robots(): MetadataRoute.Robots {
           "/private/",
           "*.json",
           "/admin",
-          "/checkout",
-          "/cart",
         ],
         crawlDelay: 1,
       },

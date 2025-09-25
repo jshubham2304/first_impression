@@ -161,9 +161,9 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "your-google-site-verification-code",
-    yandex: "your-yandex-verification-code",
-    yahoo: "your-yahoo-site-verification-code",
+    google: "ADD_YOUR_GOOGLE_VERIFICATION_CODE_HERE",
+    yandex: "ADD_YOUR_YANDEX_VERIFICATION_CODE_HERE", 
+    yahoo: "ADD_YOUR_YAHOO_VERIFICATION_CODE_HERE",
   },
   openGraph: {
     title: "First Impression / First Impressions - Professional Painting & Design Services in Udaipur",
