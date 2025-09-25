@@ -115,12 +115,12 @@ const ColorSwatch = ({
       <Badge 
         variant="secondary" 
         className={cn(
-          "absolute top-2 right-2 text-xs z-10 px-2 py-1 shadow-sm",
+          "absolute top-2 left-2 text-xs z-10 px-2 py-1 shadow-sm",
           "bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0",
           "animate-pulse"
         )}
       >
-        {featureTag === 'Recommended' ? '⭐' : featureTag === 'Colour of the year' ? '🏆' : ''}
+        {featureTag === 'Recommended' ? '⭐' : featureTag === 'Colour of the year' ? '' : ''}
       </Badge>
     )}
     <div
@@ -157,25 +157,11 @@ const ColorSwatch = ({
         </button>
       )}
       
-      {/* Translucent tag overlay */}
-      <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center gap-2 z-10">
-        {/* Code tag on the left */}
-        {code && (
-          <span className={cn(
-            "text-xs font-mono px-2 py-1 rounded-full backdrop-blur-md border border-white/20 flex-shrink-0",
-            "shadow-lg transition-all duration-200",
-            isSelected 
-              ? 'bg-black/70 text-white shadow-primary/20' 
-              : 'bg-black/50 text-white/90 hover:bg-black/60'
-          )}>
-            {code}
-          </span>
-        )}
-        
-        {/* Name tag on the right */}
+      {/* Color name at the top */}
+      <div className="absolute top-2 right-2 z-10">
         <span className={cn(
           "text-xs font-bold px-2 py-1 rounded-full backdrop-blur-md border border-white/20",
-          "flex-1 text-right truncate ml-1 shadow-lg transition-all duration-200",
+          "shadow-lg transition-all duration-200 max-w-20 truncate",
           isSelected 
             ? 'bg-white/80 text-gray-900 shadow-primary/20' 
             : 'bg-white/60 text-gray-800 hover:bg-white/70'
@@ -183,6 +169,21 @@ const ColorSwatch = ({
           {name}
         </span>
       </div>
+
+      {/* Color code at the bottom */}
+      {code && (
+        <div className="absolute bottom-2 left-2 right-2 flex justify-center z-10">
+          <span className={cn(
+            "text-xs font-mono px-2 py-1 rounded-full backdrop-blur-md border border-white/20",
+            "shadow-lg transition-all duration-200",
+            isSelected 
+              ? 'bg-black/70 text-white shadow-primary/20' 
+              : 'bg-black/50 text-white/90 hover:bg-black/60'
+          )}>
+            {code}
+          </span>
+        </div>
+      )}
     </div>
   </div>
 );
