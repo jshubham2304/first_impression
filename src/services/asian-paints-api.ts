@@ -13,16 +13,25 @@ let apiAvailable: boolean | null = null;
 let lastApiCheck = 0;
 const API_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-// Check if we're on mobile (basic detection)
+// Check if we're on mobile (enhanced detection)
 const isMobile = () => {
   if (typeof window === "undefined") return false;
-  return (
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-    window.innerWidth <= 768
-  );
+
+  // Check for mobile user agents
+  const mobileUserAgents = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i;
+  const isMobileUA = mobileUserAgents.test(navigator.userAgent);
+
+  // Check for touch capability
+  const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+  // Check screen size
+  const isSmallScreen = window.innerWidth <= 768 || window.outerWidth <= 768;
+
+  // Return true if any mobile indicator is present
+  return isMobileUA || (isTouchDevice && isSmallScreen);
 };
 
-// Quick API availability check
+// Quick API availability check with mobile optimization
 const checkApiAvailability = async (): Promise<boolean> => {
   const now = Date.now();
 
@@ -31,22 +40,40 @@ const checkApiAvailability = async (): Promise<boolean> => {
     return apiAvailable;
   }
 
+  // On mobile, be more aggressive about using fallbacks
+  const mobile = isMobile();
+
   try {
-    // Quick test with minimal params on mobile
-    const testUrl = isMobile()
-      ? `${API_BASE_URL}?selectedShadeFamily=reds&language=en`
+    // Use different strategy for mobile vs desktop
+    const testUrl = mobile
+      ? `${API_BASE_URL}?selectedShadeFamily=reds&language=en&limit=1` // Minimal request for mobile
       : `${API_BASE_URL}?selectedShadeFamily=all&language=en`;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+    // Shorter timeout for mobile due to network constraints
+    const timeoutMs = mobile ? 2000 : 5000;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    // Mobile-optimized headers
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+    };
+
+    // Use different user agents for mobile vs desktop
+    if (mobile) {
+      headers["User-Agent"] =
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1";
+    } else {
+      headers["User-Agent"] = "Mozilla/5.0 (compatible; ColorVisualizer/1.0)";
+    }
 
     const response = await fetch(testUrl, {
       method: "HEAD", // Use HEAD to minimize data transfer
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "Mozilla/5.0 (compatible; ColorVisualizer/1.0)",
-      },
+      headers,
       signal: controller.signal,
+      // Add mobile-specific configurations
+      cache: mobile ? "force-cache" : "default",
+      mode: "cors",
     });
 
     clearTimeout(timeoutId);
@@ -55,14 +82,31 @@ const checkApiAvailability = async (): Promise<boolean> => {
     lastApiCheck = now;
 
     console.log(
-      `Asian Paints API ${apiAvailable ? "available" : "unavailable"} on ${isMobile() ? "mobile" : "desktop"}`
+      `Asian Paints API ${apiAvailable ? "available" : "unavailable"} on ${mobile ? "mobile" : "desktop"} (${
+        response.status
+      })`
     );
 
     return apiAvailable;
   } catch (error) {
-    console.warn("Asian Paints API check failed:", error instanceof Error ? error.message : "Unknown error");
+    console.warn(
+      `Asian Paints API check failed on ${mobile ? "mobile" : "desktop"}:`,
+      error instanceof Error ? error.message : "Unknown error"
+    );
+
+    // On mobile, assume API is blocked more quickly
     apiAvailable = false;
     lastApiCheck = now;
+
+    // Log specific mobile issues
+    if (mobile && error instanceof Error) {
+      if (error.message.includes("Failed to fetch")) {
+        console.warn("Mobile network blocking detected - this is common on mobile networks");
+      } else if (error.name === "AbortError") {
+        console.warn("Mobile timeout - slow network connection");
+      }
+    }
+
     return false;
   }
 };
@@ -159,12 +203,14 @@ export async function fetchColorOfTheYearShades(): Promise<Shade[]> {
     .sort((a, b) => parseInt(a.popularity) - parseInt(b.popularity));
 }
 
-// Load more colors using the personalization API
+// Load more colors using the personalization API with mobile optimization
 export async function loadMoreColors(
   previousShadeSKUs: string[] = [],
   swatchesOnLoad: number = 12,
   language: string = "en"
 ): Promise<Shade[]> {
+  const mobile = isMobile();
+
   try {
     const params = new URLSearchParams({
       previousShadeSKUs: JSON.stringify(previousShadeSKUs),
@@ -172,16 +218,36 @@ export async function loadMoreColors(
       language,
     });
 
+    // Mobile-optimized headers
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+    };
+
+    if (mobile) {
+      headers["User-Agent"] =
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1";
+    } else {
+      headers["User-Agent"] = "Mozilla/5.0 (compatible; ColorVisualizer/1.0)";
+    }
+
+    // Add timeout for mobile
+    const controller = new AbortController();
+    const timeoutMs = mobile ? 3000 : 8000;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     const response = await fetch(
       `https://www.asianpaints.com/apcolourcatalogue/personalization/previousShades.json?${params}`,
       {
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "Mozilla/5.0 (compatible; ColorVisualizer/1.0)",
-        },
+        headers,
+        signal: controller.signal,
         next: { revalidate: 3600 },
+        mode: "cors",
+        credentials: "omit",
+        cache: mobile ? "force-cache" : "default",
       }
     );
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`Load more API request failed: ${response.status} ${response.statusText}`);
@@ -199,10 +265,18 @@ export async function loadMoreColors(
       return [];
     }
   } catch (error) {
-    console.error("Error loading more colors:", error);
+    console.error(`Error loading more colors on ${mobile ? "mobile" : "desktop"}:`, error);
 
-    // Provide more specific error information
-    if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
+    // Provide more specific error information for mobile
+    if (mobile && error instanceof Error) {
+      if (error.message.includes("Failed to fetch")) {
+        console.error("Mobile network connectivity issue - API may be blocked");
+      } else if (error.name === "AbortError") {
+        console.error("Mobile timeout - slow network or API blocking");
+      } else if (error.message.includes("NetworkError")) {
+        console.error("Mobile CORS or DNS blocking detected");
+      }
+    } else if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
       console.error("Network connectivity issue - check internet connection");
     } else if (error instanceof TypeError && error.message.includes("NetworkError")) {
       console.error("CORS or network policy error");
@@ -243,18 +317,33 @@ export async function fetchAllColorsForFamily(selectedShadeFamily: ShadeFamily =
       shadeMapper: "false",
     });
 
-    // Add shorter timeout for mobile devices
+    // Mobile-optimized timeout and retry logic
+    const mobile = isMobile();
     const controller = new AbortController();
-    const timeoutMs = isMobile() ? 5000 : 10000; // 5s mobile, 10s desktop
+    const timeoutMs = mobile ? 3000 : 8000; // Shorter timeout for mobile
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
+    // Prepare mobile-optimized headers
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+    };
+
+    // Use mobile-specific user agent to avoid blocking
+    if (mobile) {
+      headers["User-Agent"] =
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1";
+    } else {
+      headers["User-Agent"] = "Mozilla/5.0 (compatible; ColorVisualizer/1.0)";
+    }
+
     const response = await fetch(`${API_BASE_URL}?${params}`, {
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "Mozilla/5.0 (compatible; ColorVisualizer/1.0)",
-      },
+      headers,
       signal: controller.signal,
       next: { revalidate: 3600 },
+      // Mobile-specific optimizations
+      cache: mobile ? "force-cache" : "default",
+      mode: "cors",
+      credentials: "omit", // Don't send credentials to avoid CORS issues
     });
 
     clearTimeout(timeoutId);

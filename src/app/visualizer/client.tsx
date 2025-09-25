@@ -317,16 +317,15 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
           setRecommendedShades(recommendedFallback.length > 0 ? recommendedFallback : popularFallback.slice(0, 8));
           setColorOfYearShades(cotyFallback.length > 0 ? cotyFallback : popularFallback.slice(0, 6));
           
-          console.log('Successfully loaded fallback colors after error');
-          setError('Using offline colors. Some features may be limited.');
+          console.log('Successfully loaded fallback colors after error - Using offline colors. Some features may be limited.');
         } else {
-          // Provide more specific error messages if fallback also fails
+          // Provide more specific error messages if fallback also fails - log only
           if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
-            setError('Network error: Please check your internet connection and try again.');
+            console.error('Network error: Please check your internet connection and try again.');
           } else if (err instanceof TypeError && err.message.includes('NetworkError')) {
-            setError('Connection blocked: The color API may be temporarily unavailable.');
+            console.error('Connection blocked: The color API may be temporarily unavailable.');
           } else {
-            setError('Failed to load colors. Please refresh the page and try again.');
+            console.error('Failed to load colors. Please refresh the page and try again.');
           }
         }
       } finally {
@@ -365,18 +364,20 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
           const status = getApiStatus();
           setApiStatus(status.message);
           
-          // Set appropriate error message based on platform
-          const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-            typeof navigator !== 'undefined' ? navigator.userAgent : ''
+          // Enhanced mobile detection for better error messaging
+          const isMobileDevice = typeof navigator !== 'undefined' && (
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(navigator.userAgent) ||
+            ('ontouchstart' in window && window.innerWidth <= 768) ||
+            navigator.maxTouchPoints > 0
           );
           
           if (status.available === false && isMobileDevice) {
-            setError('Asian Paints API blocked on mobile - using offline colors with full functionality');
+            console.log('Asian Paints API blocked on mobile - using offline colors with full functionality');
           } else {
-            setError('Using offline colors for this category. Some features may be limited.');
+            console.log('Using offline colors for this category. Some features may be limited.');
           }
         } else {
-          setError('No colors available for this category.');
+          console.warn('No colors available for this category.');
           setFamilyColors([]);
         }
       }
@@ -395,18 +396,20 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
         const status = getApiStatus();
         setApiStatus(status.message);
         
-        // Set appropriate error message
-        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          typeof navigator !== 'undefined' ? navigator.userAgent : ''
+        // Enhanced mobile detection for error messaging
+        const isMobileDevice = typeof navigator !== 'undefined' && (
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(navigator.userAgent) ||
+          ('ontouchstart' in window && window.innerWidth <= 768) ||
+          navigator.maxTouchPoints > 0
         );
         
         if (status.available === false && isMobileDevice) {
-          setError('📱 Mobile DNS blocking detected - using offline Asian Paints catalog');
+          console.log('📱 Mobile DNS blocking detected - using offline Asian Paints catalog');
         } else {
-          setError('Connection issue detected - using offline colors');
+          console.log('Connection issue detected - using offline colors');
         }
       } else {
-        setError('Failed to load colors for this category. Please try again.');
+        console.error('Failed to load colors for this category. Please try again.');
         setFamilyColors([]);
       }
     } finally {
@@ -535,24 +538,6 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-3 sm:p-4 lg:p-6">
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-                <p className="text-red-700 text-sm font-medium">{error}</p>
-                {apiStatus && (
-                  <p className="text-red-600 text-xs mt-1">{apiStatus}</p>
-                )}
-              </div>
-            )}
-            
-            {/* API Status Information (when no error) */}
-            {apiStatus && !error && apiStatus.includes('blocked') && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                <p className="text-yellow-700 text-sm">
-                  📱 Mobile Network Notice: Using offline color catalog
-                </p>
-                <p className="text-yellow-600 text-xs mt-1">{apiStatus}</p>
-              </div>
-            )}
             
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 mb-3 sm:mb-4 p-1 bg-gradient-to-r from-gray-100/80 to-gray-50/80 backdrop-blur-sm border border-gray-200/50 shadow-sm gap-0.5 sm:gap-1">
@@ -607,9 +592,9 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                   </div>
                 ) : popularShades.length === 0 ? (
                   <div className="text-center p-8">
-                    <p className="text-gray-500 mb-4">No colors found</p>
+                    <p className="text-gray-500 mb-4">Loading colors...</p>
                     <p className="text-sm text-gray-400">
-                      There may be a connection issue. Please try refreshing the page.
+                      Please wait while we prepare your color palette.
                     </p>
                   </div>
                 ) : (
@@ -641,9 +626,9 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                   </div>
                 ) : recommendedShades.length === 0 ? (
                   <div className="text-center p-8">
-                    <p className="text-gray-500 mb-4">No colors found</p>
+                    <p className="text-gray-500 mb-4">Loading recommended colors...</p>
                     <p className="text-sm text-gray-400">
-                      There may be a connection issue. Please try refreshing the page.
+                      Please wait while we prepare your curated selection.
                     </p>
                   </div>
                 ) : (
@@ -722,7 +707,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                     </div>
                   ) : (
                     <p className="text-muted-foreground text-center text-sm py-4">
-                      No colors available for this family
+                      Loading colors for this family...
                     </p>
                   )}
                 </div>
@@ -807,7 +792,7 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-center text-sm py-4">
-                    No Color of the Year shades available
+                    Loading Color of the Year collection...
                   </p>
                 )}
               </TabsContent>
