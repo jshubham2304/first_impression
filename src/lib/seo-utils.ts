@@ -10,6 +10,16 @@ export const DEFAULT_SEO = {
   defaultImage: "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
   businessName: "First Impression - Professional Painting Services",
   location: "Udaipur, Rajasthan",
+  tagline: "Creating Lasting First Impressions",
+  brandKeywords: [
+    "First Impression",
+    "First Impression Painting Services",
+    "First Impression Paint Store",
+    "First Impression Asian Paints Dealer",
+    "First Impression Color Studio",
+    "First Impression Udaipur",
+    "First Impression Rajasthan",
+  ],
 };
 
 // Generate metadata for pages
@@ -40,12 +50,16 @@ export function generateMetadata({
     title: `${title} | ${DEFAULT_SEO.siteName}`,
     description,
     keywords: [
+      ...DEFAULT_SEO.brandKeywords,
       ...keywords,
       "painting services Udaipur",
       "Asian Paints Udaipur",
       "professional painters",
       "interior painting",
       "exterior painting",
+      "best paint shop Udaipur",
+      "authorized Asian Paints dealer",
+      "color consultation Udaipur",
     ],
     alternates: {
       canonical: alternates?.canonical || url,
@@ -94,6 +108,19 @@ export function generateMetadata({
 
 // Generate page-specific keywords for better SEO
 export function generateKeywords(baseKeywords: string[], location = "Udaipur"): string[] {
+  // First Impression brand keywords
+  const firstImpressionKeywords = [
+    "First Impression",
+    `First Impression ${location}`,
+    "First Impression Painting Services",
+    "First Impression Paint Store",
+    "First Impression Asian Paints Dealer",
+    "First Impression Color Studio",
+    `First Impression ${location} painting services`,
+    `First Impression ${location} paint store`,
+    `First Impression ${location} Asian Paints dealer`,
+  ];
+
   const locationKeywords = [
     `${location}`,
     `painting services ${location}`,
@@ -285,6 +312,7 @@ export function generateKeywords(baseKeywords: string[], location = "Udaipur"): 
   ];
 
   return [
+    ...firstImpressionKeywords,
     ...baseKeywords,
     ...locationKeywords,
     ...bestShopKeywords,
@@ -303,12 +331,12 @@ export function generateServiceMetadata(service: {
   keywords?: string[];
   path?: string;
 }): Metadata {
-  const title = `${service.name} - Professional Services in Udaipur`;
+  const title = `${service.name} - First Impression Professional Services in Udaipur`;
   const keywords = generateKeywords(service.keywords || [], "Udaipur");
 
   return generateMetadata({
     title,
-    description: service.description,
+    description: `First Impression offers ${service.description}. Professional painting services with expert consultation and premium Asian Paints products in Udaipur, Rajasthan.`,
     keywords,
     path: service.path,
   });
@@ -322,18 +350,22 @@ export function generateProductMetadata(product: {
   keywords?: string[];
   path?: string;
 }): Metadata {
-  const title = `${product.name} ${product.brand ? `- ${product.brand}` : ""} | Premium Paint Products`;
+  const title = `${product.name} ${
+    product.brand ? `- ${product.brand}` : ""
+  } | First Impression Premium Paint Products`;
   const keywords = generateKeywords([
     ...(product.keywords || []),
     product.brand || "Asian Paints",
     "paint products",
     "premium paint",
     "quality paint",
+    "First Impression paint products",
+    "First Impression authorized dealer",
   ]);
 
   return generateMetadata({
     title,
-    description: product.description,
+    description: `First Impression offers ${product.description}. Authorized Asian Paints dealer providing premium paint products with professional consultation in Udaipur, Rajasthan.`,
     keywords,
     path: product.path,
   });
@@ -365,8 +397,14 @@ export const STRUCTURED_DATA = {
     "@type": "LocalBusiness",
     "@id": `${BASE_URL}/#business`,
     name: DEFAULT_SEO.businessName,
-    alternateName: "First Impression Painting Services",
-    description: "Professional painting and design services in Udaipur, Rajasthan.",
+    alternateName: [
+      "First Impression Painting Services",
+      "First Impression Paint Store",
+      "First Impression Asian Paints Dealer",
+      "First Impression Color Studio",
+    ],
+    description:
+      "First Impression is Udaipur's leading Asian Paints dealer and professional painting services provider. We offer expert color consultation, digital visualization tools, premium paint products, and certified painting professionals for residential and commercial projects.",
     url: BASE_URL,
     telephone: "+91-XXXXXXXXXX",
     email: "contact@first-impression.com",
@@ -384,10 +422,74 @@ export const STRUCTURED_DATA = {
       longitude: "73.6915",
     },
     openingHours: ["Mo-Sa 09:00-18:00"],
+    priceRange: "$$",
+    paymentAccepted: "Cash, Card, UPI, Bank Transfer",
+    currenciesAccepted: "INR",
+    slogan: DEFAULT_SEO.tagline,
+    foundingDate: "2020",
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.8",
+      reviewCount: "150",
+      bestRating: "5",
+    },
+    award: [
+      "Best Asian Paints Dealer Udaipur",
+      "Top Paint Store Rajasthan",
+      "Most Trusted Paint Dealer",
+      "Digital Color Technology Leader",
+    ],
     sameAs: [
       "https://www.facebook.com/FirstImpressionPaints",
       "https://www.instagram.com/first_impression_paints",
       "https://www.youtube.com/@FirstImpressionPaints",
+    ],
+  },
+
+  brand: {
+    "@context": "https://schema.org",
+    "@type": "Brand",
+    "@id": `${BASE_URL}/#brand`,
+    name: "First Impression",
+    alternateName: [
+      "First Impression Painting Services",
+      "First Impression Paint Store",
+      "First Impression Asian Paints Dealer",
+      "First Impression Color Studio",
+    ],
+    description:
+      "First Impression is the premier Asian Paints dealer and professional painting services provider in Udaipur, Rajasthan. We specialize in color consultation, digital visualization, and expert painting services for residential and commercial projects.",
+    url: BASE_URL,
+    logo: DEFAULT_SEO.defaultImage,
+    slogan: DEFAULT_SEO.tagline,
+    founder: {
+      "@type": "Organization",
+      name: "First Impression Team",
+    },
+    foundingDate: "2020",
+    knowsAbout: [
+      "Professional Painting Services",
+      "Color Consultation",
+      "Digital Color Visualization",
+      "Asian Paints Products",
+      "Interior Design",
+      "Exterior Painting",
+      "Texture Painting",
+      "Commercial Painting",
+      "Residential Painting",
+    ],
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.8",
+      reviewCount: "150",
+      bestRating: "5",
+    },
+    award: [
+      "Best Asian Paints Dealer Udaipur",
+      "Top Paint Store Rajasthan",
+      "Certified Painting Professionals",
+      "Digital Color Technology Leader",
+      "Most Trusted Paint Dealer Udaipur",
     ],
   },
 
@@ -397,7 +499,24 @@ export const STRUCTURED_DATA = {
     "@id": `${BASE_URL}/#website`,
     url: BASE_URL,
     name: DEFAULT_SEO.businessName,
+    description:
+      "First Impression - Professional painting and design services with digital color visualization tools, expert consultation, and premium Asian Paints products in Udaipur, Rajasthan.",
     publisher: { "@id": `${BASE_URL}/#business` },
     inLanguage: "en-US",
+    potentialAction: [
+      {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${BASE_URL}/products?search={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+    ],
+    sameAs: [
+      "https://www.facebook.com/FirstImpressionPaints",
+      "https://www.instagram.com/first_impression_paints",
+      "https://www.youtube.com/@FirstImpressionPaints",
+    ],
   },
 };

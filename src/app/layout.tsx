@@ -5,14 +5,24 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { AppContent } from "./app-content";
 import { ParticlesBackground } from "@/components/particles-background";
+import { generateBrandSchema, generateFirstImpressionBusinessSchema } from "@/components/seo-head";
 
 export const metadata: Metadata = {
   title: {
     default: "First Impression - Best Asian Paints Dealer in Udaipur | #1 Paint Store",
     template: "%s | First Impression - Best Asian Paints Dealer Udaipur"
   },
-  description: "Transform your space with First Impression - the best Asian Paints dealer in Udaipur. 10+ years experience, advanced digital color visualizer, expert consultation, premium paint products, and certified professionals. Unlike traditional paint shops, we offer modern technology and guaranteed quality. Get free estimates today!",
+  description: "Transform your space with First Impression - the premier Asian Paints dealer and professional painting services provider in Udaipur. 10+ years experience, advanced digital color visualizer, expert consultation, premium paint products, and certified professionals. First Impression creates lasting impressions with modern technology and guaranteed quality. Get free estimates today!",
   keywords: [
+    // First Impression brand keywords
+    "First Impression",
+    "First Impression Udaipur",
+    "First Impression Painting Services",
+    "First Impression Paint Store",
+    "First Impression Asian Paints Dealer",
+    "First Impression Color Studio",
+    "First Impression Rajasthan",
+    
     // Core services
     "painting services Udaipur",
     "professional painters Udaipur",
@@ -129,7 +139,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "First Impression - Professional Painting & Design Services in Udaipur",
-    description: "Transform your space with expert painting services, color consultation, and premium Asian Paints products in Udaipur. Get free estimates, visualize colors, and work with professional painters who deliver exceptional results.",
+    description: "Transform your space with First Impression - the premier Asian Paints dealer and professional painting services provider in Udaipur. Expert color consultation, digital visualization, and premium paint products with certified professionals who create lasting impressions.",
     url: "https://first-impression.com",
     siteName: "First Impression",
     images: [
@@ -137,7 +147,7 @@ export const metadata: Metadata = {
         url: "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
         width: 1200,
         height: 630,
-        alt: "First Impression - Professional Painting Services in Udaipur, Rajasthan",
+        alt: "First Impression - Premier Asian Paints Dealer and Professional Painting Services in Udaipur, Rajasthan",
       },
       {
         url: "https://res.cloudinary.com/dfydjfauz/video/upload/v1758109969/file00001_qfxbkg.mp4",
@@ -160,10 +170,10 @@ export const metadata: Metadata = {
     site: "@FirstImpressionPaint",
     creator: "@FirstImpressionPaint", 
     title: "First Impression - Professional Painting Services Udaipur",
-    description: "🎨 Transform your space with expert painting services in Udaipur! ✨ Color consultation | Premium paints | Free estimates | Professional painters",
+    description: "🎨 Transform your space with First Impression - premier Asian Paints dealer in Udaipur! ✨ Digital color visualization | Expert consultation | Premium paints | Professional painters | Creating lasting impressions",
     images: {
       url: "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
-      alt: "First Impression - Professional Painting Services in Udaipur",
+      alt: "First Impression - Premier Asian Paints Dealer and Professional Painting Services in Udaipur",
     },
   },
   robots: {
@@ -185,7 +195,6 @@ export const metadata: Metadata = {
     apple: "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
   },
   manifest: "/manifest.json",
-  category: "business",
 };
 
 export default function RootLayout({
@@ -232,165 +241,8 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify([
-              {
-                "@context": "https://schema.org",
-                "@type": "LocalBusiness",
-                "@id": "https://first-impression.com/#business",
-                "name": "First Impression",
-                "alternateName": "First Impression Painting Services",
-                "logo": "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
-                "image": [
-                  "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
-                  "https://res.cloudinary.com/dfydjfauz/video/upload/v1758109969/file00001_qfxbkg.mp4"
-                ],
-                "description": "Best Asian Paints dealer and professional painting services in Udaipur, Rajasthan. Authorized retailer offering expert color consultation, visualization tools, premium paint products, and exceptional craftsmanship for residential and commercial projects.",
-                "address": {
-                  "@type": "PostalAddress",
-                  "streetAddress": "Udaipur",
-                  "addressLocality": "Udaipur",
-                  "addressRegion": "Rajasthan",
-                  "postalCode": "313001",
-                  "addressCountry": "IN"
-                },
-                "geo": {
-                  "@type": "GeoCoordinates",
-                  "latitude": "24.5712",
-                  "longitude": "73.6915"
-                },
-                "telephone": "+91-XXXXXXXXXX",
-                "email": "contact@first-impression.com",
-                "url": "https://first-impression.com",
-                "foundingDate": "2020",
-                "founder": {
-                  "@type": "Organization",
-                  "name": "First Impression Team"
-                },
-                "numberOfEmployees": "10-25",
-                "priceRange": "$$",
-                "currenciesAccepted": "INR",
-                "paymentAccepted": "Cash, Card, UPI, Bank Transfer",
-                "areaServed": [
-                  {
-                    "@type": "City",
-                    "name": "Udaipur",
-                    "containedInPlace": {
-                      "@type": "State",
-                      "name": "Rajasthan"
-                    }
-                  }
-                ],
-                "serviceArea": {
-                  "@type": "GeoCircle",
-                  "geoMidpoint": {
-                    "@type": "GeoCoordinates",
-                    "latitude": "24.5712",
-                    "longitude": "73.6915"
-                  },
-                  "geoRadius": "50000"
-                },
-                "hasOfferCatalog": {
-                  "@type": "OfferCatalog",
-                  "name": "Professional Painting Services",
-                  "itemListElement": [
-                    {
-                      "@type": "Offer",
-                      "itemOffered": {
-                        "@type": "Service",
-                        "serviceType": "Interior Painting",
-                        "name": "Interior Painting Services",
-                        "description": "Professional interior painting services for homes, offices, and commercial spaces using premium paints and modern techniques.",
-                        "provider": {
-                          "@id": "https://first-impression.com/#business"
-                        }
-                      },
-                      "priceRange": "₹15-50 per sq ft",
-                      "availability": "InStock"
-                    },
-                    {
-                      "@type": "Offer", 
-                      "itemOffered": {
-                        "@type": "Service",
-                        "serviceType": "Exterior Painting",
-                        "name": "Exterior Painting Services",
-                        "description": "Weather-resistant exterior painting services for buildings, houses, and commercial properties with long-lasting finishes.",
-                        "provider": {
-                          "@id": "https://first-impression.com/#business"
-                        }
-                      },
-                      "priceRange": "₹20-60 per sq ft",
-                      "availability": "InStock"
-                    },
-                    {
-                      "@type": "Offer",
-                      "itemOffered": {
-                        "@type": "Service",
-                        "serviceType": "Color Consultation",
-                        "name": "Expert Color Consultation",
-                        "description": "Professional color consultation and design services with digital visualization tools and expert advice.",
-                        "provider": {
-                          "@id": "https://first-impression.com/#business"
-                        }
-                      },
-                      "priceRange": "₹500-2000",
-                      "availability": "InStock"
-                    },
-                    {
-                      "@type": "Offer",
-                      "itemOffered": {
-                        "@type": "Service",
-                        "serviceType": "Texture Painting",
-                        "name": "Decorative Texture Painting",
-                        "description": "Artistic texture and decorative painting services for unique wall finishes and aesthetic appeal.",
-                        "provider": {
-                          "@id": "https://first-impression.com/#business"
-                        }
-                      },
-                      "priceRange": "₹25-80 per sq ft", 
-                      "availability": "InStock"
-                    }
-                  ]
-                },
-                "openingHours": ["Mo-Sa 09:00-18:00"],
-                "openingHoursSpecification": [
-                  {
-                    "@type": "OpeningHoursSpecification",
-                    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                    "opens": "09:00",
-                    "closes": "18:00"
-                  }
-                ],
-                "sameAs": [
-                  "https://www.google.com/maps/place/First+Impression",
-                  "https://www.facebook.com/FirstImpressionPaints",
-                  "https://www.instagram.com/first_impression_paints",
-                  "https://www.youtube.com/@FirstImpressionPaints"
-                ],
-                "aggregateRating": {
-                  "@type": "AggregateRating",
-                  "ratingValue": "4.8",
-                  "reviewCount": "150",
-                  "bestRating": "5",
-                  "worstRating": "1"
-                },
-                "award": [
-                  "Best Asian Paints Dealer Udaipur",
-                  "Top Paint Store Rajasthan",
-                  "Certified Painting Professionals",
-                  "Digital Color Technology Leader"
-                ],
-                "knowsAbout": [
-                  "Digital Color Visualization",
-                  "Professional Painting Techniques", 
-                  "Asian Paints Product Expertise",
-                  "Interior Design Consultation",
-                  "Color Psychology",
-                  "Modern Painting Technology",
-                  "Quality Paint Application",
-                  "Project Management"
-                ],
-                "slogan": "Creating Lasting First Impressions",
-                "keywords": "best paint shop Udaipur, Asian Paints dealer, authorized Asian Paints retailer, painting services, interior painting, exterior painting, color consultation, premium paint store, trusted paint dealer, professional painters Udaipur, home painting, commercial painting, paint showroom"
-              },
+              generateFirstImpressionBusinessSchema(),
+              generateBrandSchema(),
               {
                 "@context": "https://schema.org",
                 "@type": "WebSite",
