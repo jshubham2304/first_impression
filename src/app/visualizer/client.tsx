@@ -120,7 +120,7 @@ const ColorSwatch = ({
           "animate-pulse"
         )}
       >
-        {featureTag === 'Recommended' ? '⭐' : featureTag === 'Colour of the year' ? '' : ''}
+        {featureTag === 'Recommended' ? '' : featureTag === 'Colour of the year' ? '' : ''}
       </Badge>
     )}
     <div
