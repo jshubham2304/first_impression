@@ -6,8 +6,8 @@ import type { Metadata } from 'next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const metadata: Metadata = {
-  title: "About First Impression - Why Choose Us Over Badala Paints | Best Painter Service in Udaipur",
-  description: "Learn why First Impression is better than Badala Paints in Udaipur. Professional painting company with 10+ years experience, digital color visualization, expert consultation, and guaranteed quality. The best painter service and hardware shop alternative.",
+  title: "About First Impression (Badala Paints) - Why Choose Us Over Others | Best Painter Service in Udaipur",
+  description: "Learn why First Impression (formerly Badala Paints) is better than other competitors in Udaipur. Professional painting company with 10+ years experience, digital color visualization, expert consultation, and guaranteed quality. Authorized Asian Paints and JSW dealer.",
   keywords: [
     // About keywords
     "about First Impression",
@@ -19,6 +19,8 @@ export const metadata: Metadata = {
     "trusted painters Udaipur",
     "painting company history",
     "Asian Paints dealer Udaipur",
+    "JSW dealer Udaipur",
+    "authorized paint dealer Udaipur",
     "painting business Udaipur",
     "10 years painting experience",
     "reliable painters Udaipur",
@@ -33,10 +35,10 @@ export const metadata: Metadata = {
     "residential painting experts",
     "commercial painting specialists",
     // Competitor keywords
-    "First Impression vs Badala Paints",
-    "better than Badala Paints Udaipur",
-    "alternative to Badala Paints",
-    "Badala Paints competitor Udaipur",
+    "First Impression vs other paint dealers",
+    "better than other paint shops Udaipur",
+    "alternative to traditional paint stores",
+    "paint dealer competitor Udaipur",
     "best painter service Udaipur",
     "professional painting services Udaipur",
     "digital color visualization Udaipur",
@@ -109,35 +111,35 @@ const comparisons = [
   {
     feature: "Professional Expertise",
     firstImpression: "10+ years experience with certified professionals",
-    badalaPaints: "Basic hardware store service",
+    badalaPaints: "Basic hardware store service or inexperienced contractors",
     icon: Award,
     advantage: true
   },
   {
     feature: "Quality Guarantee",
     firstImpression: "100% satisfaction guarantee on all work",
-    badalaPaints: "Limited warranty",
+    badalaPaints: "Limited or no warranty",
     icon: Shield,
     advantage: true
   },
   {
     feature: "Color Consultation",
     firstImpression: "Expert color psychology and design consultation",
-    badalaPaints: "Basic paint selection advice",
+    badalaPaints: "Basic paint selection advice or no consultation",
     icon: Star,
     advantage: true
   },
   {
     feature: "Premium Products",
-    firstImpression: "Authorized Asian Paints dealer with latest products",
-    badalaPaints: "Standard paint inventory",
+    firstImpression: "Authorized Asian Paints and JSW dealer with latest products",
+    badalaPaints: "Standard paint inventory or unauthorized dealers",
     icon: Award,
     advantage: true
   },
   {
-    feature: "Service Hours",
-    firstImpression: "Professional consultation during business hours",
-    badalaPaints: "24/7 basic supply only",
+    feature: "Complete Service",
+    firstImpression: "Paint supply + professional application + consultation",
+    badalaPaints: "Either supply only or application only, not both",
     icon: CheckCircle,
     advantage: true
   }
@@ -211,18 +213,18 @@ export default function AboutUsPage() {
         <div className="container">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Why Choose <span className="text-primary">First Impression</span> Over Badala Paints?
+              Why Choose <span className="text-primary">First Impression</span> (Badala Paints) Over Others?
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Discover why First Impression is the best painter service and premier Asian Paints dealer in Udaipur. 
-              We offer superior technology, expertise, and quality compared to traditional hardware shops like Badala Paints.
+              Discover why First Impression (formerly Badala Paints) is the best painter service and premier Asian Paints dealer in Udaipur. 
+              We offer superior technology, expertise, and quality compared to other traditional hardware shops and painting services in the city.
             </p>
           </div>
 
           {/* Comparison Table */}
           <div className="mb-16">
             <h3 className="text-3xl font-bold text-center mb-8">
-              First Impression vs Badala Paints Comparison
+              First Impression (Badala Paints) vs Other Competitors Comparison
             </h3>
             <div className="space-y-6">
               {comparisons.map((comparison, index) => (
@@ -247,7 +249,7 @@ export default function AboutUsPage() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-red-600 font-semibold">
                           <XCircle className="h-5 w-5" />
-                          Badala Paints
+                          Other Competitors
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {comparison.badalaPaints}

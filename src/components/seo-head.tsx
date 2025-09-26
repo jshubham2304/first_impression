@@ -397,9 +397,12 @@ export function generateFirstImpressionBusinessSchema() {
     "alternateName": [
       "First Impression Painting Services",
       "First Impression Paint Store",
-      "First Impression Asian Paints Dealer"
+      "First Impression Asian Paints Dealer",
+      "First Impression JSW Dealer",
+      "Badala Paints",
+      "Badala Paints Udaipur"
     ],
-    "description": "First Impression is Udaipur's leading Asian Paints dealer and professional painting services provider. We offer expert color consultation, digital visualization tools, premium paint products, and certified painting professionals for residential and commercial projects.",
+    "description": "First Impression (formerly Badala Paints) is Udaipur's leading Asian Paints and JSW dealer and professional painting services provider. We offer expert color consultation, digital visualization tools, premium paint products, and certified painting professionals for residential and commercial projects.",
     "url": "https://first-impression.com",
     "telephone": "+91-XXXXXXXXXX",
     "email": "contact@first-impression.com",
@@ -474,6 +477,7 @@ export function generateFirstImpressionBusinessSchema() {
     },
     "award": [
       "Best Asian Paints Dealer Udaipur",
+      "Best JSW Dealer Udaipur",
       "Top Paint Store Rajasthan",
       "Most Trusted Paint Dealer",
       "Digital Color Technology Leader"

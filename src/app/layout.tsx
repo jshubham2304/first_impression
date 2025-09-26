@@ -9,10 +9,10 @@ import { generateBrandSchema, generateFirstImpressionBusinessSchema } from "@/co
 
 export const metadata: Metadata = {
   title: {
-    default: "First Impression / First Impressions - Best Asian Paints Dealer in Udaipur | #1 Paint Store",
-    template: "%s | First Impression / First Impressions - Best Asian Paints Dealer Udaipur"
+    default: "First Impression / First Impressions - Best Asian Paints & JSW Dealer in Udaipur | #1 Paint Store",
+    template: "%s | First Impression / First Impressions - Best Asian Paints & JSW Dealer Udaipur"
   },
-  description: "Transform your space with First Impression (First Impressions) - the premier Asian Paints dealer and professional painting services provider in Udaipur. 10+ years experience, advanced digital color visualizer, expert consultation, premium paint products, and certified professionals. Better than Badala Paints with modern technology and guaranteed quality. Get free estimates today!",
+  description: "Transform your space with First Impression (formerly Badala Paints) - the premier Asian Paints and JSW dealer and professional painting services provider in Udaipur. 10+ years experience, advanced digital color visualizer, expert consultation, premium paint products, and certified professionals. Better than other competitors with modern technology and guaranteed quality. Get free estimates today!",
   keywords: [
     // First Impression brand keywords - both singular and plural
     "First Impression",
@@ -59,6 +59,10 @@ export const metadata: Metadata = {
     "certified Asian Paints dealer Udaipur",
     "Asian Paints authorized retailer Udaipur",
     "Asian Paints showroom Udaipur",
+    "best JSW dealer Udaipur",
+    "authorized JSW dealer Udaipur",
+    "JSW authorized retailer Udaipur",
+    "JSW showroom Udaipur",
     "best paint dealer Udaipur",
     "top paint dealer Udaipur",
     "premium paint dealer Udaipur",
@@ -67,11 +71,9 @@ export const metadata: Metadata = {
     "Asian Paints dealer near me",
     
     // Competitor keywords
-    "Badala Paints",
-    "Badala Paints Udaipur",
-    "alternative to Badala Paints",
-    "better than Badala Paints",
-    "Badala Paints competitor",
+    "First Impression vs other paint dealers",
+    "better than other paint shops Udaipur",
+    "alternative to traditional paint stores",
     
     // Hardware store keywords
     "hardware shop Udaipur",
