@@ -5,9 +5,8 @@ export interface AsianPaintsApiResponse {
   shade: Shade[];
 }
 
-// Updated API URL to match the working Asian Paints endpoint
-const API_BASE_URL =
-  "https://www.asianpaints.com/content/ap/en/home/catalogue/colour-catalogue/grey-wall-colours/jcr:content/root/responsivegrid_602603264/responsivegrid/shadelisting_copy_co.shade.json";
+// Use our own API proxy to avoid CORS issues
+const API_BASE_URL = "/api/shades";
 
 // Track API availability to avoid repeated failed requests
 let apiAvailable: boolean | null = null;
@@ -32,7 +31,7 @@ const isMobile = () => {
   return isMobileUA || (isTouchDevice && isSmallScreen);
 };
 
-// Quick API availability check with mobile optimization
+// Quick API availability check - now using our proxy, so it should always work
 const checkApiAvailability = async (): Promise<boolean> => {
   const now = Date.now();
 
@@ -41,29 +40,18 @@ const checkApiAvailability = async (): Promise<boolean> => {
     return apiAvailable;
   }
 
-  // On mobile, be more aggressive about using fallbacks
-  const mobile = isMobile();
-
   try {
-    // Use minimal request for availability check
-    const testUrl = `${API_BASE_URL}?selectedShadeFamily=greys&language=en&shadeMapper=false`;
+    // Use minimal request for availability check via our proxy
+    const testUrl = `${API_BASE_URL}?selectedShadeFamily=greys&language=en&limit=1`;
 
     const controller = new AbortController();
-    // Shorter timeout for mobile due to network constraints
-    const timeoutMs = mobile ? 3000 : 6000;
+    const timeoutMs = 10000; // 10 second timeout
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-    // Simple headers - browsers ignore custom User-Agent for security
-    const headers: Record<string, string> = {
-      Accept: "application/json",
-    };
-
     const response = await fetch(testUrl, {
-      method: "GET", // Use GET instead of HEAD - some servers don't support HEAD
-      headers,
+      method: "GET",
+      headers: { Accept: "application/json" },
       signal: controller.signal,
-      mode: "cors",
-      credentials: "omit",
     });
 
     clearTimeout(timeoutId);
@@ -71,32 +59,13 @@ const checkApiAvailability = async (): Promise<boolean> => {
     apiAvailable = response.ok;
     lastApiCheck = now;
 
-    console.log(
-      `Asian Paints API ${apiAvailable ? "available" : "unavailable"} on ${mobile ? "mobile" : "desktop"} (${
-        response.status
-      })`
-    );
+    console.log(`Asian Paints API proxy ${apiAvailable ? "available" : "unavailable"} (${response.status})`);
 
     return apiAvailable;
   } catch (error) {
-    console.warn(
-      `Asian Paints API check failed on ${mobile ? "mobile" : "desktop"}:`,
-      error instanceof Error ? error.message : "Unknown error"
-    );
-
-    // On mobile, assume API is blocked more quickly
+    console.warn("Asian Paints API proxy check failed:", error instanceof Error ? error.message : "Unknown error");
     apiAvailable = false;
     lastApiCheck = now;
-
-    // Log specific mobile issues
-    if (mobile && error instanceof Error) {
-      if (error.message.includes("Failed to fetch")) {
-        console.warn("Mobile network blocking detected - this is common on mobile networks");
-      } else if (error.name === "AbortError") {
-        console.warn("Mobile timeout - slow network connection");
-      }
-    }
-
     return false;
   }
 };
@@ -279,15 +248,11 @@ export async function fetchAllColorsForFamily(selectedShadeFamily: ShadeFamily =
     return colorCache.get(selectedShadeFamily)!;
   }
 
-  // Quick API availability check - especially important for mobile
+  // Quick API availability check
   const isApiAvailable = await checkApiAvailability();
 
   if (!isApiAvailable) {
-    console.warn(
-      `Asian Paints API unavailable (${
-        isMobile() ? "mobile" : "desktop"
-      }), skipping API call for family: ${selectedShadeFamily}`
-    );
+    console.warn(`Asian Paints API proxy unavailable, skipping API call for family: ${selectedShadeFamily}`);
     return []; // Return empty array to trigger fallback in client
   }
 
@@ -298,22 +263,13 @@ export async function fetchAllColorsForFamily(selectedShadeFamily: ShadeFamily =
       shadeMapper: "false",
     });
 
-    // Mobile-optimized timeout
-    const mobile = isMobile();
     const controller = new AbortController();
-    const timeoutMs = mobile ? 5000 : 10000; // Increased timeout for reliability
+    const timeoutMs = 15000; // 15 second timeout for full fetch
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-    // Simple headers - browsers ignore custom User-Agent
-    const headers: Record<string, string> = {
-      Accept: "application/json",
-    };
-
     const response = await fetch(`${API_BASE_URL}?${params}`, {
-      headers,
+      headers: { Accept: "application/json" },
       signal: controller.signal,
-      mode: "cors",
-      credentials: "omit", // Don't send credentials to avoid CORS issues
     });
 
     clearTimeout(timeoutId);
@@ -341,17 +297,10 @@ export async function fetchAllColorsForFamily(selectedShadeFamily: ShadeFamily =
   } catch (error) {
     console.error(`Error fetching all colors for family "${selectedShadeFamily}":`, error);
 
-    // Mark API as unavailable on specific errors
-    if (error instanceof Error) {
-      if (error.name === "AbortError") {
-        console.error(`API request timeout (${isMobile() ? "mobile" : "desktop"}) for family "${selectedShadeFamily}"`);
-        apiAvailable = false;
-        lastApiCheck = Date.now();
-      } else if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
-        console.error(`Network/DNS blocking detected for Asian Paints API on ${isMobile() ? "mobile" : "desktop"}`);
-        apiAvailable = false;
-        lastApiCheck = Date.now();
-      }
+    // Mark API as unavailable on timeout/network errors
+    if (error instanceof Error && (error.name === "AbortError" || error.message.includes("Failed to fetch"))) {
+      apiAvailable = false;
+      lastApiCheck = Date.now();
     }
 
     return [];
@@ -376,9 +325,9 @@ export const getApiStatus = () => ({
   isMobile: isMobile(),
   message:
     apiAvailable === false
-      ? `Asian Paints API blocked on ${isMobile() ? "mobile" : "desktop"} - using offline colors`
+      ? "Asian Paints API proxy unavailable - using offline colors"
       : apiAvailable === true
-      ? `Asian Paints API available on ${isMobile() ? "mobile" : "desktop"}`
+      ? "Asian Paints API proxy available"
       : "Asian Paints API status unknown",
 });
 
