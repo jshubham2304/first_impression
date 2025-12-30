@@ -67,7 +67,7 @@ export function generateProductSchema(product: {
   return {
     "@context": "https://schema.org",
     "@type": "Product",
-    "@id": `https://first-impression.com/products/${product.id}`,
+    "@id": `https://firstimpresssion.netlify.app/products/${product.id}`,
     "name": product.name,
     "description": product.description,
     "image": product.imageUrl || "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
@@ -105,7 +105,7 @@ export function generateProductSchema(product: {
       "availability": "https://schema.org/InStock",
       "seller": {
         "@type": "Organization",
-        "@id": "https://first-impression.com/#business",
+        "@id": "https://firstimpresssion.netlify.app/#business",
         "name": "First Impression",
         "alternateName": "First Impression Painting Services",
         "description": "Authorized Asian Paints dealer and professional painting services in Udaipur"
@@ -159,7 +159,7 @@ export function generateServiceSchema(service: {
     "serviceType": service.serviceType || "Painting Service",
     "provider": {
       "@type": "LocalBusiness",
-      "@id": "https://first-impression.com/#business",
+      "@id": "https://firstimpresssion.netlify.app/#business",
       "name": "First Impression",
       "alternateName": "First Impression Painting Services",
       "description": "Authorized Asian Paints dealer and professional painting services in Udaipur, Rajasthan",
@@ -244,12 +244,12 @@ export function generateArticleSchema(article: {
       "worksFor": {
         "@type": "Organization",
         "name": "First Impression",
-        "@id": "https://first-impression.com/#business"
+        "@id": "https://firstimpresssion.netlify.app/#business"
       }
     },
     "publisher": {
       "@type": "Organization",
-      "@id": "https://first-impression.com/#business",
+      "@id": "https://firstimpresssion.netlify.app/#business",
       "name": "First Impression",
       "alternateName": "First Impression Painting Services",
       "description": "Authorized Asian Paints dealer and professional painting services in Udaipur, Rajasthan",
@@ -259,11 +259,9 @@ export function generateArticleSchema(article: {
         "width": 200,
         "height": 200
       },
-      "url": "https://first-impression.com",
+      "url": "https://firstimpresssion.netlify.app",
       "sameAs": [
-        "https://www.facebook.com/FirstImpressionPaints",
-        "https://www.instagram.com/first_impression_paints",
-        "https://www.youtube.com/@FirstImpressionPaints"
+        "https://www.instagram.com/hitu1682"
       ]
     },
     "datePublished": article.publishDate,
@@ -299,7 +297,7 @@ export function generateBrandSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Brand",
-    "@id": "https://first-impression.com/#brand",
+    "@id": "https://firstimpresssion.netlify.app/#brand",
     "name": "First Impression",
     "alternateName": [
       "First Impression Painting Services",
@@ -312,7 +310,7 @@ export function generateBrandSchema() {
       "First Impressions Color Studio"
     ],
     "description": "First Impression is the premier Asian Paints dealer and professional painting services provider in Udaipur, Rajasthan. We specialize in color consultation, digital visualization, and expert painting services for residential and commercial projects.",
-    "url": "https://first-impression.com",
+    "url": "https://firstimpresssion.netlify.app",
     "logo": "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
     "slogan": "Creating Lasting First Impressions",
     "founder": {
@@ -392,7 +390,7 @@ export function generateFirstImpressionBusinessSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": "https://first-impression.com/#business",
+    "@id": "https://firstimpresssion.netlify.app/#business",
     "name": "First Impression",
     "alternateName": [
       "First Impression Painting Services",
@@ -403,7 +401,7 @@ export function generateFirstImpressionBusinessSchema() {
       "Badala Paints Udaipur"
     ],
     "description": "First Impression (formerly Badala Paints) is Udaipur's leading Asian Paints and JSW dealer and professional painting services provider. We offer expert color consultation, digital visualization tools, premium paint products, and certified painting professionals for residential and commercial projects.",
-    "url": "https://first-impression.com",
+    "url": "https://firstimpresssion.netlify.app",
     "telephone": "+91-XXXXXXXXXX",
     "email": "contact@first-impression.com",
     "address": {
@@ -465,9 +463,7 @@ export function generateFirstImpressionBusinessSchema() {
       ]
     },
     "sameAs": [
-      "https://www.facebook.com/FirstImpressionPaints",
-      "https://www.instagram.com/first_impression_paints", 
-      "https://www.youtube.com/@FirstImpressionPaints"
+      "https://www.instagram.com/hitu1682"
     ],
     "aggregateRating": {
       "@type": "AggregateRating",

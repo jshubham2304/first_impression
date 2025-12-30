@@ -556,6 +556,18 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                   <Maximize2 className="h-3 w-3 sm:h-5 sm:w-5 text-gray-600" />
                 </div>
               </div>
+
+              {/* Upload Button - Mobile Only */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUploadClick();
+                }}
+                className="xl:hidden absolute bottom-3 left-3 z-20 flex items-center gap-2 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg hover:bg-white transition-all duration-200 hover:scale-105"
+              >
+                <Upload className="h-4 w-4 text-gray-700" />
+                <span className="text-sm font-medium text-gray-700">Upload Your Own Room</span>
+              </button>
               
               {/* Hover Overlay */}
               <div className="absolute inset-0 z-15 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

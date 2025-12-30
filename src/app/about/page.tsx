@@ -56,9 +56,9 @@ export const metadata: Metadata = {
     canonical: "/about",
   },
   openGraph: {
-    title: "About First Impression - Why Choose Us Over Badala Paints | Best Painter Service in Udaipur",
-    description: "Discover why First Impression is better than Badala Paints in Udaipur. 10+ years of painting excellence with digital technology, expert consultation, and guaranteed quality. The best painter service and hardware shop alternative.",
-    url: "https://first-impression.com/about",
+    title: "About First Impression(Badala Paints) - Why Choose Us Over other Paints | Best Painter Service in Udaipur",
+    description: "Discover why First Impression(Badala Paints) is better than other Painter in Udaipur. 10+ years of painting excellence with digital technology, expert consultation, and guaranteed quality. The best painter service and hardware shop alternative.",
+    url: "https://firstimpresssion.netlify.app/about",
     type: "website",
     images: [
       {
@@ -104,42 +104,42 @@ const comparisons = [
   {
     feature: "Digital Color Visualization",
     firstImpression: "Advanced 3D color preview and virtual room painting",
-    badalaPaints: "Traditional color charts only",
+    otherDealers: "Traditional color charts only",
     icon: Zap,
     advantage: true
   },
   {
     feature: "Professional Expertise",
     firstImpression: "10+ years experience with certified professionals",
-    badalaPaints: "Basic hardware store service or inexperienced contractors",
+    otherDealers: "Basic hardware store service or inexperienced contractors",
     icon: Award,
     advantage: true
   },
   {
     feature: "Quality Guarantee",
     firstImpression: "100% satisfaction guarantee on all work",
-    badalaPaints: "Limited or no warranty",
+    otherDealers: "Limited or no warranty",
     icon: Shield,
     advantage: true
   },
   {
     feature: "Color Consultation",
     firstImpression: "Expert color psychology and design consultation",
-    badalaPaints: "Basic paint selection advice or no consultation",
+    otherDealers: "Basic paint selection advice or no consultation",
     icon: Star,
     advantage: true
   },
   {
     feature: "Premium Products",
     firstImpression: "Authorized Asian Paints and JSW dealer with latest products",
-    badalaPaints: "Standard paint inventory or unauthorized dealers",
+    otherDealers: "Standard paint inventory or unauthorized dealers",
     icon: Award,
     advantage: true
   },
   {
     feature: "Complete Service",
     firstImpression: "Paint supply + professional application + consultation",
-    badalaPaints: "Either supply only or application only, not both",
+    otherDealers: "Either supply only or application only, not both",
     icon: CheckCircle,
     advantage: true
   }
@@ -224,7 +224,7 @@ export default function AboutUsPage() {
           {/* Comparison Table */}
           <div className="mb-16">
             <h3 className="text-3xl font-bold text-center mb-8">
-              First Impression (Badala Paints) vs Other Competitors Comparison
+              First Impression (Badala Paints) vs Other Paint Dealers in Udaipur
             </h3>
             <div className="space-y-6">
               {comparisons.map((comparison, index) => (
@@ -249,10 +249,10 @@ export default function AboutUsPage() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-red-600 font-semibold">
                           <XCircle className="h-5 w-5" />
-                          Other Competitors
+                          Other Paint Dealers in Udaipur
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {comparison.badalaPaints}
+                          {comparison.otherDealers}
                         </p>
                       </div>
                     </div>
@@ -301,23 +301,23 @@ export default function AboutUsPage() {
           {/* SEO Content */}
           <div className="prose max-w-none">
             <h3 className="text-2xl font-bold mb-4">
-              First Impression vs Badala Paints - The Complete Comparison
+              Why First Impression (Badala Paints) Stands Out in Udaipur
             </h3>
             <p className="text-muted-foreground mb-4">
-              When searching for the best painter service in Udaipur, many people compare First Impression with Badala Paints. 
-              While Badala Paints is a traditional hardware shop offering 24/7 paint supplies, First Impression provides a 
-              comprehensive professional painting service that goes far beyond basic paint retail.
+              When searching for the best painter service in Udaipur, you'll find many options - from traditional hardware shops
+              to independent contractors. First Impression (formerly known as Badala Paints) provides a comprehensive professional
+              painting service that goes far beyond what typical paint shops or contractors offer.
             </p>
-            
+
             <h4 className="text-xl font-semibold mb-3">
-              Why First Impression is the Better Choice for Professional Painting Services
+              Why First Impression is the Better Choice Over Other Paint Shops & Contractors
             </h4>
             <p className="text-muted-foreground mb-4">
-              As the premier Asian Paints dealer in Udaipur, First Impression combines traditional hardware shop convenience 
-              with modern digital technology and professional expertise. Unlike Badala Paints, which focuses primarily on 
-              paint supply, First Impression offers complete painting solutions including:
+              As the premier Asian Paints dealer in Udaipur, First Impression combines traditional hardware shop convenience
+              with modern digital technology and professional expertise. Unlike other paint shops that focus only on
+              supply, or contractors who lack quality products, First Impression offers complete painting solutions including:
             </p>
-            
+
             <ul className="list-disc list-inside text-muted-foreground space-y-2 mb-6">
               <li>Digital color visualization and virtual room painting</li>
               <li>Expert color consultation and interior design advice</li>
@@ -326,14 +326,14 @@ export default function AboutUsPage() {
               <li>Quality guarantees and after-sales service</li>
               <li>Project management and timeline coordination</li>
             </ul>
-            
+
             <h4 className="text-xl font-semibold mb-3">
-              Hardware Shop vs Professional Painting Service
+              Traditional Shops & Contractors vs Professional Painting Service
             </h4>
             <p className="text-muted-foreground">
-              While Badala Paints serves as a hardware shop providing paint supplies, First Impression operates as a 
-              complete painting service provider. This means you get not just the products, but also the expertise, 
-              technology, and professional service that transforms your space into something extraordinary.
+              While most hardware shops in Udaipur only provide paint supplies and local contractors offer basic application,
+              First Impression (Badala Paints) operates as a complete painting service provider. This means you get not just the products,
+              but also the expertise, technology, and professional service that transforms your space into something extraordinary.
             </p>
           </div>
         </div>

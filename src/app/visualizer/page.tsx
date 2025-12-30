@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Asian Paints Color Visualizer - Virtual Room Painting Tool | First Impression",
     description: "Try thousands of Asian Paints colors in real-time with our advanced visualizer in Udaipur. Upload your room photo or use sample rooms to find perfect paint colors for your home.",
-    url: "https://first-impression.com/visualizer",
+    url: "https://firstimpresssion.netlify.app/visualizer",
     type: "website", 
     images: [
       {

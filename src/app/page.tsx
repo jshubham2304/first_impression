@@ -16,7 +16,7 @@ export default async function HomePage() {
   const reviewsStructuredData = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": "https://first-impression.com/#organization",
+    "@id": "https://firstimpresssion.netlify.app/#organization",
     "name": "First Impression",
     "review": testimonials.slice(0, 3).map((testimonial, index) => ({
       "@type": "Review",
@@ -138,7 +138,7 @@ export default async function HomePage() {
               First Impression - Best Painter Service & Asian Paints Dealer in Udaipur
             </h1>
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto font-body">
-              Premier Asian Paints dealer and professional painting services in Udaipur. Better than Badala Paints with digital color visualization, expert consultation, and guaranteed quality. Hardware shop solutions for all your painting needs.
+              The only Asian Paints and JSW authorized dealer with professional painting services in Udaipur. Digital color visualization, expert consultation, and guaranteed quality that other paint dealers can't match.
             </p>
             <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
               <Link href="/services">

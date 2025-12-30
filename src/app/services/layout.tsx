@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Professional Painting & Design Services in Udaipur | First Impression",
     description: "Expert interior & exterior painting services in Udaipur with premium Asian Paints products. Free color consultation, professional wall treatments, and exceptional craftsmanship for homes and offices.",
-    url: "https://first-impression.com/services",
+    url: "https://firstimpresssion.netlify.app/services",
     type: "website",
     images: [
       {

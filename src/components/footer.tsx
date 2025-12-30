@@ -58,13 +58,7 @@ export function Footer() {
           <div>
             <h3 className="font-headline font-semibold mb-4">Follow Us</h3>
             <div className="flex space-x-4">
-              <Link href="#" aria-label="Twitter">
-                <TwitterIcon className="w-6 h-6 text-muted-foreground hover:text-primary" />
-              </Link>
-              <Link href="#" aria-label="Facebook">
-                <FacebookIcon className="w-6 h-6 text-muted-foreground hover:text-primary" />
-              </Link>
-              <Link href="#" aria-label="Instagram">
+              <Link href="https://www.instagram.com/hitu1682" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <InstagramIcon className="w-6 h-6 text-muted-foreground hover:text-primary" />
               </Link>
             </div>

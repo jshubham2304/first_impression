@@ -8,7 +8,7 @@ import {
   Phone, Mail, MapPin, Globe, Droplet,
   ArrowRight, Star, Clock, Award, Users,
   Building2, Share2, Download, MessageCircle, ExternalLink,
-  Sparkles, Shield, Home, Hammer, CheckCircle, Brush, Check
+  Sparkles, Shield, Home, Hammer, CheckCircle, Brush, Check, Instagram
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -48,6 +48,7 @@ const BusinessCardPage = () => {
     logo: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png',
     googleBusinessUrl: 'https://www.google.com/search?sca_esv=2e3a0442facbf014&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E9MxlKNpWAwqeUC5Q--FH3LGMJqjIMl-aCDjj07mR1ELdX257qIcv7mQLieZkWDwkQWfGy0lUlU1VjclOz09mhjTnKrYjcboOh2TyKhibJk3ShbPbQ%3D%3D&q=Badala+Paints+And+Hardware+Reviews',
     googleShareUrl: 'https://share.google/TGhVGIQXnSx6A53Wt',
+    instagramUrl: 'https://www.instagram.com/hitu1682',
     googleBusinessName: 'Badala Paints And Hardware',
     googleRating: 4.8,
     googleReviewCount: 127,
@@ -216,7 +217,7 @@ END:VCARD`;
             </div>
 
             {/* Quick Contact Buttons */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-4 gap-2">
               <a
                 href={`tel:${business.phone}`}
                 className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-green-500/10 hover:bg-green-500/20 transition-all group"
@@ -245,6 +246,17 @@ END:VCARD`;
                   <Mail className="h-4 w-4" />
                 </div>
                 <span className="text-xs font-medium">Email</span>
+              </a>
+              <a
+                href={business.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 transition-all group"
+              >
+                <div className="p-2 rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 text-white group-hover:scale-110 transition-transform">
+                  <Instagram className="h-4 w-4" />
+                </div>
+                <span className="text-xs font-medium">Instagram</span>
               </a>
             </div>
 
@@ -445,6 +457,15 @@ END:VCARD`;
                 Trusted by 500+ happy customers in Udaipur
               </p>
               <div className="flex items-center justify-center gap-4 mt-3">
+                <a
+                  href={business.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline flex items-center gap-1"
+                >
+                  <Instagram className="h-3 w-3" /> Instagram
+                </a>
+                <span className="text-muted-foreground">|</span>
                 <a
                   href={business.googleShareUrl}
                   target="_blank"

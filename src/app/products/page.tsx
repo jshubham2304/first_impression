@@ -77,7 +77,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Premium Asian Paints Products & Colors in Udaipur | First Impression",
     description: "Explore our extensive Asian Paints collection in Udaipur. Premium quality interior/exterior paints, primers, and decorative finishes with thousands of beautiful colors for any project.",
-    url: "https://first-impression.com/products",
+    url: "https://firstimpresssion.netlify.app/products",
     type: "website",
     images: [
       {

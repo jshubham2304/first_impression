@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     default: "First Impression / First Impressions - Best Asian Paints & JSW Dealer in Udaipur | #1 Paint Store",
     template: "%s | First Impression / First Impressions - Best Asian Paints & JSW Dealer Udaipur"
   },
-  description: "Transform your space with First Impression (formerly Badala Paints) - the premier Asian Paints and JSW dealer and professional painting services provider in Udaipur. 10+ years experience, advanced digital color visualizer, expert consultation, premium paint products, and certified professionals. Better than other competitors with modern technology and guaranteed quality. Get free estimates today!",
+  description: "Transform your space with First Impression (Badala Paints) - the only Asian Paints and JSW authorized dealer with professional painting services in Udaipur. 10+ years experience, advanced digital color visualizer, expert consultation, premium paint products, and certified professionals. Modern technology and guaranteed quality that other paint dealers in Udaipur can't match. Get free estimates today!",
   keywords: [
     // First Impression brand keywords - both singular and plural
     "First Impression",
@@ -154,7 +154,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://first-impression.com"),
+  metadataBase: new URL("https://firstimpresssion.netlify.app"),
   alternates: {
     canonical: "/",
     languages: {
@@ -169,8 +169,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "First Impression / First Impressions - Professional Painting & Design Services in Udaipur",
-    description: "Transform your space with First Impression (First Impressions) - the premier Asian Paints dealer and professional painting services provider in Udaipur. Expert color consultation, digital visualization, and premium paint products. Better than Badala Paints with certified professionals who create lasting impressions.",
-    url: "https://first-impression.com",
+    description: "Transform your space with First Impression (Badala Paints) - the only Asian Paints and JSW authorized dealer with professional painting services in Udaipur. Expert color consultation, digital visualization, and premium paint products. Certified professionals who create lasting impressions.",
+    url: "https://firstimpresssion.netlify.app",
     siteName: "First Impression",
     images: [
       {
@@ -190,7 +190,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
     countryName: "India",
-    emails: ["contact@first-impression.com"],
+    emails: [],
     phoneNumbers: ["+91-XXXXXXXXXX"],
     faxNumbers: [],
     alternateLocale: ["hi_IN"],
@@ -200,7 +200,7 @@ export const metadata: Metadata = {
     site: "@FirstImpressionPaint",
     creator: "@FirstImpressionPaint", 
     title: "First Impression / First Impressions - Professional Painting Services Udaipur",
-    description: "🎨 Transform your space with First Impression (First Impressions) - premier Asian Paints dealer in Udaipur! ✨ Digital color visualization | Expert consultation | Premium paints | Professional painters | Better than Badala Paints | Creating lasting impressions",
+    description: "🎨 Transform your space with First Impression (Badala Paints) - the only Asian Paints & JSW authorized dealer in Udaipur! ✨ Digital color visualization | Expert consultation | Premium paints | Professional painters | Creating lasting impressions",
     images: {
       url: "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
       alt: "First Impression - Premier Asian Paints Dealer and Professional Painting Services in Udaipur",
@@ -276,19 +276,19 @@ export default function RootLayout({
               {
                 "@context": "https://schema.org",
                 "@type": "WebSite",
-                "@id": "https://first-impression.com/#website",
-                "url": "https://first-impression.com",
+                "@id": "https://firstimpresssion.netlify.app/#website",
+                "url": "https://firstimpresssion.netlify.app",
                 "name": "First Impression - Professional Painting Services",
                 "description": "Professional painting and design services in Udaipur with color visualization tools, expert consultation, and premium paint products.",
                 "publisher": {
-                  "@id": "https://first-impression.com/#business"
+                  "@id": "https://firstimpresssion.netlify.app/#business"
                 },
                 "potentialAction": [
                   {
                     "@type": "SearchAction",
                     "target": {
                       "@type": "EntryPoint",
-                      "urlTemplate": "https://first-impression.com/products?search={search_term_string}"
+                      "urlTemplate": "https://firstimpresssion.netlify.app/products?search={search_term_string}"
                     },
                     "query-input": "required name=search_term_string"
                   }
@@ -303,25 +303,25 @@ export default function RootLayout({
                     "@type": "ListItem",
                     "position": 1,
                     "name": "Home",
-                    "item": "https://first-impression.com"
+                    "item": "https://firstimpresssion.netlify.app"
                   },
                   {
-                    "@type": "ListItem", 
+                    "@type": "ListItem",
                     "position": 2,
                     "name": "Services",
-                    "item": "https://first-impression.com/services"
+                    "item": "https://firstimpresssion.netlify.app/services"
                   },
                   {
                     "@type": "ListItem",
                     "position": 3,
                     "name": "Products",
-                    "item": "https://first-impression.com/products"
+                    "item": "https://firstimpresssion.netlify.app/products"
                   },
                   {
                     "@type": "ListItem",
                     "position": 4,
                     "name": "Visualizer",
-                    "item": "https://first-impression.com/visualizer"
+                    "item": "https://firstimpresssion.netlify.app/visualizer"
                   }
                 ]
               }

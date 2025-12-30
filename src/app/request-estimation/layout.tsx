@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Free Paint Estimate in Udaipur - Professional Painting Quote | First Impression",
     description: "Get a free, detailed painting estimate with transparent pricing and professional assessment. Custom quotes for interior/exterior painting using premium Asian Paints in Udaipur.",
-    url: "https://first-impression.com/request-estimation",
+    url: "https://firstimpresssion.netlify.app/request-estimation",
     type: "website",
     images: [
       {

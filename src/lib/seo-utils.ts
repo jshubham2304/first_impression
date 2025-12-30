@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 // Base URL for the application
-export const BASE_URL = "https://first-impression.com";
+export const BASE_URL = "https://firstimpresssion.netlify.app";
 
 // Default SEO configuration
 export const DEFAULT_SEO = {
@@ -503,9 +503,7 @@ export const STRUCTURED_DATA = {
       "Digital Color Technology Leader",
     ],
     sameAs: [
-      "https://www.facebook.com/FirstImpressionPaints",
-      "https://www.instagram.com/first_impression_paints",
-      "https://www.youtube.com/@FirstImpressionPaints",
+      "https://www.instagram.com/hitu1682",
     ],
   },
 
@@ -577,9 +575,7 @@ export const STRUCTURED_DATA = {
       },
     ],
     sameAs: [
-      "https://www.facebook.com/FirstImpressionPaints",
-      "https://www.instagram.com/first_impression_paints",
-      "https://www.youtube.com/@FirstImpressionPaints",
+      "https://www.instagram.com/hitu1682",
     ],
   },
 };

@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://first-impression.com";
+  const baseUrl = "https://firstimpresssion.netlify.app";
 
   return {
     rules: [
