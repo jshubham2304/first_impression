@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  Phone, Mail, MapPin, Globe, Paintbrush, Palette, Droplet,
+  Phone, Mail, MapPin, Globe, Droplet,
   ArrowRight, Star, Clock, Award, Users,
   Building2, Share2, Download, MessageCircle, ExternalLink,
-  Sparkles, Shield, Heart
+  Sparkles, Shield, Home, Hammer, CheckCircle, Brush, Check
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -37,9 +37,9 @@ const BusinessCardPage = () => {
 
   const business = {
     name: 'First Impression',
-    tagline: 'Professional Painting & Interior Solutions',
+    tagline: 'End-to-End Painting Contractor Services',
     contactPerson: 'Hitesh Badala',
-    designation: 'Founder & CEO',
+    designation: 'Painting Contractor',
     phone: '8560077888',
     email: 'info@firstimpression.com',
     address: 'Udaipur City, Udaipur - 313001, Rajasthan',
@@ -60,23 +60,35 @@ const BusinessCardPage = () => {
   };
 
   const services = [
-    { name: 'Wall Painting', icon: Paintbrush, color: 'bg-blue-500' },
-    { name: 'Interior Design', icon: Palette, color: 'bg-purple-500' },
+    { name: 'Interior Painting', icon: Home, color: 'bg-blue-500' },
+    { name: 'Exterior Painting', icon: Hammer, color: 'bg-orange-500' },
+    { name: 'Texture & Design', icon: Brush, color: 'bg-purple-500' },
     { name: 'Waterproofing', icon: Droplet, color: 'bg-cyan-500' },
   ];
 
   const highlights = [
-    { icon: Award, text: 'Asian Paints Authorized', color: 'text-orange-500' },
-    { icon: Shield, text: 'Quality Guaranteed', color: 'text-green-500' },
-    { icon: Users, text: '50+ Expert Team', color: 'text-blue-500' },
-    { icon: Heart, text: '100% Satisfaction', color: 'text-red-500' },
+    { icon: Award, text: 'Asian Paints Dealer', color: 'text-orange-500' },
+    { icon: CheckCircle, text: 'End-to-End Service', color: 'text-green-500' },
+    { icon: Users, text: '50+ Skilled Painters', color: 'text-blue-500' },
+    { icon: Shield, text: 'Quality Guarantee', color: 'text-purple-500' },
   ];
 
+  // Painting service images - workers at work
   const gallerySamples = [
     'https://res.cloudinary.com/dfydjfauz/image/upload/v1767026474/file1_d8c7wl.jpg',
-    'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00004_i9x97j.jpg',
-    'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00007_t5j3to.jpg',
-    'https://res.cloudinary.com/dfydjfauz/image/upload/v1758115129/file_002_c3rs35.jpg',
+    'https://res.cloudinary.com/dfydjfauz/image/upload/v1767026474/file3_eiznvw.jpg',
+    'https://res.cloudinary.com/dfydjfauz/image/upload/v1767026474/file5_iymto5.jpg',
+    'https://res.cloudinary.com/dfydjfauz/image/upload/v1767026474/file6_wvlyc9.jpg',
+  ];
+
+  // What we offer - end to end services
+  const endToEndServices = [
+    'Free Site Visit & Consultation',
+    'Color Consultation & Selection',
+    'Surface Preparation & Putty',
+    'Premium Paint Application',
+    'Texture & Design Work',
+    'Final Inspection & Cleanup',
   ];
 
   const handleShare = async () => {
@@ -334,7 +346,7 @@ END:VCARD`;
             {/* Services */}
             <div className="space-y-3">
               <h3 className="font-headline font-semibold text-center">Our Services</h3>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {services.map((service) => (
                   <Link href="/services" key={service.name}>
                     <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-muted/50 hover:bg-muted transition-all group">
@@ -346,6 +358,25 @@ END:VCARD`;
                   </Link>
                 ))}
               </div>
+            </div>
+
+            {/* End-to-End Service Process */}
+            <div className="space-y-3 p-4 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
+              <h3 className="font-headline font-semibold text-center flex items-center justify-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                Complete End-to-End Service
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                {endToEndServices.map((service, index) => (
+                  <div key={index} className="flex items-center gap-2 text-xs">
+                    <Check className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+                    <span className="text-muted-foreground">{service}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-center text-muted-foreground mt-2 italic">
+                From consultation to final cleanup - we handle everything!
+              </p>
             </div>
 
             {/* Service Areas */}

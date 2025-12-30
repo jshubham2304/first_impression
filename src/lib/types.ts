@@ -59,6 +59,8 @@ export type FeaturedPalette = {
 export type Service = {
   title: string;
   description: string;
+  image?: string;
+  checklist?: string[];
 };
 
 export type ServiceCategory = {
