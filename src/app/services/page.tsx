@@ -1,12 +1,15 @@
+'use client';
+
 import { serviceCategories, serviceFeatures } from '@/lib/services';
 import { ServiceCard } from '@/components/service-card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Users, Award, Clock, Shield, FileText, Sparkles, Phone, ArrowRight, CheckCircle2, Paintbrush } from 'lucide-react';
+import { Users, Award, Clock, Shield, FileText, Sparkles, Phone, ArrowRight, CheckCircle2, Paintbrush, Check } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type { Metadata } from 'next';
+import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 const iconMap: Record<string, React.ReactNode> = {
   users: <Users className="h-6 w-6" />,
@@ -17,115 +20,122 @@ const iconMap: Record<string, React.ReactNode> = {
   sparkles: <Sparkles className="h-6 w-6" />,
 };
 
-export const metadata: Metadata = {
-  title: "Professional Painting & Design Services in Udaipur - Expert Interior & Exterior Solutions",
-  description: "Comprehensive painting and design services in Udaipur, Rajasthan. Expert interior/exterior painting, wall treatments, color consultation, and home renovation with premium Asian Paints products. Free estimates available.",
-  keywords: [
-    "painting services Udaipur",
-    "interior painting Udaipur",
-    "exterior painting Udaipur",
-    "professional painters Udaipur",
-    "paint contractor Udaipur",
-    "painting company Udaipur",
-    "wall painting Udaipur",
-    "house painting Udaipur",
-    "home renovation Udaipur",
-    "color consultation Udaipur",
-    "Asian Paints Udaipur",
-    "residential painting Udaipur",
-    "commercial painting Udaipur",
-    "office painting Udaipur",
-    "texture painting Udaipur",
-    "decorative painting Udaipur",
-    "architectural services Udaipur",
-    "interior design Udaipur",
-    "wall treatments Udaipur",
-    "paint estimation Udaipur",
-    "painting cost Udaipur",
-    "best painters Udaipur",
-    "professional painting services",
-    "Rajasthan painting services"
-  ],
-  alternates: {
-    canonical: "/services",
-  },
-  openGraph: {
-    title: "Professional Painting & Design Services in Udaipur | First Impression",
-    description: "Expert interior & exterior painting services in Udaipur with premium Asian Paints products. Free color consultation, professional wall treatments, and exceptional craftsmanship for homes and offices.",
-    url: "https://first-impression.com/services",
-    type: "website",
-    images: [
-      {
-        url: "https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png",
-        width: 1200,
-        height: 630,
-        alt: "First Impression Professional Painting Services in Udaipur, Rajasthan",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Professional Painting Services in Udaipur | First Impression",
-    description: "Expert interior & exterior painting in Udaipur | Free consultation | Premium Asian Paints | Call for free estimate",
-    images: ["https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png"],
-  },
-};
+// Carousel images showcasing our work
+const carouselImages = [
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1767026474/file1_d8c7wl.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1767026474/file3_eiznvw.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109963/file00002_fmjajv.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00004_i9x97j.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758109964/file00007_t5j3to.jpg',
+  'https://res.cloudinary.com/dfydjfauz/image/upload/v1758115129/file_002_c3rs35.jpg',
+];
+
+// What we ensure - basic checklist for all services
+const serviceGuarantees = [
+  'Free Site Visit & Assessment',
+  'Transparent Pricing - No Hidden Costs',
+  'Premium Asian Paints Products Only',
+  'Skilled & Trained Workforce',
+  'On-Time Project Completion',
+  'Complete Site Cleanup After Work',
+  'Quality Inspection Before Handover',
+  'Post-Service Support & Warranty',
+];
 
 export default function ServicesPage() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-background py-16 md:py-24 overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-400/10 rounded-full blur-3xl" />
-        </div>
+      {/* Hero Section with Auto-Carousel */}
+      <section className="relative overflow-hidden">
+        {/* Auto-Carousel Background */}
+        <div className="relative h-[400px] md:h-[500px] w-full">
+          {carouselImages.map((src, index) => (
+            <Image
+              key={src}
+              src={src}
+              alt={`Our painting work ${index + 1}`}
+              fill
+              className={cn(
+                "object-cover transition-all duration-1000 ease-in-out",
+                index === currentImageIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"
+              )}
+              priority={index === 0}
+            />
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/80" />
 
-        <div className="container relative max-w-screen-xl">
-          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-            <div className="flex-1 text-center md:text-left">
-              <Badge className="mb-4" variant="secondary">
-                <Paintbrush className="h-3 w-3 mr-1" />
-                End-to-End Painting Services
-              </Badge>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-headline font-bold mb-4">
-                Professional{' '}
-                <span className="text-primary">Painting</span>{' '}
-                Services
-              </h1>
-              <p className="text-lg text-muted-foreground mb-6 max-w-xl">
-                Transform your spaces with our expert painting solutions. From consultation to cleanup,
-                we handle everything with skilled craftsmen and premium materials.
-              </p>
-              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <Button size="lg" asChild>
-                  <Link href="/request-estimation" className="flex items-center gap-2">
-                    Get Free Estimate <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <a href="tel:+918560077888" className="flex items-center gap-2">
-                    <Phone className="h-4 w-4" /> Call Now
-                  </a>
-                </Button>
-              </div>
+          {/* Hero Content */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4">
+            <Badge className="mb-4 bg-white/20 text-white border-white/30 backdrop-blur-sm">
+              <Paintbrush className="h-3 w-3 mr-1" />
+              End-to-End Painting Services
+            </Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-headline font-bold mb-4 text-center">
+              Professional{' '}
+              <span className="text-primary">Painting</span>{' '}
+              Services
+            </h1>
+            <p className="text-lg text-white/80 mb-6 max-w-2xl text-center">
+              Transform your spaces with our expert painting solutions. From consultation to cleanup,
+              we handle everything with skilled craftsmen and premium materials.
+            </p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Button size="lg" asChild>
+                <Link href="/request-estimation" className="flex items-center gap-2">
+                  Get Free Estimate <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="bg-white/10 border-white text-white hover:bg-white/20" asChild>
+                <a href="tel:+918560077888" className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" /> Call Now
+                </a>
+              </Button>
             </div>
+          </div>
 
-            {/* Hero Image */}
-            <div className="relative w-full md:w-96 h-64 md:h-80 rounded-2xl overflow-hidden shadow-2xl">
-              <Image
-                src="https://res.cloudinary.com/dfydjfauz/image/upload/v1767026474/file1_d8c7wl.jpg"
-                alt="Professional painter at work"
-                fill
-                className="object-cover"
-                priority
+          {/* Carousel Indicators */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+            {carouselImages.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentImageIndex(index)}
+                className={cn(
+                  "w-2 h-2 rounded-full transition-all duration-300",
+                  index === currentImageIndex
+                    ? "bg-white w-6"
+                    : "bg-white/50 hover:bg-white/70"
+                )}
+                aria-label={`Go to slide ${index + 1}`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4">
-                <p className="text-white text-sm font-medium">Our Expert Team at Work</p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Service Guarantees Checklist */}
+      <section className="py-8 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 border-y border-primary/20">
+        <div className="container max-w-screen-xl">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-headline font-semibold text-center">What We Ensure With Every Service</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {serviceGuarantees.map((item, index) => (
+              <div key={index} className="flex items-center gap-2 text-sm bg-background/80 backdrop-blur-sm p-3 rounded-lg border border-primary/10">
+                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                  <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+                </div>
+                <span className="text-muted-foreground">{item}</span>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
