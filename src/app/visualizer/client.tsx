@@ -315,19 +315,30 @@ export function VisualizerClient({ initialColors }: VisualizerClientProps) {
                           activeFilters.tonality !== 'all' || 
                           activeFilters.room !== 'all';
 
-  // Get unique colors by combining all sources and removing duplicates (memoized)
+  // Get unique colors - only show standard colors (empty featureTag)
   const getUniqueColors = useMemo(() => {
-    if (allShades.length > 0) {
-      return allShades;
+    // Always use local shades.json for complete color catalog (2200 colors)
+    const allLocalColors: Shade[] = (shadesData?.shade || []) as Shade[];
+
+    // Filter to only show standard colors (no special featureTag like Recommended, Colour of the year)
+    const standardColors = allLocalColors.filter((shade) => !shade.featureTag || shade.featureTag === '');
+
+    if (standardColors.length > 0) {
+      return standardColors;
     }
-    
-    // Combine all color sources and remove duplicates by entityCode
+
+    // Fallback to API data if local data is unavailable
+    if (allShades.length > 0) {
+      return allShades.filter(shade => !shade.featureTag || shade.featureTag === '');
+    }
+
+    // Last resort: combine other sources
     const combinedColors = [...popularShades, ...recommendedShades, ...colorOfYearShades];
-    const uniqueColors = combinedColors.filter((shade, index, array) => 
+    const uniqueColors = combinedColors.filter((shade, index, array) =>
       array.findIndex(s => s.entityCode === shade.entityCode) === index
     );
-    
-    return uniqueColors;
+
+    return uniqueColors.filter(shade => !shade.featureTag || shade.featureTag === '');
   }, [allShades, popularShades, recommendedShades, colorOfYearShades]);
 
   // Load data from API
