@@ -5,8 +5,9 @@ export interface AsianPaintsApiResponse {
   shade: Shade[];
 }
 
+// Updated API URL to match the working Asian Paints endpoint
 const API_BASE_URL =
-  "https://www.asianpaints.com/content/ap/en/home/catalogue/colour-catalogue/jcr:content/root/responsivegrid_602603264/shadelisting.shade.json";
+  "https://www.asianpaints.com/content/ap/en/home/catalogue/colour-catalogue/grey-wall-colours/jcr:content/root/responsivegrid_602603264/responsivegrid/shadelisting_copy_co.shade.json";
 
 // Track API availability to avoid repeated failed requests
 let apiAvailable: boolean | null = null;
@@ -44,36 +45,25 @@ const checkApiAvailability = async (): Promise<boolean> => {
   const mobile = isMobile();
 
   try {
-    // Use different strategy for mobile vs desktop
-    const testUrl = mobile
-      ? `${API_BASE_URL}?selectedShadeFamily=reds&language=en&limit=1` // Minimal request for mobile
-      : `${API_BASE_URL}?selectedShadeFamily=all&language=en`;
+    // Use minimal request for availability check
+    const testUrl = `${API_BASE_URL}?selectedShadeFamily=greys&language=en&shadeMapper=false`;
 
     const controller = new AbortController();
     // Shorter timeout for mobile due to network constraints
-    const timeoutMs = mobile ? 2000 : 5000;
+    const timeoutMs = mobile ? 3000 : 6000;
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-    // Mobile-optimized headers
+    // Simple headers - browsers ignore custom User-Agent for security
     const headers: Record<string, string> = {
       Accept: "application/json",
     };
 
-    // Use different user agents for mobile vs desktop
-    if (mobile) {
-      headers["User-Agent"] =
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1";
-    } else {
-      headers["User-Agent"] = "Mozilla/5.0 (compatible; ColorVisualizer/1.0)";
-    }
-
     const response = await fetch(testUrl, {
-      method: "HEAD", // Use HEAD to minimize data transfer
+      method: "GET", // Use GET instead of HEAD - some servers don't support HEAD
       headers,
       signal: controller.signal,
-      // Add mobile-specific configurations
-      cache: mobile ? "force-cache" : "default",
       mode: "cors",
+      credentials: "omit",
     });
 
     clearTimeout(timeoutId);
@@ -218,21 +208,14 @@ export async function loadMoreColors(
       language,
     });
 
-    // Mobile-optimized headers
+    // Simple headers - browsers ignore custom User-Agent
     const headers: Record<string, string> = {
       Accept: "application/json",
     };
 
-    if (mobile) {
-      headers["User-Agent"] =
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1";
-    } else {
-      headers["User-Agent"] = "Mozilla/5.0 (compatible; ColorVisualizer/1.0)";
-    }
-
     // Add timeout for mobile
     const controller = new AbortController();
-    const timeoutMs = mobile ? 3000 : 8000;
+    const timeoutMs = mobile ? 5000 : 10000;
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     const response = await fetch(
@@ -240,10 +223,8 @@ export async function loadMoreColors(
       {
         headers,
         signal: controller.signal,
-        next: { revalidate: 3600 },
         mode: "cors",
         credentials: "omit",
-        cache: mobile ? "force-cache" : "default",
       }
     );
 
@@ -317,31 +298,20 @@ export async function fetchAllColorsForFamily(selectedShadeFamily: ShadeFamily =
       shadeMapper: "false",
     });
 
-    // Mobile-optimized timeout and retry logic
+    // Mobile-optimized timeout
     const mobile = isMobile();
     const controller = new AbortController();
-    const timeoutMs = mobile ? 3000 : 8000; // Shorter timeout for mobile
+    const timeoutMs = mobile ? 5000 : 10000; // Increased timeout for reliability
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-    // Prepare mobile-optimized headers
+    // Simple headers - browsers ignore custom User-Agent
     const headers: Record<string, string> = {
       Accept: "application/json",
     };
 
-    // Use mobile-specific user agent to avoid blocking
-    if (mobile) {
-      headers["User-Agent"] =
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1";
-    } else {
-      headers["User-Agent"] = "Mozilla/5.0 (compatible; ColorVisualizer/1.0)";
-    }
-
     const response = await fetch(`${API_BASE_URL}?${params}`, {
       headers,
       signal: controller.signal,
-      next: { revalidate: 3600 },
-      // Mobile-specific optimizations
-      cache: mobile ? "force-cache" : "default",
       mode: "cors",
       credentials: "omit", // Don't send credentials to avoid CORS issues
     });
