@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   Phone, Mail, MapPin, Globe, Droplet,
-  ArrowRight, Star, Clock, Award, Users,
+  ArrowRight, Clock, Award, Users,
   Building2, Share2, Download, MessageCircle, ExternalLink,
   Sparkles, Shield, Home, Hammer, CheckCircle, Brush, Check, Instagram
 } from 'lucide-react';
@@ -46,12 +46,7 @@ const BusinessCardPage = () => {
     addressLink: 'https://maps.app.goo.gl/dPcij76yfpb4J6op8',
     website: 'https://firstimpression.com',
     logo: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1754548771/apple-touch-icon_mwod6q.png',
-    googleBusinessUrl: 'https://www.google.com/search?sca_esv=2e3a0442facbf014&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E9MxlKNpWAwqeUC5Q--FH3LGMJqjIMl-aCDjj07mR1ELdX257qIcv7mQLieZkWDwkQWfGy0lUlU1VjclOz09mhjTnKrYjcboOh2TyKhibJk3ShbPbQ%3D%3D&q=Badala+Paints+And+Hardware+Reviews',
-    googleShareUrl: 'https://share.google/TGhVGIQXnSx6A53Wt',
     instagramUrl: 'https://www.instagram.com/hitu1682',
-    googleBusinessName: 'Badala Paints And Hardware',
-    googleRating: 4.8,
-    googleReviewCount: 127,
     established: '2014',
     yearsExperience: '10+',
     projectsCompleted: '500+',
@@ -68,7 +63,7 @@ const BusinessCardPage = () => {
   ];
 
   const highlights = [
-    { icon: Award, text: 'Asian Paints Dealer', color: 'text-orange-500' },
+    { icon: Award, text: 'Authorized Paint Dealer', color: 'text-orange-500' },
     { icon: CheckCircle, text: 'End-to-End Service', color: 'text-green-500' },
     { icon: Users, text: '50+ Skilled Painters', color: 'text-blue-500' },
     { icon: Shield, text: 'Quality Guarantee', color: 'text-purple-500' },
@@ -291,39 +286,6 @@ END:VCARD`;
               </div>
             </div>
 
-            {/* Google Reviews Card */}
-            <a
-              href={business.googleBusinessUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block p-4 rounded-xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 hover:border-amber-500/40 transition-all"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={cn(
-                          "h-5 w-5",
-                          i < Math.floor(business.googleRating)
-                            ? 'text-amber-500 fill-amber-500'
-                            : 'text-gray-300'
-                        )}
-                      />
-                    ))}
-                  </div>
-                  <div>
-                    <span className="font-bold text-lg">{business.googleRating}</span>
-                    <span className="text-muted-foreground text-sm ml-1">({business.googleReviewCount})</span>
-                  </div>
-                </div>
-                <Badge variant="secondary" className="bg-white/50">
-                  Google Reviews
-                </Badge>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">Tap to read reviews or write one</p>
-            </a>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-3">
@@ -464,15 +426,6 @@ END:VCARD`;
                   className="text-xs text-primary hover:underline flex items-center gap-1"
                 >
                   <Instagram className="h-3 w-3" /> Instagram
-                </a>
-                <span className="text-muted-foreground">|</span>
-                <a
-                  href={business.googleShareUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-primary hover:underline flex items-center gap-1"
-                >
-                  <Star className="h-3 w-3" /> Write a Review
                 </a>
                 <span className="text-muted-foreground">|</span>
                 <button
