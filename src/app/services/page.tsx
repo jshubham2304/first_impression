@@ -234,12 +234,12 @@ export default function ServicesPage() {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="bg-white/10 border-white text-white hover:bg-white/20 backdrop-blur-sm" asChild>
-                <a href="tel:+918560077888" className="flex items-center gap-2">
+                <a href="tel:+919653790999" className="flex items-center gap-2">
                   <Phone className="h-4 w-4" /> Call Now
                 </a>
               </Button>
               <Button size="lg" variant="outline" className="bg-green-500/20 border-green-400 text-white hover:bg-green-500/30 backdrop-blur-sm" asChild>
-                <a href="https://wa.me/918560077888" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                <a href="https://wa.me/919653790999" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                   <MessageCircle className="h-4 w-4" /> WhatsApp
                 </a>
               </Button>
@@ -525,12 +525,12 @@ export default function ServicesPage() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/10" asChild>
-              <a href="tel:+918560077888" className="flex items-center gap-2">
-                <Phone className="h-4 w-4" /> +91 8560077888
+              <a href="tel:+919653790999" className="flex items-center gap-2">
+                <Phone className="h-4 w-4" /> +91 9653790999
               </a>
             </Button>
             <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/10" asChild>
-              <a href="https://wa.me/918560077888" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+              <a href="https://wa.me/919653790999" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4" /> WhatsApp Us
               </a>
             </Button>

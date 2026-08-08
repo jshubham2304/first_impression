@@ -469,7 +469,7 @@ export const STRUCTURED_DATA = {
     description:
       "First Impression is Udaipur's leading Asian Paints dealer and professional painting services provider. We offer expert color consultation, digital visualization tools, premium paint products, and certified painting professionals for residential and commercial projects.",
     url: BASE_URL,
-    telephone: "+91-XXXXXXXXXX",
+    telephone: "+919653790999",
     email: "contact@first-impression.com",
     address: {
       "@type": "PostalAddress",
@@ -502,9 +502,7 @@ export const STRUCTURED_DATA = {
       "Most Trusted Paint Dealer",
       "Digital Color Technology Leader",
     ],
-    sameAs: [
-      "https://www.instagram.com/hitu1682",
-    ],
+    sameAs: ["https://www.instagram.com/hitu1682"],
   },
 
   brand: {
@@ -574,8 +572,6 @@ export const STRUCTURED_DATA = {
         "query-input": "required name=search_term_string",
       },
     ],
-    sameAs: [
-      "https://www.instagram.com/hitu1682",
-    ],
+    sameAs: ["https://www.instagram.com/hitu1682"],
   },
 };

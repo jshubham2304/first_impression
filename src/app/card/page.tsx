@@ -40,7 +40,7 @@ const BusinessCardPage = () => {
     tagline: 'End-to-End Painting Contractor Services',
     contactPerson: 'Hitesh Badala',
     designation: 'Painting Contractor',
-    phone: '8560077888',
+    phone: '9653790999',
     email: 'info@firstimpression.com',
     address: 'Udaipur City, Udaipur - 313001, Rajasthan',
     addressLink: 'https://maps.app.goo.gl/dPcij76yfpb4J6op8',
@@ -107,7 +107,7 @@ VERSION:3.0
 FN:${business.contactPerson}
 ORG:${business.name}
 TITLE:${business.designation}
-TEL:+91${business.phone}
+TEL:+919653790999
 EMAIL:${business.email}
 ADR:;;${business.address}
 URL:${business.website}

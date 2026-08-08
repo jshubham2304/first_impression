@@ -402,7 +402,7 @@ export function generateFirstImpressionBusinessSchema() {
     ],
     "description": "First Impression (formerly Badala Paints) is Udaipur's leading Asian Paints and JSW dealer and professional painting services provider. We offer expert color consultation, digital visualization tools, premium paint products, and certified painting professionals for residential and commercial projects.",
     "url": "https://firstimpresssion.netlify.app",
-    "telephone": "+91-XXXXXXXXXX",
+    "telephone": "+919653790999",
     "email": "contact@first-impression.com",
     "address": {
       "@type": "PostalAddress",

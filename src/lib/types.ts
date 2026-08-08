@@ -119,3 +119,22 @@ export type Testimonial = {
   imageUrl?: string;
   imagePath?: string;
 };
+
+export const galleryCategories = ['interior', 'exterior', 'texture', 'wood', 'team'] as const;
+export type GalleryCategory = typeof galleryCategories[number];
+
+export type GalleryItem = {
+  /** Firebase-managed items have an id; bundled legacy items do not. */
+  id?: string;
+  type: 'image' | 'video';
+  src: string;
+  storagePath?: string;
+  cloudinaryPublicId?: string;
+  title: string;
+  category: GalleryCategory;
+  featured?: boolean;
+  location?: string;
+  createdAt?: number;
+  originalSize?: number;
+  compressedSize?: number;
+};

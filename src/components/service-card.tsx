@@ -83,13 +83,13 @@ export function ServiceCard({ service }: { service: Service }) {
               </a>
             </Button>
             <Button variant="outline" size="sm" asChild>
-              <a href="tel:+918560077888" className="flex items-center gap-2">
+              <a href="tel:+919653790999" className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
                 Call Now
               </a>
             </Button>
             <Button variant="secondary" size="sm" asChild>
-              <a href="https://wa.me/918560077888" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+              <a href="https://wa.me/919653790999" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4" />
                 WhatsApp
               </a>

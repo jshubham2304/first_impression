@@ -6,17 +6,10 @@ import { X, ChevronLeft, ChevronRight, Play, Expand, Heart, Share2, Camera } fro
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import type { GalleryItem } from '@/lib/types';
+import { getGalleryItems } from '@/services/gallery-service';
 
-type GalleryItem = {
-  type: 'image' | 'video';
-  src: string;
-  title: string;
-  category: 'interior' | 'exterior' | 'texture' | 'wood' | 'team';
-  featured?: boolean;
-  location?: string;
-};
-
-const galleryItems: GalleryItem[] = [
+const defaultGalleryItems: GalleryItem[] = [
   // New uploads - Team at work
   {
     type: 'image',
@@ -146,15 +139,120 @@ const galleryItems: GalleryItem[] = [
     featured: true,
     location: 'Lake Pichola',
   },
-];
+  {
+    type: 'video',
+    src: 'https://res.cloudinary.com/dfydjfauz/video/upload/v1786210817/file_0014_mcv7uf.mp4',
+    title: 'Wall Texture Design',
+    category: 'texture',
+    featured: true,
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210814/file_009_ebpxom.jpg',
+    title: 'Interior Wall Design',
+    category: 'interior',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210813/file_008_rcn2eb.jpg',
+    title: 'Interior Texture Finish',
+    category: 'texture',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210813/file_0013_gxovxj.jpg',
+    title: 'Modern Interior Wall',
+    category: 'interior',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210813/file_005_ty6gmb.jpg',
+    title: 'Textured Wall Finish',
+    category: 'texture',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210813/file_007_nmr8nd.jpg',
+    title: 'Exterior Wall Finish',
+    category: 'exterior',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210813/file_006_d9ye20.jpg',
+    title: 'Exterior House Design',
+    category: 'exterior',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210812/file_0012_jhsnd5.jpg',
+    title: 'Interior Accent Wall',
+    category: 'interior',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210812/file_004_z8jxpp.jpg',
+    title: 'Decorative Wall Texture',
+    category: 'texture',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210812/file_0011_fu41wk.jpg',
+    title: 'Living Room Interior',
+    category: 'interior',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210812/file_0010_n98ser.jpg',
+    title: 'Modern Wall Finish',
+    category: 'texture',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210812/file_002_dgcdum.jpg',
+    title: 'House Exterior Finish',
+    category: 'exterior',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786210812/file_001_x4uwfi.jpg',
+    title: 'Interior Wall Finish',
+    category: 'interior',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1786181175/gallery/WhatsApp_Image_2026-08-04_at_13.05.14_cv06nb.jpg',
+    title: 'Wall Texture Work',
+    category: 'texture',
+    location: 'Udaipur',
+  },
+  {
+    type: 'video',
+    src: 'https://res.cloudinary.com/dfydjfauz/video/upload/v1767026476/file7_r2hl2h.mp4',
+    title: 'Exterior Painting Work',
+    category: 'exterior',
+    location: 'Udaipur',
+  },
+  {
+    type: 'image',
+    src: 'https://res.cloudinary.com/dfydjfauz/image/upload/v1767026475/file4_goqjyp.jpg',
+    title: 'Exterior House Painting',
+    category: 'exterior',
+    location: 'Udaipur',
+  },
 
-const categories = [
-  { id: 'all', label: 'All Projects', icon: Camera, count: galleryItems.length },
-  { id: 'interior', label: 'Interior', count: galleryItems.filter(i => i.category === 'interior').length },
-  { id: 'exterior', label: 'Exterior', count: galleryItems.filter(i => i.category === 'exterior').length },
-  { id: 'texture', label: 'Texture', count: galleryItems.filter(i => i.category === 'texture').length },
-  { id: 'wood', label: 'Wood & Metal', count: galleryItems.filter(i => i.category === 'wood').length },
-  { id: 'team', label: 'Our Team', count: galleryItems.filter(i => i.category === 'team').length },
 ];
 
 export default function GalleryPage() {
@@ -162,10 +260,23 @@ export default function GalleryPage() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [likedItems, setLikedItems] = useState<Set<number>>(new Set());
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(defaultGalleryItems);
 
   useEffect(() => {
     setIsLoaded(true);
+    getGalleryItems().then(items => {
+      if (items.length) setGalleryItems([...items, ...defaultGalleryItems]);
+    }).catch(error => console.error('Failed to load Firebase gallery items.', error));
   }, []);
+
+  const categories = [
+    { id: 'all', label: 'All Projects', icon: Camera, count: galleryItems.length },
+    { id: 'interior', label: 'Interior', count: galleryItems.filter(i => i.category === 'interior').length },
+    { id: 'exterior', label: 'Exterior', count: galleryItems.filter(i => i.category === 'exterior').length },
+    { id: 'texture', label: 'Texture', count: galleryItems.filter(i => i.category === 'texture').length },
+    { id: 'wood', label: 'Wood & Metal', count: galleryItems.filter(i => i.category === 'wood').length },
+    { id: 'team', label: 'Our Team', count: galleryItems.filter(i => i.category === 'team').length },
+  ];
 
   const filteredItems = selectedCategory === 'all'
     ? galleryItems

@@ -1,5 +1,5 @@
 'use client';
-import { LayoutDashboard, LogOut, Package, ShoppingCart, MessageSquareText, Palette, Settings, Users, FileText } from 'lucide-react';
+import { LayoutDashboard, LogOut, Package, ShoppingCart, MessageSquareText, Palette, Settings, Users, FileText, Images } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -24,6 +24,7 @@ const adminNavLinks = [
     { href: "/admin/estimations", label: "Estimations", icon: <FileText /> },
     { href: "/admin/users", label: "Users", icon: <Users /> },
     { href: "/admin/testimonials", label: "Testimonials", icon: <MessageSquareText /> },
+    { href: "/admin/gallery", label: "Gallery", icon: <Images /> },
     { href: "/admin/visualizer-colors", label: "Visualizer Colors", icon: <Palette /> },
     { href: "/admin/configuration", label: "Configuration", icon: <Settings /> },
 ];

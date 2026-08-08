@@ -191,7 +191,7 @@ export const metadata: Metadata = {
     type: "website",
     countryName: "India",
     emails: [],
-    phoneNumbers: ["+91-XXXXXXXXXX"],
+    phoneNumbers: ["+919653790999"],
     faxNumbers: [],
     alternateLocale: ["hi_IN"],
   },
